@@ -152,28 +152,28 @@ export default function LedgerMasterForm() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ display: 'flex', flex: 1 }}>
-        <div style={{ flex: 1, padding: '20px', backgroundColor: '#f5e6e8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '15px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '24px', color: '#111827' }}>Ledger Master</h2>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Ledger Master</h2>
 
             {/* Party Details */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '32px' }}>
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: 'bold' }}>Party Name</label>
+            <div className="filter-grid" style={{ marginBottom: '32px' }}>
+              <div className="filter-grid-red">
+                <label className="filter-label">Party Name</label>
                 <input
-                 type="text"
+                  type="text"
                   value={formData.partyName}
                   onChange={(e) => handleChange('partyName', e.target.value)}
-                  style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                  className="filter-input"
                 />
               </div>
 
               {/* Group Dropdown */}
-              <div ref={groupRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>Group</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={groupRef} className="filter-grid-red">
+                <label className="filter-label">Group</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={groupSearch}
@@ -183,15 +183,12 @@ export default function LedgerMasterForm() {
                     }}
                     onFocus={() => setIsGroupOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'white', cursor: 'text' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown 
-                    size={20} 
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} 
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isGroupOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredGroups.length > 0 ? (
                       filteredGroups.map((option, index) => (
                         <div
@@ -203,120 +200,74 @@ export default function LedgerMasterForm() {
                           }}
                           onMouseEnter={() => setHoveredGroup(option)}
                           onMouseLeave={() => setHoveredGroup(null)}
-                          style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '14px', color: hoveredGroup === option ? 'white' : '#374151', backgroundColor: hoveredGroup === option ? '#A63128' : 'white', borderBottom: index < filteredGroups.length - 1 ? '1px solid #E5E7EB' : 'none', transition: 'all 0.2s ease' }}
+                          className={`dropdown-item-option ${
+                            hoveredGroup === option
+                              ? 'dropdown-item-hovered'
+                              : formData.group === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>GST No</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">GST No</label>
                 <input
                   type="text"
                   value={formData.gstNo}
                   onChange={(e) => handleChange('gstNo', e.target.value)}
-                  style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                  className="filter-input"
                 />
               </div>
+
+              <div></div>
             </div>
 
             {/* Billing Address */}
-            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>Billing Address</h3>
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
-              <div style={{ 
-  backgroundColor: 'white',
-  padding: '6px',
-  borderRadius: '4px',
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #DC2626'
-}}>
-  <label style={{ 
-    display: 'block',
-    fontSize: '16px',
-    color: '#374151',
-    marginBottom: '8px',
-    fontWeight: 'bold'
-  }}>
-    Address-1
-  </label>
+            <h3 className="section-title">Billing Address</h3>
+            <div className="filter-grid" style={{ marginBottom: '20px' }}>
+              <div className="filter-grid-red">
+                <label className="filter-label">Address-1</label>
+                <textarea
+                  value={formData.billingAddress1}
+                  onChange={(e) => {
+                    handleChange('billingAddress1', e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  rows={1}
+                  className="multiline-field"
+                />
+              </div>
 
-  <textarea
-    value={formData.billingAddress1}
-    onChange={(e) => {
-      handleChange('billingAddress1', e.target.value);
-      e.target.style.height = 'auto';
-      e.target.style.height = e.target.scrollHeight + 'px';
-    }}
-    rows={1}
-    style={{
-      width: '100%',
-      padding: '1px 1px',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
-      outline: 'none',
-      resize: 'none',       
-      minHeight: '20px',        
-      lineHeight: '16px',
-      overflow: 'hidden',     
-      fontFamily: 'inherit'
-    }}
-  />
-</div>
-
-              <div style={{ 
-  backgroundColor: 'white',
-  padding: '6px',
-  borderRadius: '4px',
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #DC2626'
-}}>
-  <label style={{ 
-    display: 'block',
-    fontSize: '16px',
-    color: '#374151',
-    marginBottom: '8px',
-    fontWeight: 'bold'
-  }}>
-    Address-2
-  </label>
-
-  <textarea
-    value={formData.billingAddress2}
-    onChange={(e) => {
-      handleChange('billingAddress2', e.target.value);
-      e.target.style.height = 'auto';
-      e.target.style.height = e.target.scrollHeight + 'px';
-    }}
-    rows={1}
-    style={{
-      width: '100%',
-      padding: '1px 1px',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
-      outline: 'none',
-      resize: 'none',
-      minHeight: '20px',
-      lineHeight: '16px',
-      overflow: 'hidden',
-      fontFamily: 'inherit'
-    }}
-  />
-</div>
-
-
+              <div className="filter-grid-red">
+                <label className="filter-label">Address-2</label>
+                <textarea
+                  value={formData.billingAddress2}
+                  onChange={(e) => {
+                    handleChange('billingAddress2', e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  rows={1}
+                  className="multiline-field"
+                />
+              </div>
 
               {/* Billing City Dropdown */}
-              <div ref={billingCityRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>City</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={billingCityRef} className="filter-grid-red">
+                <label className="filter-label">City</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={billingCitySearch}
@@ -326,15 +277,12 @@ export default function LedgerMasterForm() {
                     }}
                     onFocus={() => setIsBillingCityOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'white', cursor: 'text' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown 
-                    size={20} 
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} 
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isBillingCityOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredBillingCities.length > 0 ? (
                       filteredBillingCities.map((option, index) => (
                         <div
@@ -346,34 +294,42 @@ export default function LedgerMasterForm() {
                           }}
                           onMouseEnter={() => setHoveredBillingCity(option)}
                           onMouseLeave={() => setHoveredBillingCity(null)}
-                          style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '14px', color: hoveredBillingCity === option ? 'white' : '#374151', backgroundColor: hoveredBillingCity === option ? '#A63128' : 'white', borderBottom: index < filteredBillingCities.length - 1 ? '1px solid #E5E7EB' : 'none', transition: 'all 0.2s ease' }}
+                          className={`dropdown-item-option ${
+                            hoveredBillingCity === option
+                              ? 'dropdown-item-hovered'
+                              : formData.billingCity === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>PinCode</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">PinCode</label>
                 <input
                   type="text"
                   value={formData.billingPinCode}
                   onChange={(e) => handleChange('billingPinCode', e.target.value)}
-                  style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                  className="filter-input"
                 />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+            <div className="filter-grid" style={{ marginBottom: '32px' }}>
               {/* Billing State Dropdown */}
-              <div ref={billingStateRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>State</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={billingStateRef} className="filter-grid-red">
+                <label className="filter-label">State</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={billingStateSearch}
@@ -383,15 +339,12 @@ export default function LedgerMasterForm() {
                     }}
                     onFocus={() => setIsBillingStateOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'white', cursor: 'text' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown 
-                    size={20} 
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} 
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isBillingStateOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredBillingStates.length > 0 ? (
                       filteredBillingStates.map((option, index) => (
                         <div
@@ -403,110 +356,66 @@ export default function LedgerMasterForm() {
                           }}
                           onMouseEnter={() => setHoveredBillingState(option)}
                           onMouseLeave={() => setHoveredBillingState(null)}
-                          style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '14px', color: hoveredBillingState === option ? 'white' : '#374151', backgroundColor: hoveredBillingState === option ? '#A63128' : 'white', borderBottom: index < filteredBillingStates.length - 1 ? '1px solid #E5E7EB' : 'none', transition: 'all 0.2s ease' }}
+                          className={`dropdown-item-option ${
+                            hoveredBillingState === option
+                              ? 'dropdown-item-hovered'
+                              : formData.billingState === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
                     )}
                   </div>
                 )}
               </div>
+
+              <div></div>
+              <div></div>
+              <div></div>
             </div>
 
             {/* Delivery Address */}
-            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>Delivery Address</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
-             <div style={{ 
-  backgroundColor: 'white',
-  padding: '10px',
-  borderRadius: '4px',
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #DC2626'
-}}>
-  <label style={{ 
-    display: 'block',
-    fontSize: '16px',
-    color: '#374151',
-    marginBottom: '8px',
-    fontWeight: 'bold'
-  }}>
-    Delivery Address-1
-  </label>
+            <h3 className="section-title">Delivery Address</h3>
+            <div className="filter-grid" style={{ marginBottom: '20px' }}>
+              <div className="filter-grid-red">
+                <label className="filter-label">Delivery Address-1</label>
+                <textarea
+                  value={formData.deliveryAddress1}
+                  onChange={(e) => {
+                    handleChange('deliveryAddress1', e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  rows={1}
+                  className="multiline-field"
+                />
+              </div>
 
-  <textarea
-    value={formData.deliveryAddress1}
-    onChange={(e) => {
-      handleChange('deliveryAddress1', e.target.value);
-      e.target.style.height = 'auto';
-      e.target.style.height = e.target.scrollHeight + 'px';
-    }}
-    rows={1}
-    style={{
-      width: '100%',
-      padding: '1px 1px',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
-      outline: 'none',
-      resize: 'none',      
-      minHeight: '22px',      
-      lineHeight: '18px',
-      overflow: 'hidden',   
-      fontFamily: 'inherit'
-    }}
-  />
-</div>
-
-             <div style={{ 
-  backgroundColor: 'white',
-  padding: '10px',
-  borderRadius: '4px',
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #DC2626'
-}}>
-  <label style={{ 
-    display: 'block',
-    fontSize: '16px',
-    color: '#374151',
-    marginBottom: '8px',
-    fontWeight: 'bold'
-  }}>
-    Address-2
-  </label>
-
-  <textarea
-    value={formData.deliveryAddress2}
-    onChange={(e) => {
-      handleChange('deliveryAddress2', e.target.value);
-      e.target.style.height = 'auto';
-      e.target.style.height = e.target.scrollHeight + 'px';
-    }}
-    rows={1}
-    style={{
-      width: '100%',
-      padding: '1px 1px',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
-      outline: 'none',
-      resize: 'none',    
-      minHeight: '22px',     
-      lineHeight: '18px',
-      overflow: 'hidden',   
-      fontFamily: 'inherit'
-    }}
-  />
-</div>
-
-
+              <div className="filter-grid-red">
+                <label className="filter-label">Address-2</label>
+                <textarea
+                  value={formData.deliveryAddress2}
+                  onChange={(e) => {
+                    handleChange('deliveryAddress2', e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  rows={1}
+                  className="multiline-field"
+                />
+              </div>
 
               {/* Delivery City Dropdown */}
-              <div ref={deliveryCityRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>City</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={deliveryCityRef} className="filter-grid-red">
+                <label className="filter-label">City</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={deliveryCitySearch}
@@ -516,15 +425,12 @@ export default function LedgerMasterForm() {
                     }}
                     onFocus={() => setIsDeliveryCityOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none', backgroundColor: 'white', cursor: 'text' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown 
-                    size={20} 
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} 
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isDeliveryCityOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredDeliveryCities.length > 0 ? (
                       filteredDeliveryCities.map((option, index) => (
                         <div
@@ -536,34 +442,42 @@ export default function LedgerMasterForm() {
                           }}
                           onMouseEnter={() => setHoveredDeliveryCity(option)}
                           onMouseLeave={() => setHoveredDeliveryCity(null)}
-                          style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '14px', color: hoveredDeliveryCity === option ? 'white' : '#374151', backgroundColor: hoveredDeliveryCity === option ? '#A63128' : 'white', borderBottom: index < filteredDeliveryCities.length - 1 ? '1px solid #E5E7EB' : 'none', transition: 'all 0.2s ease' }}
+                          className={`dropdown-item-option ${
+                            hoveredDeliveryCity === option
+                              ? 'dropdown-item-hovered'
+                              : formData.deliveryCity === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>PinCode</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">PinCode</label>
                 <input
                   type="text"
                   value={formData.deliveryPinCode}
                   onChange={(e) => handleChange('deliveryPinCode', e.target.value)}
-                  style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                  className="filter-input"
                 />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            <div className="filter-grid">
               {/* Delivery State Dropdown */}
-              <div ref={deliveryStateRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: 'bold' }}>State</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={deliveryStateRef} className="filter-grid-red">
+                <label className="filter-label">State</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={deliveryStateSearch}
@@ -573,15 +487,12 @@ export default function LedgerMasterForm() {
                     }}
                     onFocus={() => setIsDeliveryStateOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'white', cursor: 'text' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown 
-                    size={20} 
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} 
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isDeliveryStateOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredDeliveryStates.length > 0 ? (
                       filteredDeliveryStates.map((option, index) => (
                         <div
@@ -593,46 +504,51 @@ export default function LedgerMasterForm() {
                           }}
                           onMouseEnter={() => setHoveredDeliveryState(option)}
                           onMouseLeave={() => setHoveredDeliveryState(null)}
-                          style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '14px', color: hoveredDeliveryState === option ? 'white' : '#374151', backgroundColor: hoveredDeliveryState === option ? '#A63128' : 'white', borderBottom: index < filteredDeliveryStates.length - 1 ? '1px solid #E5E7EB' : 'none', transition: 'all 0.2s ease'}}>
+                          className={`dropdown-item-option ${
+                            hoveredDeliveryState === option
+                              ? 'dropdown-item-hovered'
+                              : formData.deliveryState === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
+                        >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
                     )}
                   </div>
                 )}
               </div>
-              </div>
-              </div>
-          {/* Action Buttons */}
-          {/* Buttons - Outside the form container */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '30px', maxWidth: '1250px' }}>
-            <button 
-            onClick={() => navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
+
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+             {/* Action Buttons */}
+          <div className="footer-container">
+            <button onClick={() => navigate(-1)} className="btn-back">
               <span>←</span>
               <span>Back</span>
             </button>
-            
-           <div style={{ display: 'flex', gap: '12px'  }}>
-              <button 
-                onClick={handleClear}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 24px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}
-              >
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={handleClear} className="btn-all">
                 <span>✕</span>
                 <span>Clear</span>
-              </button> 
-              
-              <button 
-                onClick={handleSubmit}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 24px', fontSize: '13px', fontWeight: '500', color: 'white', backgroundColor: '#B91C1C', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-              >
+              </button>
+
+              <button onClick={handleSubmit} className="btn-all">
                 <span>✓</span>
                 <span>Submit</span>
               </button>
             </div>
           </div>
+          </div>
+
         </div>
       </div>
     </div>

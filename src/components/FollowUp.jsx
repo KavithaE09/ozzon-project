@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function FollowUp() {
   const navigate = useNavigate();
-    const getTodayDate = () => {
+  const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -13,9 +13,9 @@ export default function FollowUp() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [activeTab, setActiveTab] = useState("followup");
   const [data, setData] = useState([]);
-     const [formData, setFormData] = useState({
-      date: getTodayDate()
-    });
+  const [formData, setFormData] = useState({
+    date: getTodayDate()
+  });
 
   useEffect(() => {
     setData([
@@ -50,7 +50,7 @@ export default function FollowUp() {
         narration: "Narration"
       }
     ]);
- }, []);
+  }, []);
 
   return (
     <div className="page-container">
@@ -115,35 +115,16 @@ export default function FollowUp() {
 
             {/* TABS */}
             {selectedLead && (
-              <div style={{ display: "flex", marginTop: "24px", marginBottom: "24px" }}>
+              <div className="tabs-container">
                 <button
                   onClick={() => setActiveTab("followup")}
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    background: activeTab === "followup" ? "#fff" : "#f3f4f6",
-                    fontWeight: activeTab === "followup" ? "600" : "400",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    borderTopLeftRadius: "4px"
-                  }}
+                  className={`tab-button ${activeTab === "followup" ? "tab-button-active" : ""}`}
                 >
                   Follow Up Details
                 </button>
                 <button
                   onClick={() => setActiveTab("previous")}
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    borderLeft: "none",
-                    background: activeTab === "previous" ? "#fff" : "#f3f4f6",
-                    fontWeight: activeTab === "previous" ? "600" : "400",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    borderTopRightRadius: "4px"
-                  }}
+                  className={`tab-button ${activeTab === "previous" ? "tab-button-active" : ""}`}
                 >
                   Previous Follow Up Details
                 </button>
@@ -160,7 +141,6 @@ export default function FollowUp() {
                       value={selectedLead.containerStatus}
                       disabled
                       className="filter-input"
-                      style={{ backgroundColor: "#f3f4f6", cursor: "not-allowed" }}
                     />
                   </div>
                   <div className="filter-grid-red">

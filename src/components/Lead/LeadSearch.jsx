@@ -162,28 +162,34 @@ export default function LeadSearch() {
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
-                  {isDropdownOpen && filteredOptions.length > 0 && (
-                    <div className="dropdown-menu">
-                      {filteredOptions.map((option, index) => (
+                  {isDropdownOpen && (
+                        <div className="dropdown-menu">
+                        {filteredOptions.length > 0 ? (
+                         filteredOptions.map((option, index) => (
                         <div
-                          key={index}
-                          onClick={() => handleSelectCustomer(option)}
-                          onMouseEnter={() => setHoveredOption(option)}
-                          onMouseLeave={() => setHoveredOption(null)}
-                          className={`dropdown-item ${
-                            hoveredOption === option
-                              ? 'dropdown-item-hovered'
-                              : customerName === option
-                              ? 'dropdown-item-selected'
-                              : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
+                           key={index}
+                           onClick={() => handleSelectCustomer(option)}
+                           onMouseEnter={() => setHoveredOption(option)}
+                           onMouseLeave={() => setHoveredOption(null)}
+                           className={`dropdown-item-option ${
+                           hoveredOption === option 
+                               ? 'dropdown-item-hovered' 
+                               : customerName === option 
+                               ? 'dropdown-item-selected' 
+                               : 'dropdown-item-default'
+                           }`}
+                           >
+                           {option}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                         ))
+                         ) : (
+                        <div className="dropdown-no-matches">
+                            No matches found
+                        </div>
+                        )}
+                        </div>
+                      )}
+               </div>
                 {/* Search Button */}
                 <div className="btn-container">
                   <button onClick={handleSearch} className="btn-all">
@@ -320,16 +326,14 @@ export default function LeadSearch() {
               </div>
             )}
 
-
-          </div>
-          
-            {/* Back Button */}
+           {/* Back Button */}
             <div className="footer-container">
               <button onClick={() => navigate(-1)} className="btn-back">
                 <span>←</span>
                 <span>Back</span>
               </button>
             </div>
+          </div>
         </div>
       </div>
     </div>

@@ -47,7 +47,7 @@ export default function ProformaInvoiceSearch() {
   ];
 
   // Customer names list (sorted alphabetically)
- const customerOptions = ['Leyo', 'Kavi', 'Varshini', 'Sasi'].sort();
+  const customerOptions = ['Leyo', 'Kavi', 'Varshini', 'Sasi'].sort();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function ProformaInvoiceSearch() {
     setCustomerName(option);
     setSearchTerm(option);
     setIsDropdownOpen(false);
-};
+  };
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -80,7 +80,7 @@ export default function ProformaInvoiceSearch() {
     }
   };
 
-const handleSearch = () => {
+  const handleSearch = () => {
     let results = [...allInvoiceData];
     
     // Customer Name filter
@@ -158,25 +158,31 @@ const handleSearch = () => {
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
-                  {isDropdownOpen && filteredOptions.length > 0 && (
+                  {isDropdownOpen && (
                     <div className="dropdown-menu">
-                      {filteredOptions.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => handleSelectCustomer(option)}
-                          onMouseEnter={() => setHoveredOption(option)}
-                          onMouseLeave={() => setHoveredOption(null)}
-                          className={`dropdown-item-option ${
-                            hoveredOption === option
-                              ? 'dropdown-item-hovered'
-                              : customerName === option
-                              ? 'dropdown-item-selected'
-                              : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
+                      {filteredOptions.length > 0 ? (
+                        filteredOptions.map((option, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleSelectCustomer(option)}
+                            onMouseEnter={() => setHoveredOption(option)}
+                            onMouseLeave={() => setHoveredOption(null)}
+                            className={`dropdown-item-option ${
+                              hoveredOption === option
+                                ? 'dropdown-item-hovered'
+                                : customerName === option
+                                ? 'dropdown-item-selected'
+                                : 'dropdown-item-default'
+                            }`}
+                          >
+                            {option}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="dropdown-no-matches">
+                          No matches found
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                 </div>
@@ -309,16 +315,15 @@ const handleSearch = () => {
                 </button>
               </div>
             )}
-
-          </div>
-          
-            {/* Back Button */}
+        
+                    {/* Back Button */}
             <div className="footer-container">
               <button onClick={() => navigate(-1)} className="btn-back">
                 <span>←</span>
                 <span>Back</span>
               </button>
             </div>
+          </div>
         </div>
       </div>
     </div>

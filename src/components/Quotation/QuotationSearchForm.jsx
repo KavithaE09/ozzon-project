@@ -79,7 +79,7 @@ export default function QuotationSearchForm() {
     return customers.sort();
   };
 
-const filteredOptions = getUniqueCustomers().filter(option =>
+  const filteredOptions = getUniqueCustomers().filter(option =>
     option.toLowerCase().startsWith(searchTerm.toLowerCase())
   );
 
@@ -87,7 +87,7 @@ const filteredOptions = getUniqueCustomers().filter(option =>
     setCustomerName(option);
     setSearchTerm(option);
     setIsDropdownOpen(false);
-};
+  };
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -101,7 +101,7 @@ const filteredOptions = getUniqueCustomers().filter(option =>
     let filtered = quotations;
     if (customerName) {
       filtered = filtered.filter(q => q.customer === customerName);
-   }
+    }
     setFilteredQuotations(filtered);
     setIsSearched(true);
     setCurrentPage(1);
@@ -171,25 +171,31 @@ const filteredOptions = getUniqueCustomers().filter(option =>
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
-                  {isDropdownOpen && filteredOptions.length > 0 && (
+                  {isDropdownOpen && (
                     <div className="dropdown-menu">
-                      {filteredOptions.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => handleSelectCustomer(option)}
-                          onMouseEnter={() => setHoveredOption(option)}
-                          onMouseLeave={() => setHoveredOption(null)}
-                          className={`dropdown-item-option ${
-                            hoveredOption === option
-                              ? 'dropdown-item-hovered'
-                              : customerName === option
-                              ? 'dropdown-item-selected'
-                              : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
+                      {filteredOptions.length > 0 ? (
+                        filteredOptions.map((option, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleSelectCustomer(option)}
+                            onMouseEnter={() => setHoveredOption(option)}
+                            onMouseLeave={() => setHoveredOption(null)}
+                            className={`dropdown-item-option ${
+                              hoveredOption === option
+                                ? 'dropdown-item-hovered'
+                                : customerName === option
+                                ? 'dropdown-item-selected'
+                                : 'dropdown-item-default'
+                            }`}
+                          >
+                            {option}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="dropdown-no-matches">
+                          No matches found
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                 </div>
@@ -351,14 +357,14 @@ const filteredOptions = getUniqueCustomers().filter(option =>
                 </button>
               </div>
             )}
-          </div>
-                      {/* Back Button */}
+           {/* Back Button */}
             <div className="footer-container">
               <button onClick={() => navigate(-1)} className="btn-back">
                 <span>←</span>
                 <span>Back</span>
               </button>
             </div>
+          </div>
         </div>
       </div>
     </div>

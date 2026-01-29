@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Printer } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Search, Printer, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdvanceReceipt() {
@@ -13,11 +13,19 @@ export default function AdvanceReceipt() {
     return `${year}-${month}-${day}`;
   };
 
-  const [fromDate, setFromDate] = useState(getTodayDate());
-  const [toDate, setToDate] = useState(getTodayDate());
-  const [customer, setCustomer] = useState('');
+  const [formData, setFormData] = useState({
+    fromDate: getTodayDate(),
+    toDate: getTodayDate()
+  });
+
+  const [customerName, setCustomerName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hoveredOption, setHoveredOption] = useState(null);
   const [filteredData, setFilteredData] = useState([]); 
   const [isSearched, setIsSearched] = useState(false);
+  
+  const dropdownRef = useRef(null);
 
   const tableData = [
     { id: 1, qno: 'Q-1', date: '20-12-25', customer: 'Leyo', sales: 'Raneesh', amount: '₹ 10,00,000' },
@@ -26,97 +34,184 @@ export default function AdvanceReceipt() {
     { id: 4, qno: 'Q-1', date: '20-12-25', customer: 'Kavitha', sales: 'Raneesh', amount: '₹ 10,00,000' },
   ];
 
+  // Get unique customers from table data
+  const getUniqueCustomers = () => {
+    const customers = [...new Set(tableData.map(item => item.customer))];
+    return customers.sort();
+  };
+
+  // Filter customer options based on search term
+  const filteredOptions = getUniqueCustomers().filter(option =>
+    option.toLowerCase().startsWith(searchTerm.toLowerCase())
+  );
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelectCustomer = (option) => {
+    setCustomerName(option);
+    setSearchTerm(option);
+    setIsDropdownOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+    setIsDropdownOpen(true);
+    if (e.target.value === '') {
+      setCustomerName('');
+    }
+  };
+
   const handleSearch = () => {
     setIsSearched(true);
     
     let results = [...tableData];
     
     // Filter by customer name if selected
-    if (customer) {
+    if (customerName) {
       results = results.filter(
-        row => row.customer.toLowerCase() === customer.toLowerCase()
+        row => row.customer.toLowerCase() === customerName.toLowerCase()
       );
     }
 
     setFilteredData(results);
   };
 
+  const handlePrint = (row) => {
+    alert(`Print Quotation: ${row.qno}`);
+  };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <div style={{ flex: 1, padding: '24px', background: '#f5e6e8' }}>
-          <div style={{ background: '#fff', borderRadius: '8px', padding: '24px',marginBottom:'10px' }}>
-            <h3 style={{ marginBottom: '20px', fontSize: '20px' }}>Advance Receipt</h3>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Advance Receipt</h2>
             
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'flex-end' }}>
-              <div style={fieldBox}>
-                <label style={label}>From Date</label>
-                <input 
-                  type="date" 
-                  value={fromDate} 
-                  onChange={e => setFromDate(e.target.value)} 
-                  style={input}
-                />
-              </div>
+            {/* Filter Section */}
+            <div className="filter-section">
+              <div className="filter-grid">
+                {/* From Date */}
+                <div className="filter-grid-red">
+                  <label className="filter-label">From Date</label>
+                  <input 
+                    type="date" 
+                    value={formData.fromDate}
+                    onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
+                    className="filter-input"
+                  />
+                </div>
 
-              <div style={fieldBox}>
-                <label style={label}>To Date</label>
-                <input 
-                  type="date" 
-                  value={toDate} 
-                  onChange={e => setToDate(e.target.value)} 
-                  style={input}
-                />
-              </div>
+                {/* To Date */}
+                <div className="filter-grid-red">
+                  <label className="filter-label">To Date</label>
+                  <input 
+                    type="date" 
+                    value={formData.toDate}
+                    onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
+                    className="filter-input"
+                  />
+                </div>
 
-              <div style={customBox}>
-                <label style={label}>Customer Name</label>
-                <select
-                  style={input}
-                  value={customer}
-                  onChange={e => setCustomer(e.target.value)}
-                >
-                  <option value="">Select</option>
-                  <option>Kavi</option>
-                  <option>Kavitha</option>
-                  <option>Leyo</option>
-                  <option>Whiteson</option>
-                  <option>Sasikala</option>
-                  <option>Varshini</option>
-                </select>
-              </div>
+                {/* Customer Name Dropdown */}
+                <div ref={dropdownRef} className="filter-grid-green">
+                  <label className="filter-label">Customer Name</label>
+                  <div className="dropdown-wrapper">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleInputChange}
+                      onFocus={() => setIsDropdownOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
+                  </div>
+                  {isDropdownOpen && (
+                    <div className="dropdown-menu">
+                      {filteredOptions.length > 0 ? (
+                        filteredOptions.map((option, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleSelectCustomer(option)}
+                            onMouseEnter={() => setHoveredOption(option)}
+                            onMouseLeave={() => setHoveredOption(null)}
+                            className={`dropdown-item-option ${
+                              hoveredOption === option
+                                ? 'dropdown-item-hovered'
+                                : customerName === option
+                                ? 'dropdown-item-selected'
+                                : 'dropdown-item-default'
+                            }`}
+                          >
+                            {option}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="dropdown-no-matches">
+                          No matches found
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
 
-              <button style={searchBtn} onClick={handleSearch}>
-                <Search size={18} style={{ marginRight: '6px' }}/> Search
-              </button>
+                {/* Search Button */}
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Table - Only show after search */}
+            {/* Results Table */}
             {isSearched && (
-              <div style={{ border: '1px solid #9ca3af', borderRadius: '8px', marginTop: '100px', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead style={{ background: '#f9fafb' }}>
-                    <tr>
-                      {['Sl No', 'Quotation No', 'Quotation Date', 'Customer Name', 'Sales Person', 'Total Cost', 'Action']
-                        .map(h => <th key={h} style={th}>{h}</th>)}
+              <div className="table-container">
+                <table className="data-table">
+                  <thead>
+                    <tr className="table-header">
+                      <th className="table-th">Sl No</th>
+                      <th className="table-th">Quotation No</th>
+                      <th className="table-th">Quotation Date</th>
+                      <th className="table-th">Customer Name</th>
+                      <th className="table-th">Sales Person</th>
+                      <th className="table-th">Total Cost</th>
+                      <th className="table-th-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredData.length > 0 ? (
-                      filteredData.map(row => (
-                        <tr key={row.id}>
-                          <td style={td}>{row.id}</td>
-                          <td style={td}>{row.qno}</td>
-                          <td style={td}>{row.date}</td>
-                          <td style={td}>{row.customer}</td>
-                          <td style={td}>{row.sales}</td>
-                          <td style={td}>{row.amount}</td>
-                          <td style={td}>
-                            <div style={{ display: 'flex', gap: 10 }}>
-                              <Printer size={18} style={{ color: '#4b5563', cursor: 'pointer' }} />
+                      filteredData.map((row) => (
+                        <tr key={row.id} className="table-row">
+                          <td className="table-cell">{row.id}</td>
+                          <td className="table-cell">{row.qno}</td>
+                          <td className="table-cell">{row.date}</td>
+                          <td className="table-cell">{row.customer}</td>
+                          <td className="table-cell">{row.sales}</td>
+                          <td className="table-cell">{row.amount}</td>
+                          <td className="table-cell-center">
+                            <div className="table-actions">
+                              <button
+                                onClick={() => handlePrint(row)}
+                                className="btn-action"
+                                title="Print"
+                              >
+                                <Printer size={18} className="text-[#374151]" />
+                              </button>
                               <button 
                                 onClick={() => navigate("/layout/proformainvoice/advance")}
-                                style={advanceBtn}>
+                                className="btn-advance"
+                              >
                                 Advance
                               </button>
                             </div>
@@ -125,7 +220,7 @@ export default function AdvanceReceipt() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="7" style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                        <td colSpan="7" className="no-data-cell">
                           No records found for the selected filters
                         </td>
                       </tr>
@@ -134,134 +229,18 @@ export default function AdvanceReceipt() {
                 </table>
               </div>
             )}
+
+                      {/* Back Button */}
+          <div className="footer-container">
+            <button onClick={() => navigate(-1)} className="btn-back">
+              <span>←</span>
+              <span>Back</span>
+            </button>
           </div>
-                <button
-        onClick={() => navigate(-1)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 20px',
-          fontSize: '13px',
-          fontWeight: '500',
-          color: '#B91C1C',
-          border: '2px solid #B91C1C',
-          borderRadius: '4px',
-          backgroundColor: 'white',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease'
-        }}
-      >
-        <span>←</span>
-        <span>Back</span>
-      </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export const card = {
-  background: '#ffffff',
-  borderRadius: 10,
-  padding: 28,
-  border: '1px solid #e5e7eb'
-};
-
-export const filterRow = {
-  display: 'flex',
-  alignItems: 'flex-end',
-  gap: 24,
-  marginBottom: 36
-};
-
-export const customBox = {
-  width: 255,
-  height: '59px',                
-  border: '1px solid #9ca3af',
-  borderRight:'3px solid #22C55E',
-  borderRadius: 4.94,
-  padding: '10px 12px',
-  background: '#ffffff'
-};
-
-
-export const fieldBox = {
-  width: 255,
-  height: '59px',                
-  border: '1px solid #9ca3af',
-  borderRight:'3px solid #A63128',
-  borderRadius: 4.94,
-  padding: '10px 12px',
-  background: '#ffffff'
-};
-
-export const label = {
-  fontSize: 16,
-  fontWeight: 600,
-  marginBottom: 6,
-  color: '#374151',
-  display: 'block'
-};
-
-export const input = {
-  width: '100%',
-  border: 'none',
-  outline: 'none',
-  fontSize: 14,
-  color: '#111827',
-  background: 'transparent'
-};
-
-export const searchBtn = {
-  background: '#A63128',
-  color: '#ffffff',
-  border: 'none',
-  width: 160,
-  height: 50,
-  borderRadius: 4.94,
-  fontSize: 16,
-  fontWeight: 600,
-  cursor: 'pointer',
-  marginLeft: 75,
-  alignSelf: 'center',   
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-};
-
-export const tableWrap = {
-  border: '1px solid #e5e7eb',
-  borderRadius: 10,
-  overflow: 'hidden',
-  background: '#ffffff'
-};
-
-export const th = {
-  padding: '14px 16px',
-  textAlign: 'left',
-  fontSize: 16,
-  fontWeight: 600,
-  background: '#f9fafb',
-  color: '#374151'
-};
-
-export const td = {
-  padding: '14px 16px',
-  fontSize: 13,
-  color: '#111827',
-  borderBottom: '1px solid #f3f4f6'
-};
-
-const advanceBtn = {
-  padding: '6px 14px',
-  borderRadius: 4.94,
-  border: 'none',
-  background: '#A63128',
-  color: '#fff',
-  fontWeight: 600,
-  cursor: 'pointer',
-  marginLeft: '10px',
-  position: 'relative',
-  top: '-4px',        
-};

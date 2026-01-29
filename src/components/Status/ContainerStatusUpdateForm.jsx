@@ -331,15 +331,14 @@ export default function ContainerStatusUpdateForm() {
               </div>
             )}
 
-          </div>
-           
-           {/* Back Button */}
+                     {/* Back Button */}
             <div className="footer-container">
               <button onClick={() => navigate(-1)} className="btn-back">
                 <span>←</span>
                 <span>Back</span>
               </button>
             </div>
+          </div>
         </div>
       </div>
     </div>
