@@ -101,13 +101,13 @@ if (page === "LedgerMasterForm_Accounts")
 
         {/* MAIN CONTENT */}
          <main 
-          className="bg-[#F6EAEA] p-6 overflow-y-auto transition-all duration-300"
+        
           style={{
             marginLeft: sidebarOpen ? '240px' : '0',
             width: sidebarOpen ? 'calc(100% - 240px)' : '100%',
           }}
         >
-          <div className="bg-pink rounded-xl shadow p-6">
+          <div >
             <Outlet />
           </div>
         </main>

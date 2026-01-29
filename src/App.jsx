@@ -71,12 +71,12 @@ export default function App() {
   return (
     <Routes>
 
-     <Route path="/" element={<Admin />} />
-     <Route path="/Layout" element={<Layout />}>
- <Route index element={  <div className=" flex h-full w-full items-center  justify-center">
-      <h1 className="text-4xl  font-bold italic tracking-wider text-[var(--primary-color)]">
-        COMING SOON !!!
-      </h1>  </div>} />
+      <Route path="/" element={<Admin />} />
+      <Route path="/Layout" element={<Layout />}>
+        <Route index element={<div className=" flex h-full w-full items-center  justify-center">
+          <h1 className="text-4xl  font-bold italic tracking-wider text-[var(--primary-color)]">
+            COMING SOON !!!
+          </h1>  </div>} />
         <Route path="lead" element={<LeadSearch />} />
         <Route path="lead/lead" element={<LeadCreationForm />} />
         <Route path="lead/hold" element={<ContainerHoldRequestForm />} />
@@ -121,7 +121,7 @@ export default function App() {
         <Route path="containerholdrequestapproval" element={<ContainerHoldRequestApprovalForm />} />
         <Route path="containerblockrequestapproval" element={<ContainerBlockRequestApprovalForm />} />
         <Route path="unitmaster" element={<UnitMaster />} />
-        <Route path ="purchaseorder" element = {<PurchaseOrder/>} />
+        <Route path="purchaseorder" element={<PurchaseOrder />} />
         <Route path="ContainerStatus" element={<ContainerStatus />} />
 
         <Route path="Grade" element={<Grade />} />
@@ -134,7 +134,7 @@ export default function App() {
         <Route path="Yard" element={<Yard />} />
         <Route path="master/ledgermasterform" element={<LedgerMasterForm />} />
         <Route path="accounts/ledgermasterform" element={<LedgerMasterForm />} />
-      <Route path = "goodsreceiptnote" element = {<GoodsReceiptNote/>} />
+        <Route path="goodsreceiptnote" element={<GoodsReceiptNote />} />
 
         <Route path="SalesPerson" element={<SalesPerson />} />
         <Route path="LeadOwner" element={<LeadOwner />} />
