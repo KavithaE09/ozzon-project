@@ -1,0 +1,405 @@
+import React, { useState } from 'react';
+import { ChevronRight, Search, Edit2, Trash2 , ChevronLeft,} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export default function LeadOwner() {
+  const navigate = useNavigate();
+  const [leadOwnerName, setLeadOwnerName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+const rowsPerPage = 2;
+
+  const [leadOwners, setLeadOwners] = useState([
+    { id: 1, name: 'ADMIN' },
+    { id: 2, name: 'RANEESH' },
+    { id: 3, name: 'BALA' },
+    { id: 4, name: 'NAVEEN' }
+  ]);
+  const [filteredGroups, setFilteredGroups] = useState([
+    { id: 1, name: 'ADMIN' },
+    { id: 2, name: 'RANEESH' },
+    { id: 3, name: 'BALA' },
+    { id: 4, name: 'NAVEEN' }
+  ]);
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
+const totalPages = Math.ceil(filteredGroups.length / rowsPerPage);
+
+const indexOfLast = currentPage * rowsPerPage;
+const indexOfFirst = indexOfLast - rowsPerPage;
+
+const currentGroups = filteredGroups.slice(
+  indexOfFirst,
+  indexOfLast
+);
+
+  const handleSubmit = () => {
+    if (leadOwnerName.trim() !== '') {
+      const newOwner = {
+        id: leadOwners.length > 0 ? Math.max(...leadOwners.map(g => g.id)) + 1 : 1,
+        name: leadOwnerName.toUpperCase()
+      };
+      setLeadOwners([...leadOwners, newOwner]);
+      setFilteredGroups([...leadOwners, newOwner]);
+      setLeadOwnerName('');
+      setCurrentPage(1);
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchTerm.trim() === '') {
+      setFilteredGroups(leadOwners);
+    } else {
+      const filtered = leadOwners.filter(owner =>
+        owner.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredGroups(filtered);
+      setCurrentPage(1);
+    }
+  };
+
+  const handleEdit = (owner) => {
+    setEditingId(owner.id);
+    setEditingName(owner.name);
+  };
+
+  const handleUpdate = (ownerId) => {
+    if (editingName.trim() !== '') {
+      const updatedOwners = leadOwners.map(owner =>
+        owner.id === ownerId ? { ...owner, name: editingName.toUpperCase() } : owner
+      );
+      setLeadOwners(updatedOwners);
+      setFilteredGroups(updatedOwners);
+      setEditingId(null);
+      setEditingName('');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingName('');
+  };
+
+  const handleDelete = (ownerId) => {
+    const updatedOwners = leadOwners.filter(owner => owner.id !== ownerId);
+    setLeadOwners(updatedOwners);
+    setFilteredGroups(updatedOwners);
+    setCurrentPage(1);
+  };
+
+  return (
+  <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#F9FAFB' }}>
+      {/* Main Content */}
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Form Content */}
+        <div style={{ flex: 1, overflow: 'auto', padding: '20px', backgroundColor: '#f5e6e8' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '15px' }}>
+            {/* Lead Owner Section */}
+            <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
+              Lead Owner
+            </h2>
+
+            <div style={{
+              marginBottom: '24px',
+              display: 'flex',
+              alignItems: 'flex-end',
+               justifyContent: 'flex-start',
+              gap: '40px',
+            }}>
+              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                  marginBottom: '8px'
+                }}>
+                  Lead Owner Name
+                </label>
+                <input
+                  type="text"
+                  value={leadOwnerName}
+                  onChange={(e) => setLeadOwnerName(e.target.value)}
+                  placeholder="Enter owner name"
+                  style={{
+                    width: '256px',
+                    padding: '4px 8px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    outline: 'none',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button 
+                onClick={handleSubmit}
+                style={{ 
+                  width: '150px',
+                  height: '50px',
+                  padding: '10px 24px', 
+                  backgroundColor: '#A63128', 
+                  color: 'white', 
+                  borderRadius: '15px', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>✓</span>
+                <span>Submit</span>
+              </button>
+            </div>
+
+            {/* Record List Section */}
+            <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
+              Record List
+            </h2>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+             justifyContent: 'flex-start',
+              gap: '40px',
+              marginBottom: '24px'
+            }}>
+              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E'}}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                  marginBottom: '8px'
+                }}>
+                  Search By
+                </label>
+                <input
+                  type="text"
+                  placeholder="Lead Owner Name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    width: '256px',
+                    padding: '4px 8px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    outline: 'none',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+              <button 
+                onClick={handleSearch}
+                style={{ 
+                  width: '150px',
+                  height: '50px',
+                  padding: '10px 24px', 
+                  backgroundColor: '#A63128', 
+                  color: 'white', 
+                  borderRadius: '15px', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Search size={18} /> Search
+              </button>
+            </div>
+
+            {/* Table */}
+            <div style={{
+              border: '1px solid #9CA3AF',
+              borderRadius: '8px',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                backgroundColor: '#fde2e2',
+                padding: '10px 16px',
+                borderBottom: '1px solid #9CA3AF'
+              }}>
+                <span style={{ fontSize: '16px', fontWeight: '600', color: '#000000' }}>
+                  Lead Owner Name
+                </span>
+              </div>
+              <div style={{ backgroundColor: 'white' }}>
+                {currentGroups.length > 0 ? (
+                      currentGroups.map((owner, idx) => (
+                    <div
+                      key={owner.id}
+                      style={{
+                        padding: '10px 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderBottom: idx !== filteredGroups.length - 1 ? '1px solid #f3f4f6' : 'none',
+                        gap: '12px'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                        <ChevronRight size={16} style={{ color: '#374151' }} />
+                        {editingId === owner.id ? (
+                          <input
+                            type="text"
+                            value={editingName}
+                            onChange={(e) => setEditingName(e.target.value)}
+                            style={{
+                              flex: 1,
+                              padding: '4px 8px',
+                              border: '1px solid #9CA3AF',
+                              borderRadius: '4px',
+                              fontSize: '14px',
+                              outline: 'none',
+                              backgroundColor: 'white'
+                            }}
+                          />
+                        ) : (
+                          <span style={{ fontSize: '14px', color: '#111827' }}>{owner.name}</span>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {editingId === owner.id ? (
+                          <>
+                            <button
+                              onClick={() => handleUpdate(owner.id)}
+                              style={{
+                                padding: '4px 12px',
+                                backgroundColor: '#A63128',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                fontSize: '13px',
+                                cursor: 'pointer',
+                                fontWeight: '500'
+                              }}
+                            >
+                              Update
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              style={{
+                                padding: '4px 12px',
+                                backgroundColor: '#6B7280',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                fontSize: '13px',
+                                cursor: 'pointer',
+                                fontWeight: '500'
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <Edit2 
+                              size={18} 
+                              style={{ color: '#6B7280', cursor: 'pointer' }}
+                              onClick={() => handleEdit(owner)}
+                            />
+                            <Trash2 
+                              size={18} 
+                              style={{ color: '#DC2626', cursor: 'pointer' }}
+                              onClick={() => handleDelete(owner.id)}
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: '16px 24px', textAlign: 'center', fontSize: '14px', color: '#6B7280' }}>
+                    No records found
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+             <div style={{
+  display: 'flex',
+  justifyContent: 'flex-end',
+  gap: '8px',
+  marginTop: '12px'
+}}>
+  <button
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage(p => p - 1)}
+    style={{
+      padding: '6px 12px',
+      borderRadius: '4px',
+      border: '1px solid #d1d5db',
+      backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
+      cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+    }}
+  >
+     <ChevronLeft />
+  </button>
+
+  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+    <button
+      key={page}
+      onClick={() => setCurrentPage(page)}
+      style={{
+        padding: '6px 12px',
+        borderRadius: '4px',
+        border: '1px solid #d1d5db',
+        backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
+        color: currentPage === page ? '#ffffff' : '#000000',
+        cursor: 'pointer'
+      }}
+    >
+      {page}
+    </button>
+  ))}
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage(p => p + 1)}
+    style={{
+      padding: '6px 12px',
+      borderRadius: '4px',
+      border: '1px solid #d1d5db',
+      backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
+      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+    }}
+  >
+ <ChevronRight />
+  </button>
+</div>
+          <button 
+            onClick={() => navigate(-1)}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '8px 20px', 
+              fontSize: '13px', 
+              fontWeight: '500', 
+              color: '#B91C1C', 
+              border: '2px solid #B91C1C', 
+              borderRadius: '4px', 
+              backgroundColor: 'white', 
+              cursor: 'pointer' 
+            }}
+          >
+            <span>←</span>
+            <span>Back</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
