@@ -19,36 +19,33 @@ export default function LeadSearch() {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const paginatedData = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-
-
-  const getTodayDate = () => {
+   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  };
+   };
 
-
-  const [formData, setFormData] = useState({
+   const [formData, setFormData] = useState({
     formdate: getTodayDate(),
     todate: getTodayDate(),
     customerName: ''
   });
 
   // Customer names list (sorted alphabetically)
-  const customerOptions = ['Sasi', 'Varshini'].sort();
+  const customerOptions = ['Sasi', 'Varshini','Raneesh','Leyo','Kavitha','kumar'].sort();
 
   // All invoice data
   const allInvoiceData = [
     { slNo: 1, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'Sasi', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
     { slNo: 2, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'Varshini', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
-    { slNo: 3, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'Sasi', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
-    { slNo: 4, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'Varshini', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
-    { slNo: 5, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'Sasi', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
-    { slNo: 7, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'Varshini', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
+    { slNo: 3, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'Raneesh', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
+    { slNo: 4, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'leyo', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
+    { slNo: 5, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'kavitha', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
+    { slNo: 7, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'kumar', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
   ];
 
   // Show all data on first load
@@ -68,14 +65,12 @@ export default function LeadSearch() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter customer options based on search term - only show names that START with the search term
+  // Filter customer options based on search term
   const filteredOptions = customerOptions.filter(option =>
     option.toLowerCase().startsWith(searchTerm.toLowerCase())
-  );
+   );
 
-
-  const handleSearch = () => {
-
+   const handleSearch = () => {
     let results = [...allInvoiceData];
 
     // Customer Name filter
@@ -102,9 +97,7 @@ export default function LeadSearch() {
     if (e.target.value === '') {
       setCustomerName('');
     }
-  };
-
-
+};
 
   const handlePrint = (index, e) => {
     e.stopPropagation();
@@ -122,231 +115,156 @@ export default function LeadSearch() {
       setFilteredData(updatedData);
     }
   };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <div style={{ flex: 1, overflow: 'auto', padding: '24px', backgroundColor: '#F3E8E8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '32px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', color: '#111827' }}>Lead </h2>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Lead</h2>
 
             {/* Filter Section */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
-                <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                  <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>From Date</label>
+            <div className="filter-section">
+              <div className="filter-grid">
+                {/* From Date */}
+                <div className="filter-grid-red">
+                  <label className="filter-label">From Date</label>
                   <input
                     type="date"
                     value={formData.formdate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, formdate: e.target.value })
-                    }
-                    style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
+                    onChange={(e) => setFormData({ ...formData, formdate: e.target.value })}
+                    className="filter-input"
                   />
+                 </div>
 
-                </div>
-                <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                  <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>To Date</label>
+                {/* To Date */}
+                <div className="filter-grid-red">
+                  <label className="filter-label">To Date</label>
                   <input
                     type="date"
                     value={formData.todate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, todate: e.target.value })
-                    }
-                    style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
+                    onChange={(e) => setFormData({ ...formData, todate: e.target.value })}
+                    className="filter-input"
                   />
+                 </div>
 
-                </div>
-                <div ref={dropdownRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E', position: 'relative' }}>
-                  <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Customer Name</label>
-                  <div style={{ position: 'relative' }}>
+                {/* Customer Name Dropdown */}
+                <div ref={dropdownRef} className="filter-grid-green">
+                  <label className="filter-label">Customer Name</label>
+                  <div className="dropdown-wrapper">
                     <input
                       type="text"
                       value={searchTerm}
                       onChange={handleInputChange}
                       onFocus={() => setIsDropdownOpen(true)}
                       placeholder="Type or select..."
-                      style={{
-                        width: '100%',
-                        padding: '1px 1px 1px 1px',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '14px',
-                        outline: 'none',
-                        backgroundColor: 'white',
-                        cursor: 'text'
-                      }}
+                      className="dropdown-input"
                     />
-                    <ChevronDown
-                      size={20}
-                      style={{
-                        position: 'absolute',
-                        right: '4px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: '#000000',
-                        pointerEvents: 'none'
-                      }}
-                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                   </div>
-                  {isDropdownOpen && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: '0',
-                      right: '0',
-                      marginTop: '4px',
-                      backgroundColor: 'white',
-                      border: '1px solid #D1D5DB',
-                      borderRadius: '4px',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                      maxHeight: '200px',
-                      overflowY: 'auto',
-                      zIndex: 1000
-                    }}>
-                      {filteredOptions.length > 0 ? (
-                        filteredOptions.map((option, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handleSelectCustomer(option)}
-                            onMouseEnter={() => setHoveredOption(option)}
-                            onMouseLeave={() => setHoveredOption(null)}
-                            style={{
-                              padding: '8px 12px',
-                              cursor: 'pointer',
-                              fontSize: '14px',
-                              color: hoveredOption === option ? 'white' : '#374151',
-                              backgroundColor: hoveredOption === option ? '#A63128' : (customerName === option ? '#FEE2E2' : 'white'),
-                              borderBottom: index < filteredOptions.length - 1 ? '1px solid #E5E7EB' : 'none',
-                              transition: 'all 0.2s ease'
-                            }}
-                          >
-                            {option}
-                          </div>
-                        ))
-                      ) : (
-                        <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
-                          No matches found
+                  {isDropdownOpen && filteredOptions.length > 0 && (
+                    <div className="dropdown-menu">
+                      {filteredOptions.map((option, index) => (
+                        <div
+                          key={index}
+                          onClick={() => handleSelectCustomer(option)}
+                          onMouseEnter={() => setHoveredOption(option)}
+                          onMouseLeave={() => setHoveredOption(null)}
+                          className={`dropdown-item ${
+                            hoveredOption === option
+                              ? 'dropdown-item-hovered'
+                              : customerName === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
+                        >
+                          {option}
                         </div>
-                      )}
+                      ))}
                     </div>
                   )}
                 </div>
-                <div style={{ paddingRight: '8px' }}>
-                  <button
-                    onClick={handleSearch}
-                    style={{
-                      width: '150px',
-                      height: '50px',
-                      padding: '10px 24px',
-                      backgroundColor: '#A63128',
-                      color: 'white',
-                      borderRadius: '15px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      border: 'none',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }} >
+                {/* Search Button */}
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
                     <Search size={18} /> Search
                   </button>
                 </div>
               </div>
-              <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px' }}>
-                <div style={{ gridColumn: '4', paddingRight: '8px' }}>
-                  <button
-                    onClick={() => navigate("/layout/lead/lead")}
-                    style={{
-                      width: '150px',
-                      height: '50px',
-                      padding: '10px 24px',
-                      backgroundColor: '#A63128',
-                      color: 'white',
-                      borderRadius: '15px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      border: 'none',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}>
-                    <Plus size={18} /> Lead
-                  </button>
-                </div>
+
+              {/* Lead Button Row */}
+              <div className="btn-container">
+                <button onClick={() => navigate("/layout/lead/lead")} className="btn-all">
+                  <Plus size={18} /> Lead
+                </button>
               </div>
             </div>
 
-            {/* Table */}
+            {/* Results Table */}
             {isSearched && (
-              <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-                <table style={{ width: '100%', fontSize: '14px', borderCollapse: 'collapse' }}>
+              <div className="table-container">
+                <table className="data-table">
                   <thead>
-                    <tr style={{ backgroundColor: '#fde2e2' }}>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>SI No</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Lead No</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Lead Date</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Customer Name</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Sales Person</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Total Cost</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Hold Request</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Quotation</th>
-                      <th style={{ padding: '8px', textAlign: 'center', fontWeight: 'bold', color: '#000000', borderBottom: '2px solid #D1D5DB' }}>Actions</th>
+                    <tr className="table-header">
+                      <th className="table-th">SI No</th>
+                      <th className="table-th">Lead No</th>
+                      <th className="table-th">Lead Date</th>
+                      <th className="table-th">Customer Name</th>
+                      <th className="table-th">Sales Person</th>
+                      <th className="table-th">Total Cost</th>
+                      <th className="table-th">Hold Request</th>
+                      <th className="table-th">Quotation</th>
+                      <th className="table-th-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredData.length > 0 ? (
                       paginatedData.map((row, index) => (
-                        <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <td style={{ padding: '14px 16px', color: '#374151' }}>{indexOfFirstRow + index + 1}</td>
-                          <td style={{ padding: '14px 16px', color: '#374151' }}>{row.leadNo}</td>
-                          <td style={{ padding: '14px 16px', color: '#374151' }}>{row.leadDate}</td>
-                          <td style={{ padding: '14px 16px', color: '#374151' }}>{row.customerName}</td>
-                          <td style={{ padding: '14px 16px', color: '#374151' }}>{row.salesPerson}</td>
-                          <td style={{ padding: '14px 16px', color: '#374151' }}>{row.totalCost}</td>
-                          <td style={{ padding: '14px 11px', color: '#374151' }}>
+                        <tr key={index} className="table-row">
+                          <td className="table-cell">{indexOfFirstRow + index + 1}</td>
+                          <td className="table-cell">{row.leadNo}</td>
+                          <td className="table-cell">{row.leadDate}</td>
+                          <td className="table-cell">{row.customerName}</td>
+                          <td className="table-cell">{row.salesPerson}</td>
+                          <td className="table-cell">{row.totalCost}</td>
+                          <td className="table-cell">
                             <button
                               onClick={() => navigate("/layout/lead/hold")}
-                              style={{ padding: '8px 12px', backgroundColor: '#e86e17', color: 'white', border: 'none', borderRadius: '4px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                              className="btn-hold"
                             >
                               Hold
                             </button>
                           </td>
-                          <td style={{ padding: '14px 11px', color: '#374151' }}>
+                          <td className="table-cell">
                             <button
                               onClick={() => navigate("/layout/lead/quotation")}
-                              style={{ padding: '8px 12px', backgroundColor: '#5d17e8', color: 'white', border: 'none', borderRadius: '4px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                              className="btn-quotation"
                             >
                               Quotation
                             </button>
                           </td>
-                          <td style={{ padding: '14px 8px', textAlign: 'center' }}>
-                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
+                          <td className="table-cell-center">
+                            <div className="table-actions">
                               <button
                                 onClick={(e) => handlePrint(index, e)}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                className="btn-action"
                                 title="Print"
                               >
-                                <Printer size={18} style={{ color: '#374151' }} />
+                                <Printer size={18} className="text-[#374151]" />
                               </button>
-
-                              <button
+                            <button
                                 onClick={() => navigate("/layout/lead/lead")}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                className="btn-action"
                                 title="Edit"
                               >
-                                <Edit2 size={18} style={{ color: '#374151' }} />
+                                <Edit2 size={18} className="text-[#374151]" />
                               </button>
-
                               <button
                                 onClick={(e) => handleDelete(index, e)}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                className="btn-action"
                                 title="Delete"
                               >
-                                <Trash2 size={18} style={{ color: '#dc2626' }} />
+                                <Trash2 size={18} className="text-[#dc2626]" />
                               </button>
                             </div>
                           </td>
@@ -354,7 +272,7 @@ export default function LeadSearch() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="9" style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
+                        <td colSpan="9" className="no-data-cell">
                           No records found for the selected filters
                         </td>
                       </tr>
@@ -363,71 +281,55 @@ export default function LeadSearch() {
                 </table>
               </div>
             )}
-          </div>
-          {isSearched && filteredData.length > rowsPerPage && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '8px',
-              marginTop: '12px'
-            }}>
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
 
-                }}
-              >
-                <ChevronLeft />
-              </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+           {/* Pagination */}
+            {isSearched && filteredData.length > rowsPerPage && (
+              <div className="pagination-container">
                 <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    border: '1px solid #d1d5db',
-                    backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-                    color: currentPage === page ? '#ffffff' : '#000000',
-                    cursor: 'pointer'
-                  }}
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  className={`pagination-btn ${
+                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
                 >
-                  {page}
+                  <ChevronLeft size={18} />
                 </button>
-              ))}
 
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`pagination-page-btn ${
+                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
 
-                }}
-              >
-                <ChevronRight />
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className={`pagination-btn ${
+                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+
+
+          </div>
+          
+            {/* Back Button */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
               </button>
             </div>
-          )}
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '30px', maxWidth: '1250px' }}>
-            <button
-              onClick={() => navigate(-1)}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
-              <span>←</span>
-              <span>Back</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

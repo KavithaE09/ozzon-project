@@ -127,6 +127,53 @@ else if (path.includes("/accounts/ledgermasterform")) {
       setPurchaseOpen(false);
     }
 
+    //sales routes
+    else if (path.includes("/lead")) {
+      setActive("Lead");
+      setAccountsOpen(false);
+     setInventoryOpen(false);
+     setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(true);
+      setPurchaseOpen(false);
+    } 
+    else if (path.includes("/FollowUp")) {
+      setActive("FollowUp");
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(true);
+      setPurchaseOpen(false);
+      setApprovalOpen(false);
+      setJobOpen(false);
+    }
+    else if (path.includes("/quotation")) {
+      setActive("Quotation");
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(true);
+      setPurchaseOpen(false);
+      setApprovalOpen(false);
+      setJobOpen(false);
+    }
+    else if (path.includes("/proformainvoice")) {
+      setActive("ProformaInvoice");
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(true);
+      setPurchaseOpen(false);
+      setApprovalOpen(false);
+      setJobOpen(false);
+    }
+   else if (path.includes("/containerstatusupdateform")) {
+      setActive("ContainerStatusUpdateForm");
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(true);
+      setPurchaseOpen(false);
+      setApprovalOpen(false);
+      setJobOpen(false);
+    }
+
    
     // Account routes
     else if (path.includes("/advancereceipt")) {
@@ -138,6 +185,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
       setSalesOpen(false);
       setPurchaseOpen(false);
     } 
+
     // inventory routes
     else if (path.includes("/purchaseorder")) {
       setActive("PurchaseOrder");
@@ -174,7 +222,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
      setAccountsOpen(false);
     }
 
-    //job routes
+    //production routes
     else if (path.includes("/assignjob")) {
       setActive("AssignJob");
       setJobOpen(true);
@@ -231,15 +279,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
       setApprovalOpen(true);
       setJobOpen(false);
     }
-     else if (path.includes("/FollowUp")) {
-      setActive("FollowUp");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(true);
-      setJobOpen(false);
-    }
+
 
 
     // Dashboard
@@ -334,8 +374,8 @@ else if (path.includes("/accounts/ledgermasterform")) {
               setPurchaseOpen(false);
               setApprovalOpen(false);
               setJobOpen(false);
-               setAccountsOpen(false);
-                setInventoryOpen(false);
+              setAccountsOpen(false);
+              setInventoryOpen(false);
             }}
           />
           {formsOpen && (
@@ -379,8 +419,8 @@ else if (path.includes("/accounts/ledgermasterform")) {
               setPurchaseOpen(false);
               setApprovalOpen(false);
               setJobOpen(false);
-               setAccountsOpen(false);
-                setInventoryOpen(false);
+              setAccountsOpen(false);
+              setInventoryOpen(false);
             }}
           />
           {salesOpen && (
