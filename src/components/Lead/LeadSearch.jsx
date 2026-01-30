@@ -120,7 +120,8 @@ export default function LeadSearch() {
     <div className="page-container">
       <div className="content-wrapper">
         <div className="main-section">
-          <div className="content-card">
+          <div className="content-card bg-white dark:bg-[#353C44]">
+
             <h2 className="page-title">Lead</h2>
 
             {/* Filter Section */}
