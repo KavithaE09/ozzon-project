@@ -3,9 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 export default function FollowUp() {
   const navigate = useNavigate();
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   const [selectedLead, setSelectedLead] = useState(null);
   const [activeTab, setActiveTab] = useState("followup");
   const [data, setData] = useState([]);
+  const [formData, setFormData] = useState({
+    date: getTodayDate()
+  });
 
   useEffect(() => {
     setData([
@@ -42,201 +52,164 @@ export default function FollowUp() {
     ]);
   }, []);
 
-  const thStyle = {
-    padding: "10px",
-    textAlign: "center",
-    whiteSpace: "nowrap"
-  };
-
-  const tdStyle = {
-    padding: "10px",
-    textAlign: "center",
-    whiteSpace: "nowrap"
-  };
-
   return (
-    <div style={{ padding: "24px", backgroundColor: "#F3E8E8", minHeight: "100vh" }}>
-      <div style={{ background: "#fff", padding: "24px", borderRadius: "8px" }}>
-        <h2 style={{ marginBottom: "16px", fontSize: "20px" }}>Follow Up</h2>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Follow Up</h2>
 
-        {/* MAIN TABLE – NO CHANGE */}
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
-            <thead style={{ backgroundColor: "#fde2e2" }}>
-              <tr>
-                <th style={thStyle}>Select</th>
-                <th style={thStyle}>S/No</th>
-                <th style={thStyle}>Lead No</th>
-                <th style={thStyle}>Lead Date</th>
-                <th style={thStyle}>Customer Name</th>
-                <th style={thStyle}>Sales Person</th>
-                <th style={thStyle}>Q.Status</th>
-                <th style={thStyle}>Q.Approval</th>
-                <th style={thStyle}>Container Status</th>
-                <th style={thStyle}>PI Status</th>
-                <th style={thStyle}>Contact No</th>
-                <th style={thStyle}>Contact Date</th>
-                <th style={thStyle}>Next Follow Up Date</th>
-                <th style={thStyle}>Narration</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, index) => (
-                <tr
-                  key={index}
-                  style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#f9fafb" }}
+            {/* MAIN TABLE */}
+            <div className="table-container">
+              <table className="data-table">
+                <thead>
+                  <tr className="table-header">
+                    <th className="table-th-center">Select</th>
+                    <th className="table-th-center">S/No</th>
+                    <th className="table-th-center">Lead No</th>
+                    <th className="table-th-center">Lead Date</th>
+                    <th className="table-th">Customer Name</th>
+                    <th className="table-th-center">Sales Person</th>
+                    <th className="table-th-center">Q.Status</th>
+                    <th className="table-th-center">Q.Approval</th>
+                    <th className="table-th-center">Container Status</th>
+                    <th className="table-th-center">PI Status</th>
+                    <th className="table-th-center">Contact No</th>
+                    <th className="table-th-center">Contact Date</th>
+                    <th className="table-th-center">Next Follow Up Date</th>
+                    <th className="table-th">Narration</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((row, index) => (
+                    <tr key={index} className="table-row">
+                      <td className="table-cell-center">
+                        <input
+                          type="radio"
+                          name="lead"
+                          className="accent-primary"
+                          onChange={() => {
+                            setSelectedLead(row);
+                            setActiveTab("followup");
+                          }}
+                        />
+                      </td>
+                      <td className="table-cell-center">{row.slNo}</td>
+                      <td className="table-cell-center">{row.leadNo}</td>
+                      <td className="table-cell-center">{row.leadDate}</td>
+                      <td className="table-cell">{row.customerName}</td>
+                      <td className="table-cell-center">{row.salesPerson}</td>
+                      <td className="table-cell-center">{row.qStatus}</td>
+                      <td className="table-cell-center">{row.qApproval}</td>
+                      <td className="table-cell-center">{row.containerStatus}</td>
+                      <td className="table-cell-center">{row.piStatus}</td>
+                      <td className="table-cell-center">{row.contactNo}</td>
+                      <td className="table-cell-center">{row.contactDate}</td>
+                      <td className="table-cell-center">{row.nextFollowUp}</td>
+                      <td className="table-cell">{row.narration}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* TABS */}
+            {selectedLead && (
+              <div className="tabs-container">
+                <button
+                  onClick={() => setActiveTab("followup")}
+                  className={`tab-button ${activeTab === "followup" ? "tab-button-active" : ""}`}
                 >
-                  <td style={tdStyle}>
+                  Follow Up Details
+                </button>
+                <button
+                  onClick={() => setActiveTab("previous")}
+                  className={`tab-button ${activeTab === "previous" ? "tab-button-active" : ""}`}
+                >
+                  Previous Follow Up Details
+                </button>
+              </div>
+            )}
+
+            {/* FOLLOW UP DETAILS */}
+            {selectedLead && activeTab === "followup" && (
+              <div style={{ marginBottom: "24px" }}>
+                <div className="filter-grid" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+                  <div className="filter-grid-red">
+                    <label className="filter-label">Lead Status</label>
                     <input
-                      type="radio"
-                      name="lead"
-                      onChange={() => {
-                        setSelectedLead(row);
-                        setActiveTab("followup");
-                      }}
+                      value={selectedLead.containerStatus}
+                      disabled
+                      className="filter-input"
                     />
-                  </td>
-                  <td style={tdStyle}>{row.slNo}</td>
-                  <td style={tdStyle}>{row.leadNo}</td>
-                  <td style={tdStyle}>{row.leadDate}</td>
-                  <td style={{ ...tdStyle, textAlign: "left" }}>{row.customerName}</td>
-                  <td style={tdStyle}>{row.salesPerson}</td>
-                  <td style={tdStyle}>{row.qStatus}</td>
-                  <td style={tdStyle}>{row.qApproval}</td>
-                  <td style={tdStyle}>{row.containerStatus}</td>
-                  <td style={tdStyle}>{row.piStatus}</td>
-                  <td style={tdStyle}>{row.contactNo}</td>
-                  <td style={tdStyle}>{row.contactDate}</td>
-                  <td style={tdStyle}>{row.nextFollowUp}</td>
-                  <td style={{ ...tdStyle, textAlign: "left" }}>{row.narration}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                  <div className="filter-grid-red">
+                    <label className="filter-label">Next Follow Up Date</label>
+                    <input
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+                </div>
 
-        {/* TABS */}
-        {selectedLead && (
-          <div style={{ display: "flex", marginTop: "130px" }}>
-            <button
-              onClick={() => setActiveTab("followup")}
-              style={{
-                flex: 1,
-                padding: "10px",
-                border: "1px solid #ddd",
-                background: activeTab === "followup" ? "#fff" : "#f3f4f6",
-                fontWeight: activeTab === "followup" ? "600" : "400"
-              }}
-            >
-              Follow Up Details
-            </button>
-            <button
-              onClick={() => setActiveTab("previous")}
-              style={{
-                flex: 1,
-                padding: "10px",
-                border: "1px solid #ddd",
-                borderLeft: "none",
-                background: activeTab === "previous" ? "#fff" : "#f3f4f6",
-                fontWeight: activeTab === "previous" ? "600" : "400"
-              }}
-            >
-              Previous Follow Up Details
-            </button>
-          </div>
-        )}
-
-        {/* FOLLOW UP DETAILS */}
-        {selectedLead && activeTab === "followup" && (
-          <div style={{ marginTop: "90px" }}>
-            <div style={{ display: "flex", gap: "20px" }}>
-              <div>
-                <label>Lead Status</label>
-                <input
-                  value={selectedLead.containerStatus}
-                  disabled
-                  style={{ display: "block", padding: "6px", marginTop: "4px" }}
-                />
+                <div className="filter-grid-red" style={{ marginTop: "16px" }}>
+                  <label className="filter-label">Remarks</label>
+                  <textarea 
+                    rows={1}
+                    className='multiline-field'
+                  />
+                </div>
               </div>
-              <div>
-                <label>Next Follow Up Date</label>
-                <input
-                  type="date"
-                  style={{ display: "block", padding: "6px", marginTop: "4px" }}
-                />
+            )}
+
+            {/* PREVIOUS FOLLOW UP DETAILS */}
+            {selectedLead && activeTab === "previous" && (
+              <div className="table-container" style={{ marginBottom: "24px" }}>
+                <table className="data-table">
+                  <thead>
+                    <tr className="table-header">
+                      <th className="table-th-center">S/No</th>
+                      <th className="table-th-center">Lead Status</th>
+                      <th className="table-th-center">Contact Date</th>
+                      <th className="table-th-center">Next Follow Up Date</th>
+                      <th className="table-th">Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map((row, index) => (
+                      <tr key={index} className="table-row">
+                        <td className="table-cell-center">{row.slNo}</td>
+                        <td className="table-cell-center">Following</td>
+                        <td className="table-cell-center">{row.contactDate}</td>
+                        <td className="table-cell-center">{row.nextFollowUp}</td>
+                        <td className="table-cell">
+                          The Container Was Loading .....................................................................
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
+            )}
 
-            <div style={{ marginTop: "16px" }}>
-              <label>Remarks</label>
-              <textarea rows="6" style={{ width: "100%", marginTop: "6px" }} />
-            </div>
-
-            
-          </div>
-        )}
-{/* PREVIOUS FOLLOW UP DETAILS – SAME TABLE STYLE */}
-{selectedLead && activeTab === "previous" && (
-  <div style={{ marginTop: "24px", overflowX: "auto" }}>
-    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
-      <thead style={{ backgroundColor: "#fde2e2" }}>
-        <tr>
-          <th style={thStyle}>S/No</th>
-          <th style={thStyle}>Lead Status</th>
-          <th style={thStyle}>Contact Date</th>
-          <th style={thStyle}>Next Follow Up Date</th>
-          <th style={thStyle}>Remarks</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row, index) => (
-          <tr
-            key={index}
-            style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#f9fafb" }}
-          >
-            <td style={tdStyle}>{row.slNo}</td>
-            <td style={tdStyle}>Following</td>
-            <td style={tdStyle}>{row.contactDate}</td>
-            <td style={tdStyle}>{row.nextFollowUp}</td>
-            <td style={{ ...tdStyle, textAlign: "left" }}>
-              The Container Was Loading .....................................................................
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
-</div>
-
-      {/* BACK */}
-      <div style={{ marginTop: "24px" }}>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            border: "2px solid #B91C1C",
-            color: "#B91C1C",
-            padding: "6px 16px",
-            background: "#fff"
-          }}
-        >
-          ← Back
-        </button>
-      </div>
-      <div style={{ textAlign: "right", marginTop: "-25px" }}>
-              <button
-                style={{
-                  backgroundColor: "#A63128",
-                  color: "#fff",
-                  padding: "15px 34px",
-                  border: "none",
-                  borderRadius: "10px"
-                }}
-              >
-                Submit
+            {/* SUBMIT AND BACK BUTTONS */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
               </button>
+
+              {selectedLead && (
+                <button className="btn-all">
+                  <span>✓</span> Submit
+                </button>
+              )}
             </div>
+          </div>
+        </div>
+      </div>
     </div>
-    
   );
 }

@@ -5,30 +5,21 @@ import { useNavigate } from 'react-router-dom';
 export default function ProformaInvoiceSearch() {
   const navigate = useNavigate();
   const [isSearched, setIsSearched] = useState(false);
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+ 
   const [customerName, setCustomerName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [hoveredOption, setHoveredOption] = useState(null);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
   
   const dropdownRef = useRef(null);
 
-
-const [currentPage, setCurrentPage] = useState(1);
-const rowsPerPage = 5;
-
-const indexOfLastRow = currentPage * rowsPerPage;
-const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-
-const paginatedData = filteredData.slice(
-  indexOfFirstRow,
-  indexOfLastRow
-);
-
-const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const paginatedData = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
   const getTodayDate = () => {
     const today = new Date();
@@ -49,7 +40,7 @@ const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     { slNo: 2, quotationNo: 'Q-1', quotationDate: '2025-12-22', customerName: 'Kavi', salesPerson: 'Raneesh', totalCost: '₹ 15,00,000' },
     { slNo: 3, quotationNo: 'Q-1', quotationDate: '2025-12-28', customerName: 'Varshini', salesPerson: 'Raneesh', totalCost: '₹ 12,00,000' },
     { slNo: 4, quotationNo: 'Q-1', quotationDate: '2025-12-25', customerName: 'Sasi', salesPerson: 'Raneesh', totalCost: '₹ 10,00,000' },
-     { slNo: 5, quotationNo: 'Q-1', quotationDate: '2025-12-20', customerName: 'Leyo', salesPerson: 'Raneesh', totalCost: '₹ 10,00,000' },
+    { slNo: 5, quotationNo: 'Q-1', quotationDate: '2025-12-20', customerName: 'Leyo', salesPerson: 'Raneesh', totalCost: '₹ 10,00,000' },
     { slNo: 6, quotationNo: 'Q-1', quotationDate: '2025-12-22', customerName: 'Kavi', salesPerson: 'Raneesh', totalCost: '₹ 15,00,000' },
     { slNo: 7, quotationNo: 'Q-1', quotationDate: '2025-12-28', customerName: 'Varshini', salesPerson: 'Raneesh', totalCost: '₹ 12,00,000' },
     { slNo: 8, quotationNo: 'Q-1', quotationDate: '2025-12-25', customerName: 'Sasi', salesPerson: 'Raneesh', totalCost: '₹ 10,00,000' }
@@ -57,10 +48,6 @@ const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
   // Customer names list (sorted alphabetically)
   const customerOptions = ['Leyo', 'Kavi', 'Varshini', 'Sasi'].sort();
-
-  useEffect(() => {
-    setIsFirstLoad(false);
-  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -74,7 +61,7 @@ const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter customer options based on search term - only show names that START with the search term
+  // Filter customer options based on search term
   const filteredOptions = customerOptions.filter(option =>
     option.toLowerCase().startsWith(searchTerm.toLowerCase())
   );
@@ -83,14 +70,6 @@ const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     setCustomerName(option);
     setSearchTerm(option);
     setIsDropdownOpen(false);
-    
-    // Auto-filter immediately when customer is selected
-    let results = [...allInvoiceData];
-    results = results.filter(
-      item => item.customerName.toLowerCase() === option.toLowerCase()
-    );
-    setFilteredData(results);
-    setIsSearched(true);
   };
 
   const handleInputChange = (e) => {
@@ -98,28 +77,16 @@ const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     setIsDropdownOpen(true);
     if (e.target.value === '') {
       setCustomerName('');
-      setIsSearched(false);
-      setFilteredData([]);
     }
-  };
-
-  const validateRequiredFields = () => {
-    if (!formData.customerName) {
-      return true;
-    }
-    return false;
   };
 
   const handleSearch = () => {
-    if (!validateRequiredFields()) {
-      return;
-    }
     let results = [...allInvoiceData];
+    
     // Customer Name filter
     if (customerName) {
       results = results.filter(
-        item =>
-          item.customerName.toLowerCase() === customerName.toLowerCase()
+        item => item.customerName.toLowerCase() === customerName.toLowerCase()
       );
     }
 
@@ -128,326 +95,235 @@ const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     setCurrentPage(1);
   };
 
-const handlePrint = (actualIndex) => {
-  const row = filteredData[actualIndex];
-  alert(`Print Invoice: ${row.quotationNo}`);
-};
+  const handlePrint = (index, e) => {
+    e.stopPropagation();
+    const actualIndex = indexOfFirstRow + index;
+    const row = filteredData[actualIndex];
+    alert(`Print Invoice: ${row.quotationNo}`);
+  };
 
-  const handleDelete = (actualIndex) => {
-  if (window.confirm('Are you sure you want to delete this invoice?')) {
-    setFilteredData(prev =>
-      prev.filter((_, i) => i !== actualIndex)
-    );
-  }
-};
+  const handleDelete = (index, e) => {
+    e.stopPropagation();
+    const actualIndex = indexOfFirstRow + index;
 
-
-
+    if (window.confirm('Are you sure you want to delete this invoice?')) {
+      const updatedData = filteredData.filter((_, i) => i !== actualIndex);
+      setFilteredData(updatedData);
+    }
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ flex: 1, overflow: 'auto', padding: '24px', backgroundColor: '#F3E8E8' }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '32px' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '24px', color: '#111827' }}>Proforma Invoice</h2>
-          <div style={{ marginBottom: '32px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #d1d5db', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>From Date</label>
-                 <input
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Proforma Invoice</h2>
+
+            {/* Filter Section */}
+            <div className="filter-section">
+              <div className="filter-grid">
+                {/* From Date */}
+                <div className="filter-grid-red">
+                  <label className="filter-label">From Date</label>
+                  <input
                     type="date"
                     value={formData.formdate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, formdate: e.target.value })
-                    }
-                    style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
-                  />
-              </div>
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #d1d5db', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>To Date</label>
-                <input
-                    type="date"
-                    value={formData.todate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, todate: e.target.value })
-                    }
-                    style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
-                  />
-              </div>
-              <div ref={dropdownRef} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #d1d5db', borderRight: '3px solid #22C55E', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Customer Name</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleInputChange}
-                    onFocus={() => setIsDropdownOpen(true)}
-                    placeholder="Type or select..."
-                    style={{ 
-                      width: '100%', 
-                      padding: '1px 1px 1px 1px', 
-                      border: 'none', 
-                      borderRadius: '4px', 
-                      fontSize: '14px', 
-                      outline: 'none',
-                      backgroundColor: 'white',
-                      cursor: 'text'
-                    }}
-                  />
-                  <ChevronDown 
-                    size={20} 
-                    style={{ 
-                      position: 'absolute', 
-                      right: '4px', 
-                      top: '50%', 
-                      transform: 'translateY(-50%)',
-                      color: '#000000',
-                      pointerEvents: 'none'
-                    }} 
+                    onChange={(e) => setFormData({ ...formData, formdate: e.target.value })}
+                    className="filter-input"
                   />
                 </div>
-                {isDropdownOpen && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: '0',
-                    right: '0',
-                    marginTop: '4px',
-                    backgroundColor: 'white',
-                    border: '1px solid #D1D5DB',
-                    borderRadius: '4px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    maxHeight: '200px',
-                    overflowY: 'auto',
-                    zIndex: 1000
-                  }}>
-                    {filteredOptions.length > 0 ? (
-                      filteredOptions.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => handleSelectCustomer(option)}
-                          onMouseEnter={() => setHoveredOption(option)}
-                          onMouseLeave={() => setHoveredOption(null)}
-                          style={{
-                           padding: '8px 12px',
-                              cursor: 'pointer',
-                              fontSize: '14px',
-                              color: hoveredOption === option ? 'white' : '#374151',
-                              backgroundColor: hoveredOption === option ? '#A63128' : (customerName === option ? '#FEE2E2' : 'white'),
-                              borderBottom: index < filteredOptions.length - 1 ? '1px solid #E5E7EB' : 'none',
-                              transition: 'all 0.2s ease'
-                          }}
-                        >
-                          {option}
-                        </div>
-                      ))
-                    ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
-                        No matches found
-                      </div>
-                    )}
+
+                {/* To Date */}
+                <div className="filter-grid-red">
+                  <label className="filter-label">To Date</label>
+                  <input
+                    type="date"
+                    value={formData.todate}
+                    onChange={(e) => setFormData({ ...formData, todate: e.target.value })}
+                    className="filter-input"
+                  />
+                </div>
+
+                {/* Customer Name Dropdown */}
+                <div ref={dropdownRef} className="filter-grid-green">
+                  <label className="filter-label">Customer Name</label>
+                  <div className="dropdown-wrapper">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleInputChange}
+                      onFocus={() => setIsDropdownOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                   </div>
-                )}
+                  {isDropdownOpen && (
+                    <div className="dropdown-menu">
+                      {filteredOptions.length > 0 ? (
+                        filteredOptions.map((option, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleSelectCustomer(option)}
+                            onMouseEnter={() => setHoveredOption(option)}
+                            onMouseLeave={() => setHoveredOption(null)}
+                            className={`dropdown-item-option ${
+                              hoveredOption === option
+                                ? 'dropdown-item-hovered'
+                                : customerName === option
+                                ? 'dropdown-item-selected'
+                                : 'dropdown-item-default'
+                            }`}
+                          >
+                            {option}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="dropdown-no-matches">
+                          No matches found
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Search Button */}
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
+                </div>
               </div>
-              <div style={{ paddingRight: '8px' }}>
-                <button
-                  onClick={handleSearch}
-                  style={{
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px',
-                    backgroundColor: '#A63128',
-                    color: 'white',
-                    borderRadius: '15px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}>
-                  <Search size={18} /> Search
-                </button>
-              </div>
-            </div>
-            <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px' }}>
-              <div style={{ gridColumn: '4', paddingRight: '8px' }}>
-                <button onClick={() => navigate("/layout/proformainvoice/add")}
-                  style={{
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px',
-                    backgroundColor: '#A63128',
-                    color: 'white',
-                    borderRadius: '15px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}>
+
+              {/* Proforma Invoice Button Row */}
+              <div className="btn-container">
+                <button onClick={() => navigate("/layout/proformainvoice/add")} className="btn-all">
                   <Plus size={18} /> Proforma Invoice
                 </button>
               </div>
             </div>
-          </div>
 
-          {isSearched && (
-            <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-              <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#fde2e2', borderBottom: '1px solid #e5e7eb' }}>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>SI No</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>PI No</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>PI Date</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>PI Name</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Sales Person</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Total Cost</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600', color: '#000000', fontSize: '16px', width: '80px' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedData.length > 0 ? (
-                    paginatedData.map((row, index) => (
-
-                      <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                        <td style={{ padding: '14px 16px', color: '#374151' }}>{indexOfFirstRow + index + 1}</td>
-                        <td style={{ padding: '14px 16px', color: '#374151' }}>{row.quotationNo}</td>
-                        <td style={{ padding: '14px 16px', color: '#374151' }}>{row.quotationDate}</td>
-                        <td style={{ padding: '14px 16px', color: '#374151' }}>{row.customerName}</td>
-                        <td style={{ padding: '14px 16px', color: '#374151' }}>{row.salesPerson}</td>
-                        <td style={{ padding: '14px 16px', color: '#374151' }}>{row.totalCost}</td>
-                        <td style={{ padding: '14px 16px', textAlign: 'center', position: 'relative' }}>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '10px',
-                              justifyContent: 'center'
-                            }}
-                          >
-                            <button
-                              onClick={() => handlePrint(indexOfFirstRow + index)}
-
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
-                              title="Print"
-                            >
-                              <Printer size={18} style={{ color: '#374151' }} />
-                            </button>
-                            
-                            <button
-                              onClick={() => navigate("/layout/proformainvoice/add")}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
-                              title="Edit"
-                            >
-                              <Edit2 size={18} style={{ color: '#374151' }} />
-                            </button>
-                            
-                            <button
-                             onClick={() => handleDelete(indexOfFirstRow + index)}
-
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
-                              title="Delete"
-                            >
-                              <Trash2 size={18} style={{ color: '#dc2626' }} />
-                            </button>
-
-                            <button onClick={() => navigate("/layout/proformainvoice/advance")}
-                              style={{
-                                padding: '5px 10px',
-                                borderRadius: '6px',
-                                background: '#A63128',
-                                color: '#fff',
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                border: '1px solid #9CA3AF',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              Advance
-                            </button>
-
-                            <button
-                              onClick={() => navigate("/layout/proformainvoice/block")}
-                              style={{
-                                padding: '6px 14px',
-                                borderRadius: 6,
-                                border: 'none',
-                                background: '#A63128',
-                                color: '#fff',
-                                fontWeight: 600,
-                                fontSize: 13,
-                                cursor: 'pointer'
-                              }}
-                            >
-                              Block
-                            </button>
-                          </div>
+            {/* Results Table */}
+            {isSearched && (
+              <div className="table-container">
+                <table className="data-table">
+                  <thead>
+                    <tr className="table-header">
+                      <th className="table-th">SI No</th>
+                      <th className="table-th">PI No</th>
+                      <th className="table-th">PI Date</th>
+                      <th className="table-th">PI Name</th>
+                      <th className="table-th">Sales Person</th>
+                      <th className="table-th">Total Cost</th>
+                      <th className="table-th-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.length > 0 ? (
+                      paginatedData.map((row, index) => (
+                        <tr key={index} className="table-row">
+                          <td className="table-cell">{indexOfFirstRow + index + 1}</td>
+                          <td className="table-cell">{row.quotationNo}</td>
+                          <td className="table-cell">{row.quotationDate}</td>
+                          <td className="table-cell">{row.customerName}</td>
+                          <td className="table-cell">{row.salesPerson}</td>
+                          <td className="table-cell">{row.totalCost}</td>
+                          <td className="table-cell-center">
+                            <div className="table-actions">
+                              <button
+                                onClick={(e) => handlePrint(index, e)}
+                                className="btn-action"
+                                title="Print"
+                              >
+                                <Printer size={18} className="text-[#374151]" />
+                              </button>
+                              <button
+                                onClick={() => navigate("/layout/proformainvoice/add")}
+                                className="btn-action"
+                                title="Edit"
+                              >
+                                <Edit2 size={18} className="text-[#374151]" />
+                              </button>
+                              <button
+                                onClick={(e) => handleDelete(index, e)}
+                                className="btn-action"
+                                title="Delete"
+                              >
+                                <Trash2 size={18} className="text-[#dc2626]" />
+                              </button>
+                              <button
+                                onClick={() => navigate("/layout/proformainvoice/advance")}
+                                className="btn-hold"
+                              >
+                                Advance
+                              </button>
+                              <button
+                                onClick={() => navigate("/layout/proformainvoice/block")}
+                                className="btn-quotation"
+                              >
+                                Block
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="no-data-cell">
+                          No records found for the selected filters
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
-                        No records found for the selected filters
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Pagination */}
+            {isSearched && filteredData.length > rowsPerPage && (
+              <div className="pagination-container">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  className={`pagination-btn ${
+                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`pagination-page-btn ${
+                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className={`pagination-btn ${
+                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+        
+                    {/* Back Button */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
             </div>
-          )}
-        </div>
-        {isSearched && totalPages > 1 && (
-  <div style={{
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '8px',
-    marginTop: '12px'
-  }}>
-    <button
-      disabled={currentPage === 1}
-      onClick={() => setCurrentPage(p => p - 1)}
-    >
-       <ChevronLeft />
-    </button>
-
-    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-      <button
-        key={page}
-        onClick={() => setCurrentPage(page)}
-        style={{
-          backgroundColor: currentPage === page ? '#A63128' : '#fff',
-          color: currentPage === page ? '#fff' : '#000',
-          border: '1px solid #d1d5db',
-          padding: '6px 12px',
-          borderRadius: '4px'
-        }}
-      >
-        {page}
-      </button>
-    ))}
-
-    <button
-      disabled={currentPage === totalPages}
-      onClick={() => setCurrentPage(p => p + 1)}
-    >
-      <ChevronRight />
-    </button>
-  </div>
-)}
-
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '30px', maxWidth: '1250px' }}>
-          <button
-            onClick={() =>  navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
-            <span>←</span>
-            <span>Back</span>
-          </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Search, Edit2, Trash2 , ChevronLeft,} from 'lucide-react';
+import { Search, ChevronRight, Edit2, Trash2, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LeadOwner() {
@@ -7,7 +7,7 @@ export default function LeadOwner() {
   const [leadOwnerName, setLeadOwnerName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-const rowsPerPage = 2;
+  const rowsPerPage = 2;
 
   const [leadOwners, setLeadOwners] = useState([
     { id: 1, name: 'ADMIN' },
@@ -22,25 +22,31 @@ const rowsPerPage = 2;
     { id: 4, name: 'NAVEEN' }
   ]);
   const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState('');
-const totalPages = Math.ceil(filteredGroups.length / rowsPerPage);
-
-const indexOfLast = currentPage * rowsPerPage;
-const indexOfFirst = indexOfLast - rowsPerPage;
-
-const currentGroups = filteredGroups.slice(
-  indexOfFirst,
-  indexOfLast
-);
+  
+  const totalPages = Math.ceil(filteredGroups.length / rowsPerPage);
+  const indexOfLast = currentPage * rowsPerPage;
+  const indexOfFirst = indexOfLast - rowsPerPage;
+  const currentGroups = filteredGroups.slice(indexOfFirst, indexOfLast);
 
   const handleSubmit = () => {
     if (leadOwnerName.trim() !== '') {
-      const newOwner = {
-        id: leadOwners.length > 0 ? Math.max(...leadOwners.map(g => g.id)) + 1 : 1,
-        name: leadOwnerName.toUpperCase()
-      };
-      setLeadOwners([...leadOwners, newOwner]);
-      setFilteredGroups([...leadOwners, newOwner]);
+      if (editingId) {
+        // Update existing record
+        const updatedOwners = leadOwners.map(owner =>
+          owner.id === editingId ? { ...owner, name: leadOwnerName.toUpperCase() } : owner
+        );
+        setLeadOwners(updatedOwners);
+        setFilteredGroups(updatedOwners);
+        setEditingId(null);
+      } else {
+        // Add new record
+        const newOwner = {
+          id: leadOwners.length > 0 ? Math.max(...leadOwners.map(g => g.id)) + 1 : 1,
+          name: leadOwnerName.toUpperCase()
+        };
+        setLeadOwners([...leadOwners, newOwner]);
+        setFilteredGroups([...leadOwners, newOwner]);
+      }
       setLeadOwnerName('');
       setCurrentPage(1);
     }
@@ -60,24 +66,8 @@ const currentGroups = filteredGroups.slice(
 
   const handleEdit = (owner) => {
     setEditingId(owner.id);
-    setEditingName(owner.name);
-  };
-
-  const handleUpdate = (ownerId) => {
-    if (editingName.trim() !== '') {
-      const updatedOwners = leadOwners.map(owner =>
-        owner.id === ownerId ? { ...owner, name: editingName.toUpperCase() } : owner
-      );
-      setLeadOwners(updatedOwners);
-      setFilteredGroups(updatedOwners);
-      setEditingId(null);
-      setEditingName('');
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditingName('');
+    setLeadOwnerName(owner.name);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = (ownerId) => {
@@ -88,316 +78,142 @@ const currentGroups = filteredGroups.slice(
   };
 
   return (
-  <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#F9FAFB' }}>
-      {/* Main Content */}
-    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Form Content */}
-        <div style={{ flex: 1, overflow: 'auto', padding: '20px', backgroundColor: '#f5e6e8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '15px' }}>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
             {/* Lead Owner Section */}
-            <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-              Lead Owner
-            </h2>
-
-            <div style={{
-              marginBottom: '24px',
-              display: 'flex',
-              alignItems: 'flex-end',
-               justifyContent: 'flex-start',
-              gap: '40px',
-            }}>
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  Lead Owner Name
-                </label>
-                <input
-                  type="text"
-                  value={leadOwnerName}
-                  onChange={(e) => setLeadOwnerName(e.target.value)}
-                  placeholder="Enter owner name"
-                  style={{
-                    width: '256px',
-                    padding: '4px 8px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    backgroundColor: 'white'
-                  }}
-                />
+            <h2 className="page-title">Lead Owner</h2>
+            
+            <div className="filter-section">
+              <div className="filter-grid">
+                <div className="filter-grid-red">
+                  <label className="filter-label">Lead Owner Name</label>
+                  <input
+                    type="text"
+                    value={leadOwnerName}
+                    onChange={(e) => setLeadOwnerName(e.target.value)}
+                    placeholder="Enter owner name"
+                    className="filter-input"
+                  />
+                </div>
+                <div className="btn-container">
+                  <button onClick={handleSubmit} className="btn-all">
+                    <span>✓</span>
+                    <span>Submit</span>
+                  </button>
+                </div>
               </div>
-
-              {/* Submit Button */}
-              <button 
-                onClick={handleSubmit}
-                style={{ 
-                  width: '150px',
-                  height: '50px',
-                  padding: '10px 24px', 
-                  backgroundColor: '#A63128', 
-                  color: 'white', 
-                  borderRadius: '15px', 
-                  fontSize: '14px', 
-                  fontWeight: '500', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                <span>✓</span>
-                <span>Submit</span>
-              </button>
             </div>
 
             {/* Record List Section */}
-            <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-              Record List
-            </h2>
-
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-             justifyContent: 'flex-start',
-              gap: '40px',
-              marginBottom: '24px'
-            }}>
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E'}}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  color: '#374151',
-                  marginBottom: '8px'
-                }}>
-                  Search By
-                </label>
-                <input
-                  type="text"
-                  placeholder="Lead Owner Name"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{
-                    width: '256px',
-                    padding: '4px 8px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    backgroundColor: 'white'
-                  }}
-                />
+            <h2 className="page-title">Record List</h2>
+            
+            <div className="filter-section">
+              <div className="filter-grid">
+                <div className="filter-grid-green">
+                  <label className="filter-label">Search By</label>
+                  <input
+                    type="text"
+                    placeholder="Lead Owner Name"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="filter-input"
+                  />
+                </div>
+                
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
+                </div>
               </div>
-              <button 
-                onClick={handleSearch}
-                style={{ 
-                  width: '150px',
-                  height: '50px',
-                  padding: '10px 24px', 
-                  backgroundColor: '#A63128', 
-                  color: 'white', 
-                  borderRadius: '15px', 
-                  fontSize: '14px', 
-                  fontWeight: '500', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Search size={18} /> Search
-              </button>
             </div>
 
             {/* Table */}
-            <div style={{
-              border: '1px solid #9CA3AF',
-              borderRadius: '8px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                backgroundColor: '#fde2e2',
-                padding: '10px 16px',
-                borderBottom: '1px solid #9CA3AF'
-              }}>
-                <span style={{ fontSize: '16px', fontWeight: '600', color: '#000000' }}>
-                  Lead Owner Name
-                </span>
+            <div className="master-table-container">
+              <div className="master-table-header">
+                <span className="master-table-title">Lead Owner Name</span>
               </div>
-              <div style={{ backgroundColor: 'white' }}>
+              <div className="master-table-body">
                 {currentGroups.length > 0 ? (
-                      currentGroups.map((owner, idx) => (
-                    <div
-                      key={owner.id}
-                      style={{
-                        padding: '10px 16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        borderBottom: idx !== filteredGroups.length - 1 ? '1px solid #f3f4f6' : 'none',
-                        gap: '12px'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                  currentGroups.map((owner, idx) => (
+                    <div key={owner.id} className="master-table-row">
+                      <div className="master-table-content">
                         <ChevronRight size={16} style={{ color: '#374151' }} />
-                        {editingId === owner.id ? (
-                          <input
-                            type="text"
-                            value={editingName}
-                            onChange={(e) => setEditingName(e.target.value)}
-                            style={{
-                              flex: 1,
-                              padding: '4px 8px',
-                              border: '1px solid #9CA3AF',
-                              borderRadius: '4px',
-                              fontSize: '14px',
-                              outline: 'none',
-                              backgroundColor: 'white'
-                            }}
-                          />
-                        ) : (
-                          <span style={{ fontSize: '14px', color: '#111827' }}>{owner.name}</span>
-                        )}
+                        <span className="master-name-text">{owner.name}</span>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        {editingId === owner.id ? (
-                          <>
-                            <button
-                              onClick={() => handleUpdate(owner.id)}
-                              style={{
-                                padding: '4px 12px',
-                                backgroundColor: '#A63128',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                fontSize: '13px',
-                                cursor: 'pointer',
-                                fontWeight: '500'
-                              }}
-                            >
-                              Update
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              style={{
-                                padding: '4px 12px',
-                                backgroundColor: '#6B7280',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                fontSize: '13px',
-                                cursor: 'pointer',
-                                fontWeight: '500'
-                              }}
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <Edit2 
-                              size={18} 
-                              style={{ color: '#6B7280', cursor: 'pointer' }}
-                              onClick={() => handleEdit(owner)}
-                            />
-                            <Trash2 
-                              size={18} 
-                              style={{ color: '#DC2626', cursor: 'pointer' }}
-                              onClick={() => handleDelete(owner.id)}
-                            />
-                          </>
-                        )}
+                      <div className="table-actions">
+                        <button
+                          onClick={() => handleEdit(owner)}
+                          className="btn-action"
+                          title="Edit"
+                        >
+                          <Edit2 size={18} className="text-[#374151]" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(owner.id)}
+                          className="btn-action"
+                          title="Delete"
+                        >
+                          <Trash2 size={18} className="text-[#dc2626]" />
+                        </button>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div style={{ padding: '16px 24px', textAlign: 'center', fontSize: '14px', color: '#6B7280' }}>
+                  <div className="no-data-cell">
                     No records found
                   </div>
                 )}
               </div>
             </div>
+
+            {/* Pagination */}
+            {filteredGroups.length > rowsPerPage && (
+              <div className="pagination-container">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => p - 1)}
+                  className={`pagination-btn ${
+                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`pagination-page-btn ${
+                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  className={`pagination-btn ${
+                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+            
+            {/* Back Button */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
+            </div>
           </div>
-             <div style={{
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: '8px',
-  marginTop: '12px'
-}}>
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage(p => p - 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-    }}
-  >
-     <ChevronLeft />
-  </button>
-
-  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-    <button
-      key={page}
-      onClick={() => setCurrentPage(page)}
-      style={{
-        padding: '6px 12px',
-        borderRadius: '4px',
-        border: '1px solid #d1d5db',
-        backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-        color: currentPage === page ? '#ffffff' : '#000000',
-        cursor: 'pointer'
-      }}
-    >
-      {page}
-    </button>
-  ))}
-
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage(p => p + 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-    }}
-  >
- <ChevronRight />
-  </button>
-</div>
-          <button 
-            onClick={() => navigate(-1)}
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px', 
-              padding: '8px 20px', 
-              fontSize: '13px', 
-              fontWeight: '500', 
-              color: '#B91C1C', 
-              border: '2px solid #B91C1C', 
-              borderRadius: '4px', 
-              backgroundColor: 'white', 
-              cursor: 'pointer' 
-            }}
-          >
-            <span>←</span>
-            <span>Back</span>
-          </button>
         </div>
       </div>
     </div>
