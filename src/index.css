@@ -1,59 +1,36 @@
 @import "tailwindcss";
 
-/* ================= BASE ================= */
+/* Base font for whole app */
 @layer base {
-  :root {
-    --primary-bg: #f6eaea;
-    --primary-color: #a63128;
-
-    /* light */
-    --card-bg: #ffffff;
-    --text-color: #111827;
-    --border-color: #e5e7eb;
-  }
-
-  /* 🌙 DARK MODE (PURE BLACK) */
-  .dark {
-    --primary-bg: #0b0b0b;     /* page background - black */
-    --primary-color: #f3f4f6;
-
-    --card-bg: #121212;       /* card / header bg */
-    --text-color: #f3f4f6;    /* white text */
-    --border-color: #2a2a2a;  /* dark border */
-  }
-
   body {
     font-family: "Nunito Sans", sans-serif;
     background-color: var(--primary-bg);
-    color: var(--text-color);
-    margin: 0;
+  }
+   :root {
+    --primary-bg: #f6eaea;     
+    --primary-color: #a63128;  
   }
 }
 
-/* ================= COMPONENTS ================= */
 @layer components {
   .login-box {
-    @apply w-[400px] rounded-[18px] p-12 ml-[-10px] mb-8;
-    background-color: var(--card-bg);
-    border: 1px solid var(--primary-color);
+    @apply w-[400px] bg-white rounded-[18px] p-12 border border-red-600 ml-[-10px] mb-8;
   }
 
   .input {
-    @apply w-full px-4 py-3 rounded-[10px] text-base outline-none;
-    background-color: var(--card-bg);
-    border: 1px solid var(--primary-color);
-    color: var(--text-color);
+    @apply w-full px-4 py-3 rounded-[10px] border border-red-600 bg-[#F7F9FC] text-base outline-none;
   }
 
   .label {
     @apply block mb-2 text-base font-semibold;
   }
 
-  /* HEADER */
+
+
+/*header*/
   .header {
-    @apply h-[76px] flex justify-between items-center px-6 shadow-sm;
-    background-color: var(--card-bg);
-    border-bottom: 1px solid var(--border-color);
+    @apply bg-white h-[76px] flex justify-between items-center
+           border-b border-gray-200 shadow-sm px-6;
   }
 
   .header-left {
@@ -73,14 +50,12 @@
   }
 
   .settings-icon {
-    @apply transition;
-    color: var(--text-color);
+    @apply text-gray-700 hover:text-[#B73E3E] transition;
   }
 
   .profile-box {
-    @apply flex items-center gap-3 h-[60px] px-4 w-[227px] rounded cursor-pointer;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
+    @apply flex items-center gap-3 bg-white border border-gray-200
+           h-[60px] px-4 w-[227px] rounded cursor-pointer;
   }
 
   .user-icon {
@@ -88,26 +63,20 @@
   }
 
   .dropdown {
-    @apply absolute right-0 mt-2 w-[230px] rounded-md shadow-lg z-[9999];
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
+    @apply absolute right-0 mt-2 w-[230px] bg-white
+           border border-gray-400 rounded-md shadow-lg z-[9999];
   }
 
   .dropdown-item {
-    @apply block px-3 py-2 text-sm border-b last:border-none transition;
-    color: var(--text-color);
-    border-color: var(--border-color);
+    @apply block px-3 py-2 text-sm text-gray-700
+           border-b border-gray-200 last:border-none
+           hover:bg-[#A63128] hover:text-white transition;
   }
-
-  .dropdown-item:hover {
-    background-color: var(--primary-color);
-    color: #ffffff;
-  }
-
-  /* LAYOUT */
+/*layout*/
+@layer components {
   .main-content {
-    @apply h-full w-full overflow-auto transition-all duration-300;
-    background-color: var(--primary-bg);
+    @apply h-full w-full overflow-auto transition-all duration-300 
+           bg-[var(--primary-bg)];
   }
 
   .main-with-sidebar {
@@ -119,64 +88,28 @@
   }
 }
 
-/* ================= UTILITIES ================= */
+}
+
+
+
+
+
+
+
+
 @layer utilities {
   .bg-primary {
-    background-color: var(--primary-color);
+    background-color: #a63028;
   }
 
   .text-primary {
-    color: var(--primary-color);
+    color: #a63028;
   }
 
   .accent-primary {
-    accent-color: var(--primary-color);
+    accent-color: #a63028;
   }
 }
-<<<<<<< HEAD
-
-/* ================= FILTER CARDS ================= */
-.filter-grid-red {
-  @apply p-[10px] rounded border-r-[3px] border-r-[#DC2626];
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-}
-
-.filter-grid-green {
-  @apply p-[10px] rounded border-r-[3px] border-r-[#22C55E] relative;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-}
-
-/* ================= BUTTONS ================= */
-.btn-search,
-.btn-lead {
-  width: 150px !important;
-  height: 50px !important;
-  padding: 10px 24px !important;
-  background: var(--primary-color) !important;
-  color: white !important;
-  border-radius: 15px !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  border: none !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  box-shadow: 0 4px 12px rgba(166, 49, 40, 0.3) !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-search:hover,
-.btn-lead:hover {
-  background: linear-gradient(135deg, #a63128 0%, #dc2626 100%) !important;
-  transform: scale(1.02) !important;
-}
-
-/* ================= LOGIN ================= */
-=======
   /* page  */
   .page-container {
     display: flex;
@@ -546,12 +479,16 @@
 
 
 /* Admin Login page only */
->>>>>>> 11db96f48406c6adbc0cd737b7f134b16a7746ae
 .admin-login-page {
-  background-color: var(--primary-bg);
+  background-color: #ffffff;
   min-height: 100vh;
 }
 
+/* Optional reset */
+body {
+  margin: 0;
+}
+/* PAGE WRAPPER */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -559,6 +496,7 @@
   align-items: center;
 }
 
+/* MAIN CONTAINER */
 .login-container {
   max-width: 1400px;
   width: 100%;
@@ -568,6 +506,7 @@
   justify-content: center;
 }
 
+/* LEFT SECTION */
 .login-left {
   text-align: center;
 }
@@ -586,12 +525,13 @@
   margin-top: 10px;
 }
 
+/* RIGHT CARD */
 .login-card {
   width: 420px;
   padding: 45px;
+  border: 1px solid red;
   border-radius: 18px;
-  background-color: var(--card-bg);
-  border: 1px solid var(--primary-color);
+  background: #fff;
 }
 
 .login-card h2 {
@@ -606,6 +546,7 @@
   opacity: 0.7;
 }
 
+/* FORM */
 .form-group {
   margin-bottom: 22px;
 }
@@ -618,11 +559,12 @@
   width: 100%;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid var(--primary-color);
-  background-color: var(--card-bg);
-  color: var(--text-color);
+  border: 1px solid red;
+  background: #f7f9fc;
+  font-size: 16px;
 }
 
+/* PASSWORD */
 .password-box {
   position: relative;
 }
@@ -635,6 +577,7 @@
   cursor: pointer;
 }
 
+/* OPTIONS FIX  */
 .options {
   display: flex;
   justify-content: space-between;
@@ -642,25 +585,29 @@
   margin: 24px 0;
 }
 
+.remember {
+  font-size: 14px;
+}
+
 .forgot {
-  color: var(--primary-color);
+  font-size: 14px;
+  color: #a63028;
   font-weight: 600;
   cursor: pointer;
 }
 
+/* BUTTON FIX */
 .login-btn {
   width: 100%;
   padding: 14px;
   border-radius: 12px;
   border: none;
-  background: var(--primary-color);
+  background: #a63028;
   color: white;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
 }
-<<<<<<< HEAD
-=======
 
   
   /* Table */
@@ -792,13 +739,3 @@
   .btn-back:hover {
     background: #fef2f2 !important;
   }
-
-
-
-
-
-
-
-
-
->>>>>>> 11db96f48406c6adbc0cd737b7f134b16a7746ae
