@@ -265,9 +265,9 @@ else if (path.includes("/accounts/ledgermasterform")) {
       className={`${open ? "w-[240px]" : "w-0"} transition-all duration-300 overflow-hidden`}
       style={{
         background: "linear-gradient(180deg, #370606 0%, #751616 25%, #A63128 50%, #751616 75%, #370606 100%)",
-        height: "calc(100vh - 85px)",
+        height: "calc(100vh - 76px)",
         position: "fixed",
-        top: "85px",
+        top: "76px",
 
         left: 0,
         zIndex: 40,
