@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function Sidebar({ open, onNavigate }) {
-  const isDark = document.documentElement.classList.contains("dark");
+   const isDark = document.documentElement.classList.contains("dark");
   const location = useLocation();
   const [active, setActive] = useState("Dashboard");
   const [leadOpen, setLeadOpen] = useState(false);
@@ -330,6 +330,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Dashboard"
             icon={<Home size={22} />}
             active={active === "Dashboard"}
+             isDark={isDark}
             onClick={() => {
               setActive("Dashboard");
               setLeadOpen(false);
@@ -349,6 +350,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Master Forms"
             icon={<List size={22} />}
             active={formsOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={formsOpen}
             onClick={() => {
@@ -364,26 +366,26 @@ else if (path.includes("/accounts/ledgermasterform")) {
           />
           {formsOpen && (
             <>
-              <SubButton label="Role Master" active={active === "RoleMaster"} onClick={() => handleClick("RoleMaster")} />
-              <SubButton label="User Role Settings" active={active === "UserRoleSettings"} onClick={() => handleClick("UserRoleSettings")} />
-              <SubButton label="User Master" active={active === "UserMaster"} onClick={() => handleClick("UserMaster")} />
-              <SubButton label="Department Master" active={active === "DepartmentMaster"} onClick={() => handleClick("DepartmentMaster")} /> 
-              <SubButton label="LeadOwner" active={active === "LeadOwner"} onClick={() => handleClick("LeadOwner")} />
-              <SubButton label="Lead Status Master" active={active === "LeadStatusMaster"} onClick={() => handleClick("LeadStatusMaster")} />
-              <SubButton label="Lead Source Master" active={active === "LeadSourceMaster"} onClick={() => handleClick("LeadSourceMaster")} />
-              <SubButton label="SizeType" active={active === "SizeType"} onClick={() => handleClick("SizeType")} />
-              <SubButton label="Template Group" active={active === "TemplateGroup"} onClick={() => handleClick("TemplateGroup")} />
-              <SubButton label="Template Specification" active={active === "TemplateSpecification"} onClick={() => handleClick("TemplateSpecification")} />
-              <SubButton label="Template Settings" active={active === "TemplateSettings"} onClick={() => handleClick("TemplateSettings")} />
-              <SubButton label="Material Group" active={active === "MaterialGroup"} onClick={() => handleClick("MaterialGroup")} />
-              <SubButton label="Material List" active={active === "MaterialList"} onClick={() => handleClick("MaterialList")} />
-             <SubButton label="Unit Master" active={active === "UnitMaster"} onClick={() => handleClick("UnitMaster")} />
-              <SubButton label="AssignLabour" active={active === "AssignLabour"} onClick={() => handleClick("AssignLabour")} />
-            <SubButton label="Supervisor" active={active === "Supervisor"} onClick={() => handleClick("Supervisor")} />
-              <SubButton label="Receiver/Giver"  active={active === "Receiver"} onClick={() => handleClick("Receiver")} />
-              <SubButton label="Yard" active={active === "Yard"} onClick={() => handleClick("Yard")} />
-             <SubButton label="Grade" active={active === "Grade"} onClick={() => handleClick("Grade")} />
-              <SubButton label="Settings" active={active === "Settings"} onClick={() => handleClick("Settings")} />
+              <SubButton label="Role Master" active={active === "RoleMaster"}isDark={isDark} onClick={() => handleClick("RoleMaster")} />
+              <SubButton label="User Role Settings" active={active === "UserRoleSettings"} isDark={isDark} onClick={() => handleClick("UserRoleSettings")} />
+              <SubButton label="User Master" active={active === "UserMaster"} isDark={isDark} onClick={() => handleClick("UserMaster")} />
+              <SubButton label="Department Master" active={active === "DepartmentMaster"} isDark={isDark} onClick={() => handleClick("DepartmentMaster")} /> 
+              <SubButton label="LeadOwner" active={active === "LeadOwner"} isDark={isDark} onClick={() => handleClick("LeadOwner")} />
+              <SubButton label="Lead Status Master" active={active === "LeadStatusMaster"}isDark={isDark} onClick={() => handleClick("LeadStatusMaster")} />
+              <SubButton label="Lead Source Master" active={active === "LeadSourceMaster"} isDark={isDark} onClick={() => handleClick("LeadSourceMaster")} />
+              <SubButton label="SizeType" active={active === "SizeType"}isDark={isDark} onClick={() => handleClick("SizeType")} />
+              <SubButton label="Template Group" active={active === "TemplateGroup"}isDark={isDark} onClick={() => handleClick("TemplateGroup")} />
+              <SubButton label="Template Specification" active={active === "TemplateSpecification"}isDark={isDark} onClick={() => handleClick("TemplateSpecification")} />
+              <SubButton label="Template Settings" active={active === "TemplateSettings"}isDark={isDark} onClick={() => handleClick("TemplateSettings")} />
+              <SubButton label="Material Group" active={active === "MaterialGroup"}isDark={isDark} onClick={() => handleClick("MaterialGroup")} />
+              <SubButton label="Material List" active={active === "MaterialList"}isDark={isDark} onClick={() => handleClick("MaterialList")} />
+             <SubButton label="Unit Master" active={active === "UnitMaster"}isDark={isDark} onClick={() => handleClick("UnitMaster")} />
+              <SubButton label="AssignLabour" active={active === "AssignLabour"}isDark={isDark} onClick={() => handleClick("AssignLabour")} />
+            <SubButton label="Supervisor" active={active === "Supervisor"}isDark={isDark} onClick={() => handleClick("Supervisor")} />
+              <SubButton label="Receiver/Giver"  active={active === "Receiver"}isDark={isDark} onClick={() => handleClick("Receiver")} />
+              <SubButton label="Yard" active={active === "Yard"}isDark={isDark} onClick={() => handleClick("Yard")} />
+             <SubButton label="Grade" active={active === "Grade"}isDark={isDark} onClick={() => handleClick("Grade")} />
+              <SubButton label="Settings" active={active === "Settings"}isDark={isDark} onClick={() => handleClick("Settings")} />
              {/*<SubButton label="Group" active={active === "Group"} onClick={() => handleClick("Group", "Group")} />
               <SubButton label="GroupUnder" active={active === "GroupUnder"} onClick={() => handleClick("GroupUnder", "GroupUnder")} />*/}
               </>
@@ -394,6 +396,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Sales"
             icon={<BarChart3 size={22} />}
             active={salesOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={salesOpen}
             onClick={() => {
@@ -409,11 +412,11 @@ else if (path.includes("/accounts/ledgermasterform")) {
           />
           {salesOpen && (
             <>
-              <SubButton label="Lead" active={active === "Lead"} onClick={() => handleClick("Lead")} />
-              <SubButton label="Follow Up" active={active === "FollowUp"} onClick={() => handleClick("FollowUp")} />
-              <SubButton label="Quotation" active={active === "Quotation"} onClick={() => handleClick("Quotation", "QuotationSearch")} />
-              <SubButton label="Proforma Invoice" active={active === "ProformaInvoice"} onClick={() => handleClick("ProformaInvoice", "ProformaInvoiceSearch")} />
-              <SubButton label="Container Status Update " active={active === "ContainerStatusUpdateForm"} onClick={() => handleClick("ContainerStatusUpdateForm", "ContainerStatusUpdateForm")} />
+              <SubButton label="Lead" active={active === "Lead"}isDark={isDark} onClick={() => handleClick("Lead")} />
+              <SubButton label="Follow Up" active={active === "FollowUp"} isDark={isDark} onClick={() => handleClick("FollowUp")} />
+              <SubButton label="Quotation" active={active === "Quotation"}isDark={isDark} onClick={() => handleClick("Quotation", "QuotationSearch")} />
+              <SubButton label="Proforma Invoice" active={active === "ProformaInvoice"} isDark={isDark} onClick={() => handleClick("ProformaInvoice", "ProformaInvoiceSearch")} />
+              <SubButton label="Container Status Update " active={active === "ContainerStatusUpdateForm"} isDark={isDark} onClick={() => handleClick("ContainerStatusUpdateForm", "ContainerStatusUpdateForm")} />
             </>
           )}
           {/* Account */}
@@ -421,6 +424,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Accounts"
             icon={<ClipboardList size={22} />}
             active={accountsOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={accountsOpen}
             onClick={() => {
@@ -438,13 +442,13 @@ else if (path.includes("/accounts/ledgermasterform")) {
           {accountsOpen && (
 
             <>
-              <SubButton label="Account Group Form" active={active === "LedgerMasterGroupForm"} onClick={() => handleClick("LedgerMasterGroupForm")} />
+              <SubButton label="Account Group Form" active={active === "LedgerMasterGroupForm"}isDark={isDark} onClick={() => handleClick("LedgerMasterGroupForm")} />
                 <SubButton
   label="Ledger Master Form"
-    active={active === "LedgerMasterForm"}
+    active={active === "LedgerMasterForm"} isDark={isDark}
   onClick={() => handleClick("LedgerMasterForm", "LedgerMasterForm_Accounts")}
 />
- <SubButton label="Advance Receipt" active={active === "AdvanceReceipt"} onClick={() => handleClick("AdvanceReceipt")} />
+ <SubButton label="Advance Receipt" active={active === "AdvanceReceipt"}isDark={isDark} onClick={() => handleClick("AdvanceReceipt")} />
 
             </>
           )}
@@ -453,6 +457,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Purchase"
             icon={<ShoppingCart size={22} />}
             active={purchaseOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={purchaseOpen}
             onClick={() => {
@@ -468,9 +473,9 @@ else if (path.includes("/accounts/ledgermasterform")) {
           />
           {purchaseOpen && (
             <>
-             <SubButton label="Container Master" active={active === "ContainerMaster"} onClick={() => handleClick("ContainerMaster")} />
-              <SubButton label="Container Purchase" active={active === "ContainerPurchase"} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
-            <SubButton label="Container Status" active={active === "ContainerStatus"} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
+             <SubButton label="Container Master" active={active === "ContainerMaster"}isDark={isDark} onClick={() => handleClick("ContainerMaster")} />
+              <SubButton label="Container Purchase" active={active === "ContainerPurchase"}isDark={isDark} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
+            <SubButton label="Container Status" active={active === "ContainerStatus"}isDark={isDark} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
             </>
           )}
 
@@ -479,6 +484,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Production"
             icon={<BriefcaseBusiness size={22} />}
             active={jobOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={jobOpen}
             onClick={() => {
@@ -494,10 +500,10 @@ else if (path.includes("/accounts/ledgermasterform")) {
           />
           {jobOpen && (
             <>
-              <SubButton label="Assign Job" active={active === "AssignJob"} onClick={() => handleClick("AssignJob", "AssignJob")} />
-              <SubButton label="Assign Task" active={active === "AssignTask"} onClick={() => handleClick("AssignTask", "AssignTask")} />
-              <SubButton label="Task Completion" active={active === "TaskCompletion"} onClick={() => handleClick("TaskCompletion", "TaskCompletion")} />
-              <SubButton label="Job Order Status" active={active === "JobOrderStatus"} onClick={() => handleClick("JobOrderStatus", "JobOrderStatus")} />
+              <SubButton label="Assign Job" active={active === "AssignJob"}isDark={isDark} onClick={() => handleClick("AssignJob", "AssignJob")} />
+              <SubButton label="Assign Task" active={active === "AssignTask"}isDark={isDark} onClick={() => handleClick("AssignTask", "AssignTask")} />
+              <SubButton label="Task Completion" active={active === "TaskCompletion"}isDark={isDark} onClick={() => handleClick("TaskCompletion", "TaskCompletion")} />
+              <SubButton label="Job Order Status" active={active === "JobOrderStatus"}isDark={isDark} onClick={() => handleClick("JobOrderStatus", "JobOrderStatus")} />
             </>
           )}
 
@@ -506,6 +512,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Inventory"
             icon={<Building2 size={22} />}
             active={inventoryOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={inventoryOpen}
             onClick={() => {
@@ -520,14 +527,14 @@ else if (path.includes("/accounts/ledgermasterform")) {
           />
           {inventoryOpen && (
             <>
-              <SubButton label="Purchase Order " active={active === "PurchaseOrder"} onClick={() => handleClick("PurchaseOrder", "PurchaseOrder")} />
-              <SubButton label="Goods Receipt Note" active={active === "GoodsReceiptNote"} onClick={() => handleClick("GoodsReceiptNote", "GoodsReceiptNote")} />
-              <SubButton label="Purchase " active={active === "PurchaseSearch"} onClick={() => handleClick("PurchaseSearch", "PurchaseSearch")} />
-              <SubButton label="Purchase Return " active={active === "PurchaseReturnSearch"} onClick={() => handleClick("PurchaseReturnSearch", "PurchaseReturnSearch")} />
-              <SubButton label="Stock Issue" active={active === "StockIssue"} onClick={() => handleClick("StockIssue", "StockIssue")} />
-              <SubButton label="Stock Issue Return" active={active === "StockIssueReturn"} onClick={() => handleClick("StockIssueReturn", "StockIssueReturn")} />
-              <SubButton label="Sales" active={active === "SalesSearch"} onClick={() => handleClick("SalesSearch", "SalesSearch")} />
-              <SubButton label="Sales Return" active={active === "SalesReturnSearch"} onClick={() => handleClick("SalesReturnSearch", "SalesReturnSearch")} />
+              <SubButton label="Purchase Order " active={active === "PurchaseOrder"}isDark={isDark} onClick={() => handleClick("PurchaseOrder", "PurchaseOrder")} />
+              <SubButton label="Goods Receipt Note" active={active === "GoodsReceiptNote"}isDark={isDark} onClick={() => handleClick("GoodsReceiptNote", "GoodsReceiptNote")} />
+              <SubButton label="Purchase " active={active === "PurchaseSearch"}isDark={isDark} onClick={() => handleClick("PurchaseSearch", "PurchaseSearch")} />
+              <SubButton label="Purchase Return " active={active === "PurchaseReturnSearch"}isDark={isDark} onClick={() => handleClick("PurchaseReturnSearch", "PurchaseReturnSearch")} />
+              <SubButton label="Stock Issue" active={active === "StockIssue"}isDark={isDark} onClick={() => handleClick("StockIssue", "StockIssue")} />
+              <SubButton label="Stock Issue Return" active={active === "StockIssueReturn"}isDark={isDark} onClick={() => handleClick("StockIssueReturn", "StockIssueReturn")} />
+              <SubButton label="Sales" active={active === "SalesSearch"}isDark={isDark} onClick={() => handleClick("SalesSearch", "SalesSearch")} />
+              <SubButton label="Sales Return" active={active === "SalesReturnSearch"}isDark={isDark} onClick={() => handleClick("SalesReturnSearch", "SalesReturnSearch")} />
             </>
           )}
 
@@ -538,6 +545,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
             label="Approval"
             icon={<CheckCircle size={22} />}
             active={approvalOpen}
+            isDark={isDark}
             hasArrow
             arrowOpen={approvalOpen}
             onClick={() => {
@@ -553,11 +561,11 @@ else if (path.includes("/accounts/ledgermasterform")) {
           />
           {approvalOpen && (
             <>
-              <SubButton label="Quotation Approval" active={active === "QuotationApproval"} onClick={() => handleClick("QuotationApproval", "QuotationApproval")} />
-              <SubButton label="Proforma Invoice Approval" active={active === "ProformaInvoiceApproval"} onClick={() => handleClick("ProformaInvoiceApproval", "ProformaInvoiceApproval")} />
-              <SubButton label="Container Hold Request Approval" active={active === "ContainerHoldRequestApprovalForm"} onClick={() => handleClick("ContainerHoldRequestApprovalForm", "ContainerHoldRequestApprovalForm")} />
-              <SubButton label="Container Block Request Approval" active={active === "ContainerBlockApproval"} onClick={() => handleClick("ContainerBlockRequestApprovalForm", "ContainerBlockRequestApprovalForm")} />
-              <SubButton label="Job Order Acceptance" active={active === "JobOrderAcceptance"} onClick={() => handleClick("JobOrderAcceptance", "JobOrderAcceptance")} />
+              <SubButton label="Quotation Approval" active={active === "QuotationApproval"}isDark={isDark} onClick={() => handleClick("QuotationApproval", "QuotationApproval")} />
+              <SubButton label="Proforma Invoice Approval" active={active === "ProformaInvoiceApproval"}isDark={isDark} onClick={() => handleClick("ProformaInvoiceApproval", "ProformaInvoiceApproval")} />
+              <SubButton label="Container Hold Request Approval" active={active === "ContainerHoldRequestApprovalForm"}isDark={isDark} onClick={() => handleClick("ContainerHoldRequestApprovalForm", "ContainerHoldRequestApprovalForm")} />
+              <SubButton label="Container Block Request Approval" active={active === "ContainerBlockApproval"}isDark={isDark} onClick={() => handleClick("ContainerBlockRequestApprovalForm", "ContainerBlockRequestApprovalForm")} />
+              <SubButton label="Job Order Acceptance" active={active === "JobOrderAcceptance"}isDark={isDark} onClick={() => handleClick("JobOrderAcceptance", "JobOrderAcceptance")} />
             </>
           )}
 
@@ -567,61 +575,101 @@ else if (path.includes("/accounts/ledgermasterform")) {
   );
 }
 
-function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen }) {
+function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen , isDark }) {
   const [hover, setHover] = useState(false);
   return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+    
+    
+
+<button
+  onClick={onClick}
+  onMouseEnter={() => setHover(true)}
+  onMouseLeave={() => setHover(false)}
+  style={{
+    backgroundColor: isDark
+      ? active
+        ? "#29333E"     // selected - dark
+        : hover
+        ? "#262F38"     // hover - dark
+        : "#212830"     // normal - dark
+      : active
+      ? "#FFFFFF"      // selected - light
+      : "#A63028",     // normal - light
+
+    color: isDark
+      ? "#FFFFFF"
+      : active
+      ? "#A63028"
+      : "#FFFFFF",
+
+    width: "200px",
+    height: "40px",
+    border: "none",
+    marginBottom: "8px",
+    paddingLeft: "16px",
+    paddingRight: "12px",
+    flexShrink: 0,
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+  }}
+  className="flex items-center justify-between rounded-[12px] font-poppins font-semibold text-[14px]"
+>
+  <div className="flex items-center gap-[12px]">
+    {icon}
+    {label}
+  </div>
+
+  {hasArrow && (
+    <ChevronRight
+      size={18}
       style={{
-        backgroundColor: active ? "#FFFFFF" : "#A63028",
-        width: "200px",
-        height: "40px",
-        border: "none",
-        color: active ? "#A63028" : "#FFFFFF",
-        marginBottom: "8px",
-        paddingLeft: "16px",
-        paddingRight: "12px",
-        opacity: hover ? 0.85 : 1,
-        flexShrink: 0,
-        cursor: "pointer",
+        transition: "transform 0.2s ease",
+        transform: arrowOpen ? "rotate(90deg)" : "rotate(0deg)",
       }}
-      className="flex items-center justify-between rounded-[12px] font-poppins font-semibold text-[14px]"
-    >
-      <div className="flex items-center gap-[12px]">{icon}{label}</div>
-      {hasArrow && (
-        <ChevronRight
-          size={18}
-          style={{
-            transition: "transform 0.2s ease",
-            transform: arrowOpen ? "rotate(90deg)" : "rotate(0deg)",
-          }}
-        />
-      )}
-    </button>
+    />
+  )}
+</button>
+
   );
 }
 
-function SubButton({ label, active, onClick }) {
+function SubButton({ label, active, onClick, isDark }) {
   const [hover, setHover] = useState(false);
+
+  const backgroundColor = isDark
+    ? active
+      ? "#29333E"      // dark selected
+      : hover
+      ? "#262F38"      // dark hover
+      : "#212830"      // dark normal
+    : active
+    ? "#FFFFFF"        // light selected
+    : "#A63028";       // light normal
+
+  const textColor = isDark
+    ? "#FFFFFF"
+    : active
+    ? "#A63028"
+    : "#FFFFFF";
+
   return (
     <button
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
-        backgroundColor: active ? "#FFFFFF" : "#A63028",
+        backgroundColor,
         width: "200px",
         height: "40px",
         border: "none",
-        color: active ? "#A63028" : "#FFFFFF",
+        color: textColor,
         marginBottom: "8px",
         paddingLeft: "16px",
         paddingRight: "12px",
-        opacity: hover ? 0.85 : 1,
+        opacity: hover ? 0.95 : 1,
         flexShrink: 0,
         cursor: "pointer",
+        transition: "background-color 0.2s ease",
       }}
       className="flex items-center rounded-[10px] font-poppins text-[13px]"
     >
