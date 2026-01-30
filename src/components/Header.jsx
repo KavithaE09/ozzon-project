@@ -47,7 +47,7 @@ export default function Header({ onMenuClick }) {
   return (
     <header
       className={`h-[76px] flex justify-between items-center border-b shadow-sm transition-colors
-      ${darkMode ? "bg-[#0b0b0b] border-[#2a2a2a]" : "bg-white border-[#E5E7EB]"}`}
+      ${darkMode ? "bg-[#151B23] border-[#2a2a2a]" : "bg-white border-[#E5E7EB]"}`}
     >
       {/* LEFT */}
       <div className="flex items-center pl-6">
@@ -115,7 +115,7 @@ export default function Header({ onMenuClick }) {
             onClick={() => setOpenProfile(!openProfile)}
             className={`flex items-center gap-3 px-4 h-[60px] cursor-pointer border transition-colors
             ${darkMode
-              ? "bg-[#121212] border-[#2a2a2a]"
+              ? "bg-[#151B23] border-[#2a2a2a]"
               : "bg-white border-[#E5E7EB]"}`}
             style={{ width: "227px", borderRadius: "5px" }}
           >
