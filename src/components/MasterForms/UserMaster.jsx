@@ -87,7 +87,7 @@ export default function UserMaster() {
                     type="text"
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="Enter group name"
+                    placeholder="Enter user name"
                     className="filter-input"
                   />
                 </div>
