@@ -225,7 +225,7 @@ export default function UserRoleSettings() {
                             type="checkbox"
                             checked={selectedRoleData[key]}
                             onChange={() => handlePermissionChange(key)}
-                            className="radio-input accent-primary"
+                            className="radio-input "
                           />
                         </td>
                       ))}
