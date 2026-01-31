@@ -210,7 +210,7 @@ export default function AdvanceReceipt() {
                               </button>
                               <button 
                                 onClick={() => navigate("/layout/proformainvoice/advance")}
-                                className="btn-advance"
+                                className="btn-smallbtn"
                               >
                                 Advance
                               </button>

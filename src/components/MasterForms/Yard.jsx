@@ -1,406 +1,220 @@
 import React, { useState } from 'react';
-import { ChevronRight, Search, Edit2, Trash2 , ChevronLeft} from 'lucide-react';
+import { Search, ChevronRight, Edit2, Trash2, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Yard() {
   const navigate = useNavigate();
-  const [groupName, setGroupName] = useState('');
+  const [yardName, setYardName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-const rowsPerPage = 2;
+  const rowsPerPage = 2;
 
-  const [templateGroups, setTemplateGroups] = useState([
-    { id: 1, name: 'Global' },
-    { id: 2, name: 'Local' },
-    { id: 3, name: 'Temporary' },
-    { id: 4, name: 'Permanent' }
+  const [yardList, setYardList] = useState([
+    { id: 1, name: 'GLOBAL' },
+    { id: 2, name: 'LOCAL' },
+    { id: 3, name: 'TEMPORARY' },
+    { id: 4, name: 'PERMANENT' }
   ]);
   const [filteredGroups, setFilteredGroups] = useState([
-    { id: 1, name: 'Global' },
-    { id: 2, name: 'Local' },
-    { id: 3, name: 'Temporary' },
-    { id: 4, name: 'Permanent' }
+    { id: 1, name: 'GLOBAL' },
+    { id: 2, name: 'LOCAL' },
+    { id: 3, name: 'TEMPORARY' },
+    { id: 4, name: 'PERMANENT' }
   ]);
   const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState('');
-
+  
   const totalPages = Math.ceil(filteredGroups.length / rowsPerPage);
-
-const indexOfLast = currentPage * rowsPerPage;
-const indexOfFirst = indexOfLast - rowsPerPage;
-
-const currentGroups = filteredGroups.slice(
-  indexOfFirst,
-  indexOfLast
-);
-
+  const indexOfLast = currentPage * rowsPerPage;
+  const indexOfFirst = indexOfLast - rowsPerPage;
+  const currentGroups = filteredGroups.slice(indexOfFirst, indexOfLast);
 
   const handleSubmit = () => {
-    if (groupName.trim() !== '') {
-      const newGroup = {
-        id: templateGroups.length > 0 ? Math.max(...templateGroups.map(g => g.id)) + 1 : 1,
-        name: groupName.toUpperCase()
-      };
-      setTemplateGroups([...templateGroups, newGroup]);
-      setFilteredGroups([...templateGroups, newGroup]);
-      setGroupName('');
+    if (yardName.trim() !== '') {
+      if (editingId) {
+        // Update existing record
+        const updatedList = yardList.map(yard =>
+          yard.id === editingId ? { ...yard, name: yardName.toUpperCase() } : yard
+        );
+        setYardList(updatedList);
+        setFilteredGroups(updatedList);
+        setEditingId(null);
+      } else {
+        // Add new record
+        const newYard = {
+          id: yardList.length > 0 ? Math.max(...yardList.map(g => g.id)) + 1 : 1,
+          name: yardName.toUpperCase()
+        };
+        setYardList([...yardList, newYard]);
+        setFilteredGroups([...yardList, newYard]);
+      }
+      setYardName('');
       setCurrentPage(1);
-
     }
   };
-  
+
   const handleSearch = () => {
     if (searchTerm.trim() === '') {
-      setFilteredGroups(templateGroups);
+      setFilteredGroups(yardList);
     } else {
-      const filtered = templateGroups.filter(group =>
-        group.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = yardList.filter(yard =>
+        yard.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredGroups(filtered);
       setCurrentPage(1);
-
     }
   };
 
-  const handleEdit = (group) => {
-    setEditingId(group.id);
-    setEditingName(group.name);
+  const handleEdit = (yard) => {
+    setEditingId(yard.id);
+    setYardName(yard.name);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleUpdate = (groupId) => {
-    if (editingName.trim() !== '') {
-      const updatedGroups = templateGroups.map(group =>
-        group.id === groupId ? { ...group, name: editingName.toUpperCase() } : group
-      );
-      setTemplateGroups(updatedGroups);
-      setFilteredGroups(updatedGroups);
-      setEditingId(null);
-      setEditingName('');
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditingName('');
-  };
-
-  const handleDelete = (groupId) => {
-    const updatedGroups = templateGroups.filter(group => group.id !== groupId);
-    setTemplateGroups(updatedGroups);
-    setFilteredGroups(updatedGroups);
+  const handleDelete = (yardId) => {
+    const updatedList = yardList.filter(yard => yard.id !== yardId);
+    setYardList(updatedList);
+    setFilteredGroups(updatedList);
     setCurrentPage(1);
-
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f5f5f5' }}>
-      {/* Form Content */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '20px', backgroundColor: '#f5e6e8' }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '15px' }}>
-          {/* Template Group Section */}
-          <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-            Yard Master
-          </h2>
-          
-          <div style={{ 
-            marginBottom: '24px',
-            display: 'flex', 
-            alignItems: 'flex-end', 
-             justifyContent: 'flex-start',
-              gap: '40px',
-          }}>
-            <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#374151',
-                marginBottom: '8px'
-              }}>
-                Yard Name
-              </label>
-              <input
-                type="text"
-                value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
-                placeholder="Global"
-                style={{ 
-                  width: '256px', 
-                  padding: '4px 8px', 
-                  border: 'none', 
-                  borderRadius: '4px',
-                  fontSize: '13px',
-                  outline: 'none',
-                  backgroundColor: 'white'
-                }}
-              />
-            </div>
-            <button 
-              onClick={handleSubmit}
-              style={{ 
-                width: '150px',
-                height:'50px',
-                padding: '10px 24px', 
-                backgroundColor: '#A63128', 
-                color: 'white', 
-                borderRadius: '15px', 
-                fontSize: '14px', 
-                fontWeight: '500', 
-                border: 'none', 
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <span>✓</span>
-              <span>Submit</span>
-            </button>
-          </div>
-
-          {/* Record List Section */}
-          <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-            Record List
-          </h2>
-          
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'flex-end', 
-             justifyContent: 'flex-start',
-              gap: '40px',
-            marginBottom: '24px' 
-          }}>
-            <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E'}}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#374151',
-                marginBottom: '8px'
-              }}>
-                Search
-              </label>
-              <input
-                type="text"
-                placeholder="Enter Yard Name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ 
-                  width: '256px', 
-                  padding: '4px 8px', 
-                  border: 'none', 
-                  borderRadius: '4px',
-                  fontSize: '13px',
-                  outline: 'none',
-                  backgroundColor: 'white'
-                }}
-              />
-            </div>
-            <button 
-              onClick={handleSearch}
-              style={{ 
-                width: '150px',
-                height:'50px',
-                padding: '10px 24px', 
-                backgroundColor: '#A63128', 
-                color: 'white', 
-                borderRadius: '15px', 
-                fontSize: '14px', 
-                fontWeight: '500', 
-                border: 'none', 
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <Search size={18} /> Search
-            </button>
-          </div>
-
-          {/* Table */}
-          <div style={{ 
-            border: '1px solid #9CA3AF', 
-            borderRadius: '8px', 
-            overflow: 'hidden' 
-          }}>
-            <div style={{ 
-              backgroundColor: '#fde2e2', 
-              padding: '10px 16px', 
-              borderBottom: '1px solid #9CA3AF' 
-            }}>
-              <span style={{ fontSize: '16px', fontWeight: '600', color: '#000000' }}>
-                Module Name
-              </span>
-            </div>
-            <div style={{ backgroundColor: 'white' }}>
-              {currentGroups.length > 0 ? (
-                currentGroups.map((group, idx) => (
-
-                  <div 
-                    key={group.id}
-                    style={{ 
-                      padding: '10px 16px', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between',
-                      borderBottom: idx !== filteredGroups.length - 1 ? '1px solid #f3f4f6' : 'none',
-                      gap: '12px'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                      <ChevronRight size={16} style={{ color: '#374151' }} />
-                      {editingId === group.id ? (
-                        <input
-                          type="text"
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          style={{
-                            flex: 1,
-                            padding: '4px 8px',
-                            border: '1px solid #9CA3AF',
-                            borderRadius: '4px',
-                            fontSize: '14px',
-                            outline: 'none',
-                            backgroundColor: 'white'
-                          }}
-                        />
-                      ) : (
-                        <span style={{ fontSize: '14px', color: '#111827' }}>{group.name}</span>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      {editingId === group.id ? (
-                        <>
-                          <button
-                            onClick={() => handleUpdate(group.id)}
-                            style={{
-                              padding: '4px 12px',
-                              backgroundColor: '#A63128',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '4px',
-                              fontSize: '13px',
-                              cursor: 'pointer',
-                              fontWeight: '500'
-                            }}
-                          >
-                            Update
-                          </button>
-                          <button
-                            onClick={handleCancelEdit}
-                            style={{
-                              padding: '4px 12px',
-                              backgroundColor: '#6B7280',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '4px',
-                              fontSize: '13px',
-                              cursor: 'pointer',
-                              fontWeight: '500'
-                            }}
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <Edit2 
-                            size={18} 
-                            style={{ color: '#6B7280', cursor: 'pointer' }}
-                            onClick={() => handleEdit(group)}
-                          />
-                          <Trash2 
-                            size={18} 
-                            style={{ color: '#DC2626', cursor: 'pointer' }}
-                            onClick={() => handleDelete(group.id)}
-                          />
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div style={{ padding: '16px 24px', textAlign: 'center', fontSize: '14px', color: '#6B7280' }}>
-                  No records found
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            {/* Yard Master Section */}
+            <h2 className="page-title">Yard Master</h2>
+            
+            <div className="filter-section">
+              <div className="filter-grid">
+                <div className="filter-grid-red">
+                  <label className="filter-label">Yard Name</label>
+                  <input
+                    type="text"
+                    value={yardName}
+                    onChange={(e) => setYardName(e.target.value)}
+                    placeholder="Global"
+                    className="filter-input"
+                  />
                 </div>
-              )}
+                <div className="btn-container">
+                  <button onClick={handleSubmit} className="btn-all">
+                    <span>✓</span>
+                    <span>Submit</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Record List Section */}
+            <h2 className="page-title">Record List</h2>
+            
+            <div className="filter-section">
+              <div className="filter-grid">
+                <div className="filter-grid-green">
+                  <label className="filter-label">Search By</label>
+                  <input
+                    type="text"
+                    placeholder="Enter Yard Name"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="filter-input"
+                  />
+                </div>
+                
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="master-table-container">
+              <div className="master-table-header">
+                <span className="master-table-title">Module Name</span>
+              </div>
+              <div className="master-table-body">
+                {currentGroups.length > 0 ? (
+                  currentGroups.map((yard, idx) => (
+                    <div key={yard.id} className="master-table-row">
+                      <div className="master-table-content">
+                        <ChevronRight size={16} style={{ color: '#374151' }} />
+                        <span className="master-name-text">{yard.name}</span>
+                      </div>
+                      <div className="table-actions">
+                        <button
+                          onClick={() => handleEdit(yard)}
+                          className="btn-action"
+                          title="Edit"
+                        >
+                          <Edit2 size={18} className="text-[#374151]" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(yard.id)}
+                          className="btn-action"
+                          title="Delete"
+                        >
+                          <Trash2 size={18} className="text-[#dc2626]" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-data-cell">
+                    No records found
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Pagination */}
+            {filteredGroups.length > rowsPerPage && (
+              <div className="pagination-container">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => p - 1)}
+                  className={`pagination-btn ${
+                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`pagination-page-btn ${
+                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  className={`pagination-btn ${
+                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+            
+            {/* Back Button */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
             </div>
           </div>
         </div>
-        <div style={{
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: '8px',
-  marginTop: '12px'
-}}>
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage(p => p - 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-    }}
-  >
-    <ChevronLeft />
-  </button>
-
-  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-    <button
-      key={page}
-      onClick={() => setCurrentPage(page)}
-      style={{
-        padding: '6px 12px',
-        borderRadius: '4px',
-        border: '1px solid #d1d5db',
-        backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-        color: currentPage === page ? '#ffffff' : '#000000',
-        cursor: 'pointer'
-      }}
-    >
-      {page}
-    </button>
-  ))}
-
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage(p => p + 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-    }}
-  >
-    <ChevronRight />
-  </button>
-</div>
-
-        <button 
-          onClick={() => navigate(-1)}
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px', 
-            padding: '8px 20px', 
-            fontSize: '13px', 
-            fontWeight: '500', 
-            color: '#B91C1C', 
-            border: '2px solid #B91C1C', 
-            borderRadius: '4px', 
-            backgroundColor: 'white', 
-            cursor: 'pointer' 
-          }}
-        >
-          <span>←</span>
-          <span>Back</span>
-        </button>
       </div>
     </div>
   );

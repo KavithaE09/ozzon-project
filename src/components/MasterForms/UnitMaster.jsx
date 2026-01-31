@@ -93,7 +93,7 @@ export default function UnitMaster() {
                     type="text"
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="Raneesh"
+                    placeholder="Enter Unit name"
                     className="filter-input"
                   />
                 </div>

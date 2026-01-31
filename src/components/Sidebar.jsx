@@ -18,20 +18,116 @@ export default function Sidebar({ open, onNavigate }) {
   useEffect(() => {
   const path = location.pathname.toLowerCase();
 
-  if (path.includes("/master/ledgermasterform")) {
-    setActive("LedgerMasterForm");
-    setFormsOpen(true);
-    setAccountsOpen(false);
-   
-  return;
-  }
 
-else if (path.includes("/accounts/ledgermasterform")) {
-    setActive("LedgerMasterForm");
-    setAccountsOpen(true);
-    setFormsOpen(false);
-    return;
-  }
+    // Reset all
+  setFormsOpen(false);
+  setSalesOpen(false);
+  setAccountsOpen(false);
+  setPurchaseOpen(false);
+  setInventoryOpen(false);
+  setApprovalOpen(false);
+  setJobOpen(false);
+
+  //purchase routes
+   if (path.includes("/containermaster")) {
+      setActive("ContainerMaster");
+      setAccountsOpen(false);
+     setInventoryOpen(false);
+     setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(true);
+    } else if (path.includes("/purchasemaster")) {
+      setActive("PurchaseMaster");
+      setAccountsOpen(false);
+     setInventoryOpen(false);
+     setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(true);
+    } else if (path.includes("/containerpurchase")) {
+      setActive("ContainerPurchase");
+      setAccountsOpen(false);
+     setInventoryOpen(false);
+     setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(true);
+    } else if (path.includes("/containerstatus")) {
+      setActive("ContainerStatus");
+      setAccountsOpen(false);
+     setInventoryOpen(false);
+     setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(true);
+    } 
+
+    
+      // inventory routes
+    if (path.includes("/purchaseorder")) {
+      setActive("PurchaseOrder");
+      setInventoryOpen(true);
+      setSalesOpen(false);
+      setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+    }else if (path.includes("/purchasesearch")) {
+      setActive("PurchaseSearch");
+      setInventoryOpen(true);
+      setSalesOpen(false);
+      setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+    } else if (path.includes("/purchasereturn") && path.includes("search")) {
+      setActive("PurchaseReturnSearch");
+      setInventoryOpen(true);
+      setSalesOpen(false);
+      setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+    } else if (path.includes("/purchasereturn")) {
+      setActive("PurchaseReturn");
+      setInventoryOpen(true);
+      setSalesOpen(false);
+      setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+    } else if (path.includes("/purchase")) {
+      setActive("Purchase");
+      setInventoryOpen(true);
+      setSalesOpen(false);
+      setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+  } else if (path.includes("/stockissuereturn")) {
+      setActive("StockIssueReturn");
+      setInventoryOpen(true);
+      setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+    } else if (path.includes("/stockissue")) {
+      setActive("StockIssue");
+      setInventoryOpen(true);
+     setAccountsOpen(false);
+      setLeadOpen(false);
+      setFormsOpen(false);
+      setSalesOpen(false);
+      setPurchaseOpen(false);
+    }
+
 
 
     // Master Forms routes
@@ -41,13 +137,9 @@ else if (path.includes("/accounts/ledgermasterform")) {
     } else if (path.includes("/userrolesettings")) {
       setActive("UserRoleSettings");
       setFormsOpen(true);
-    } else if (path.includes("/containermaster")) {
-      setActive("ContainerMaster");
-      setFormsOpen(false);
-    } else if (path.includes("/departmentmaster")) {
+    } else if (path.includes("/departmentmaster")) { 
       setActive("DepartmentMaster");
-      setFormsOpen(true);
-  
+      setFormsOpen(true); 
     } else if (path.includes("/templategroup")) {
       setActive("TemplateGroup");
       setFormsOpen(true);
@@ -62,12 +154,10 @@ else if (path.includes("/accounts/ledgermasterform")) {
       setFormsOpen(true);
     } else if (path.includes("/leadstatusmaster")) {
       setActive("LeadStatusMaster");
-      setFormsOpen(true);
-    
+      setFormsOpen(true); 
     } else if (path.includes("/unitmaster")) {
       setActive("UnitMaster");
-      setFormsOpen(true);
-
+      setFormsOpen(true); 
     } else if (path.includes("/leadsourcemaster")) {
       setActive("LeadSourceMaster");
       setFormsOpen(true);
@@ -98,16 +188,13 @@ else if (path.includes("/accounts/ledgermasterform")) {
     } else if (path.includes("/yard")) {
       setActive("Yard");
       setFormsOpen(true);
-    }
-    else if (path.includes("/leadowner")) {
+    } else if (path.includes("/leadowner")) {
       setActive("LeadOwner");
       setFormsOpen(true);
-    }
-    else if (path.includes("/receiver")) {
+    } else if (path.includes("/receiver")) {
       setActive("Receiver");
       setFormsOpen(true);
-    }
-    else if (path.includes("/ledgermastergroupform")) {
+    }  else if (path.includes("/ledgermastergroupform")) {
       setActive("LedgerMasterGroupForm");
       setAccountsOpen(true);
      setInventoryOpen(false);
@@ -174,7 +261,16 @@ else if (path.includes("/accounts/ledgermasterform")) {
       setFormsOpen(false);
       setSalesOpen(false);
       setPurchaseOpen(false);
-    } 
+    }else if (path.includes("/accounts/ledgermasterform")) {
+    setActive("LedgerMasterForm");
+    setAccountsOpen(true);
+    setFormsOpen(false);
+    setInventoryOpen(false);
+     setLeadOpen(false);
+     setSalesOpen(false);
+      setPurchaseOpen(false);
+    }
+
 
     // inventory routes
     else if (path.includes("/purchaseorder")) {
@@ -467,13 +563,14 @@ else if (path.includes("/accounts/ledgermasterform")) {
               setSalesOpen(false);
               setApprovalOpen(false);
               setJobOpen(false);
-               setAccountsOpen(false);
-                setInventoryOpen(false);
+              setAccountsOpen(false);
+              setInventoryOpen(false);
             }}
           />
           {purchaseOpen && (
             <>
-             <SubButton label="Container Master" active={active === "ContainerMaster"}isDark={isDark} onClick={() => handleClick("ContainerMaster")} />
+              <SubButton label="Container Master" active={active === "ContainerMaster"}isDark={isDark} onClick={() => handleClick("ContainerMaster")} />
+               <SubButton label="Purchase Master" active={active === "PurchaseMaster"} isDark={isDark}onClick={() => handleClick("PurchaseMaster", "PurchaseMaster")} />
               <SubButton label="Container Purchase" active={active === "ContainerPurchase"}isDark={isDark} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
             <SubButton label="Container Status" active={active === "ContainerStatus"}isDark={isDark} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
             </>
@@ -522,7 +619,7 @@ else if (path.includes("/accounts/ledgermasterform")) {
               setPurchaseOpen(false);
               setApprovalOpen(false);
               setJobOpen(false);
-               setAccountsOpen(false);
+              setAccountsOpen(false);
             }}
           />
           {inventoryOpen && (

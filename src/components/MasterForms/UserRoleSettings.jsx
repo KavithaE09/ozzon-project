@@ -25,12 +25,12 @@ export default function UserRoleSettings() {
   const [showRecordList, setShowRecordList] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
   const [editingName, setEditingName] = useState('');
- const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 2;
   
   const roleDropdownRef = useRef(null);
 
-const filteredRoles = rolesList.filter(role =>
+  const filteredRoles = rolesList.filter(role =>
     role.toLowerCase().includes(roleSearch.toLowerCase())
   );
 
@@ -44,7 +44,7 @@ const filteredRoles = rolesList.filter(role =>
         setIsRoleDropdownOpen(false);
       }
     };
-  document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
@@ -138,47 +138,32 @@ const filteredRoles = rolesList.filter(role =>
         setCurrentPage(newTotalPages);
       }
     }
-};
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ display: 'flex', flex: 1 }}>
-        <div style={{ flex: 1, padding: '20px', backgroundColor: '#f5e6e8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '10px' }}>
-
-            <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-              User Role Settings
-            </h2>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">User Role Settings</h2>
 
             {/* Role Select Section */}
-            <div style={{ display: 'grid', gridTemplateColumns: '300px 160px 280px 280px', gap: '30px', marginBottom: '24px' }}>
-              <div
-                ref={roleDropdownRef}
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  border: '1px solid #9CA3AF',
-                  borderRight: '3px solid #DC2626',
-                  position: 'relative'
-                }}
-              >
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>
-                  Role Settings
-                </label>
-                <div style={{ position: 'relative' }}>
+            <div className="filter-grid">
+              <div ref={roleDropdownRef} className="filter-grid-red">
+                <label className="filter-label">Role Settings</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={roleSearch}
                     onChange={handleRoleInput}
                     onFocus={() => setIsRoleDropdownOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', fontSize: '14px', outline: 'none', backgroundColor: 'white' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown size={20} style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isRoleDropdownOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', maxHeight: '180px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredRoles.length > 0 ? (
                       filteredRoles.map((option, index) => (
                         <div
@@ -186,45 +171,26 @@ const filteredRoles = rolesList.filter(role =>
                           onClick={() => handleRoleSelect(option)}
                           onMouseEnter={() => setHoveredRole(option)}
                           onMouseLeave={() => setHoveredRole(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredRole === option ? 'white' : '#374151',
-                            backgroundColor: hoveredRole === option ? '#A63128' : selectedRole === option ? '#FEE2E2' : 'white',
-                            borderBottom: index < filteredRoles.length - 1 ? '1px solid #E5E7EB' : 'none'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredRole === option
+                              ? 'dropdown-item-hovered'
+                              : selectedRole === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div style={{ display: 'grid', justifyContent: 'end', marginTop: '20px' }}>
-                <button
-                  onClick={handleSubmit}
-                  style={{
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px',
-                    backgroundColor: '#A63128',
-                    color: 'white',
-                    borderRadius: '15px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
+              <div className="btn-container">
+                <button onClick={handleSubmit} className="btn-search">
                   <span>✓</span>
                   <span>Submit</span>
                 </button>
@@ -235,187 +201,113 @@ const filteredRoles = rolesList.filter(role =>
 
             {/* Permission Table */}
             {selectedRoleData && (
-              <table
-                style={{
-                  width: '100%',
-                  marginTop: '18px',
-                  fontSize: '14px',
-                  borderCollapse: 'collapse',
-                  border: '1px solid #9CA3AF'
-                }}
-              >
-                <thead>
-                  <tr style={{ backgroundColor: '#fde2e2', textAlign: 'center' }}>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Sl No</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Forms</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Add</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Delete</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>View</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Print</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Menu</th>
-                    <th style={{ padding: '10px', border: '1px solid #9CA3AF' }}>Others</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ textAlign: 'center' }}>
-                    <td style={{ padding: '10px', border: '1px solid #9CA3AF' }}>{selectedRoleData.id}</td>
-                    <td style={{ padding: '10px', border: '1px solid #9CA3AF' }}>{selectedRoleData.name}</td>
-                    {['add','delete','view','print','menu','others'].map(key => (
-                      <td key={key} style={{ padding: '10px', border: '1px solid #9CA3AF' }}>
-                        <input
-                          type="checkbox"
-                          checked={selectedRoleData[key]}
-                          onChange={() => handlePermissionChange(key)}
-                          style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
+              <div className="table-container mt-5">
+                <table className="data-table">
+                  <thead className="table-header">
+                    <tr>
+                      <th className="table-th-center">Sl No</th>
+                      <th className="table-th-center">Forms</th>
+                      <th className="table-th-center">Add</th>
+                      <th className="table-th-center">Delete</th>
+                      <th className="table-th-center">View</th>
+                      <th className="table-th-center">Print</th>
+                      <th className="table-th-center">Menu</th>
+                      <th className="table-th-center">Others</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="table-row">
+                      <td className="table-cell-center">{selectedRoleData.id}</td>
+                      <td className="table-cell-center">{selectedRoleData.name}</td>
+                      {['add', 'delete', 'view', 'print', 'menu', 'others'].map(key => (
+                        <td key={key} className="table-cell-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedRoleData[key]}
+                            onChange={() => handlePermissionChange(key)}
+                            className="radio-input "
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             )}
 
             {/* Record List */}
             {showRecordList && (
               <>
-                <h2 style={{ fontSize: '20px', fontWeight: '600', marginTop: '32px', marginBottom: '16px', color: '#111827' }}>
-                  Record List
-                </h2>
+                <h2 className="section-title mt-8">Record List</h2>
 
-                <div style={{
-                  display: 'flex', 
-                  alignItems: 'flex-end', 
-                  justifyContent: 'flex-start',
-                  gap: '40px',
-                  marginBottom: '24px'
-                }}>
-                  <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E' }}>
-                    <label style={{ display: 'block', fontSize: '16px', fontWeight: 'bold', color: '#374151', marginBottom: '8px' }}>
-                      Search
-                    </label>
+                <div className="filter-grid">
+                  <div className="filter-grid-green w-[280px]">
+                    <label className="filter-label">Search</label>
                     <input
                       type="text"
                       placeholder="Role Name"
                       value={searchText}
                       onChange={(e) => setSearchText(e.target.value)}
-                      style={{ width: '256px', padding: '4px 8px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'white' }}
+                      className="filter-input"
                     />
                   </div>
-                  <button
-                    onClick={handleSearch}
-                    style={{ 
-                      width: '150px', 
-                      height: '50px', 
-                      padding: '10px 24px', 
-                      backgroundColor: '#A63128', 
-                      color: 'white', 
-                      borderRadius: '15px', 
-                      fontSize: '14px', 
-                      fontWeight: '500', 
-                      border: 'none', 
-                      cursor: 'pointer', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
-                      gap: '8px' 
-                    }}
-                  >
+                  <button onClick={handleSearch} className="btn-search">
                     <Search size={18} /> Search
                   </button>
                 </div>
 
                 {/* Table with Edit and Delete Icons */}
-                <div style={{ border: '1px solid #9CA3AF', borderRadius: '8px', overflow: 'hidden' }}>
-                  <div style={{ backgroundColor: '#fde2e2', padding: '10px 16px', borderBottom: '1px solid #9CA3AF' }}>
-                    <span style={{ fontSize: '16px', fontWeight: '600', color: '#000000' }}>
-                      Role Settings Name
-                    </span>
+                <div className="master-table-container">
+                  <div className="master-table-header">
+                    <span className="master-table-title">Role Settings Name</span>
                   </div>
-                  <div style={{ backgroundColor: 'white' }}>
+                  <div className="master-table-body">
                     {paginatedData.length === 0 ? (
-                      <div style={{ padding: '16px 24px', textAlign: 'center', fontSize: '14px', color: '#6B7280' }}>
-                        No records found
-                      </div>
+                      <div className="no-data-cell">No records found</div>
                     ) : (
                       paginatedData.map((role, idx) => (
-                        <div
-                          key={role}
-                          style={{ 
-                            padding: '10px 16px', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'flex-start', 
-                            gap: '40px', 
-                            borderBottom: idx !== paginatedData.length - 1 ? '1px solid #f3f4f6' : 'none' 
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                            <ChevronRight size={16} style={{ color: '#374151' }} />
+                        <div key={role} className="master-table-row">
+                          <div className="master-table-content">
+                            <ChevronRight size={16} className="text-gray-700" />
                             {editingRole === role ? (
                               <input
                                 type="text"
                                 value={editingName}
                                 onChange={(e) => setEditingName(e.target.value)}
-                                style={{
-                                  flex: 1,
-                                  padding: '4px 8px',
-                                  border: '1px solid #9CA3AF',
-                                  borderRadius: '4px',
-                                  fontSize: '14px',
-                                  outline: 'none',
-                                  backgroundColor: 'white',
-                                }}
+                                className="master-edit-input"
                               />
                             ) : (
-                              <span style={{ fontSize: '14px', color: '#111827' }}>{role}</span>
+                              <span className="master-name-text">{role}</span>
                             )}
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div className="flex items-center gap-3">
                             {editingRole === role ? (
                               <>
-                                <button
-                                  onClick={handleUpdate}
-                                  style={{
-                                    padding: '4px 12px',
-                                    backgroundColor: '#A63128',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    fontSize: '13px',
-                                    cursor: 'pointer',
-                                    fontWeight: '500'
-                                  }}
-                                >
+                                <button onClick={handleUpdate} className="btn-smallbtn">
                                   Update
                                 </button>
                                 <button
                                   onClick={handleCancelEdit}
-                                  style={{
-                                    padding: '4px 12px',
-                                    backgroundColor: '#6B7280',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    fontSize: '13px',
-                                    cursor: 'pointer',
-                                    fontWeight: '500'
-                                  }}
+                                  className="btn-smallbtn"
+                                  style={{ backgroundColor: '#6B7280' }}
                                 >
                                   Cancel
                                 </button>
                               </>
                             ) : (
                               <>
-                                <Edit2
-                                  size={18}
-                                  style={{ color: '#6B7280', cursor: 'pointer' }}
+                                <button
                                   onClick={() => handleEdit(role)}
-                                />
-                                <Trash2
-                                  size={18}
-                                  style={{ color: '#DC2626', cursor: 'pointer' }}
+                                  className="btn-action"
+                                >
+                                  <Edit2 size={18} className="text-gray-600" />
+                                </button>
+                                <button
                                   onClick={() => handleDelete(role)}
-                                />
+                                  className="btn-action"
+                                >
+                                  <Trash2 size={18} className="text-red-600" />
+                                </button>
                               </>
                             )}
                           </div>
@@ -426,26 +318,17 @@ const filteredRoles = rolesList.filter(role =>
                 </div>
               </>
             )}
-          </div>
+          
 
           {/* Pagination */}
           {showRecordList && displayRoles.length > rowsPerPage && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '8px',
-              marginBottom: '12px'
-            }}>
+            <div className="pagination-container">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(prev => prev - 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-                }}
+                className={`pagination-btn ${
+                  currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                }`}
               >
                 <ChevronLeft size={16} />
               </button>
@@ -454,14 +337,9 @@ const filteredRoles = rolesList.filter(role =>
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    border: '1px solid #d1d5db',
-                    backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-                    color: currentPage === page ? '#ffffff' : '#000000',
-                    cursor: 'pointer'
-                  }}
+                  className={`pagination-page-btn ${
+                    currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                  }`}
                 >
                   {page}
                 </button>
@@ -470,25 +348,21 @@ const filteredRoles = rolesList.filter(role =>
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(prev => prev + 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-                }}
+                className={`pagination-btn ${
+                  currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                }`}
               >
                 <ChevronRight size={16} />
               </button>
             </div>
           )}
-           <button 
-            onClick={() => navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
+
+          <button onClick={() => navigate(-1)} className="btn-back">
             <span>←</span>
             <span>Back</span>
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

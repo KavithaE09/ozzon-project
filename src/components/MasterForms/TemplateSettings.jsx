@@ -125,33 +125,7 @@ const currentRows = rows.slice(
   setOpenMenuIndex(null);
 };
 const handleSubmit = () => {
-     if (!formData.pino || !formData.pino.trim()) {
-      alert('Please fill PI NO');
-      return;
-    }
-    if (!formData.pidate) {
-      alert('Please select PI Date');
-      return;
-    }
-    if (!formData.quotationno || !formData.quotationno.trim()) {
-      alert('Please fill Quotation No');
-      return;
-    }
-    if (!formData.quotationdate) {
-      alert('Please select Quotation Date');
-      return;
-    }
-    if (!formData.customerName) {
-      alert('Please select Customer Name');
-      return;
-    }
-    if (!formData.address || !formData.address.trim()) {
-      alert('Please fill Address');
-      return;
-    }
-    
-    setShowSubmitMessage(true);
-    setTimeout(() => setShowSubmitMessage(false), 3000);
+    alert('Form submitted successfully!');
   };
 
 const handleDelete = (index) => {
@@ -211,53 +185,48 @@ const stopEditing = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f5f5f5'}}>
+    <div className="page-container">
      
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="content-wrapper">
     
-        <div style={{ flex: 1, overflow: 'auto', padding: '20px', backgroundColor: '#f5e6e8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px',marginBottom:'10px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '24px', color: '#111827' }}>Template Settings</h2>
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Template Settings</h2>
 
-            <div style={{ marginBottom: '24px',  border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626', padding: '8px' }}>
-              <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Template Name</label>
+            <div className="filter-grid-red mb-6">
+              <label className="filter-label">Template Name</label>
               <input
                 type="text"
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
-                style={{ width: '300px', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '14px'}}
+                className="filter-input w-[300px]"
               />
             </div>
 
             {/* Table */}
-                       <div style={{ overflowX: 'auto', marginBottom: '20px', border: '1px solid #9CA3AF', borderRadius: '8px' }}>
-                         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '1200px' }}>
-                           <thead>
-                             <tr style={{ backgroundColor: '#fde2e2', borderBottom: '2px solid #E5E7EB' }}>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000' ,fontSize:'14px'}}>Sl No</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000',fontSize:'14px' }}>Template Group</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000',fontSize:'14px' }}>Template Specification</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000',fontSize:'14px' }}>Dimension</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000' ,fontSize:'14px'}}>No. of Unit</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000',fontSize:'14px' }}>Amount</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000',fontSize:'14px' }}>Hidden Amount</th>
-                               <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: '600', color: '#000000',fontSize:'14px' }}>Actions</th>
-                             </tr>
-                           </thead>
-                           <tbody>
-                             {currentRows.map((row, index) => (
+            <div className="table-container mb-5">
+              <table className="data-table">
+                <thead className="table-header">
+                  <tr>
+                    <th className="table-th">Sl No</th>
+                    <th className="table-th">Template Group</th>
+                    <th className="table-th">Template Specification</th>
+                    <th className="table-th">Dimension</th>
+                    <th className="table-th">No. of Unit</th>
+                    <th className="table-th">Amount</th>
+                    <th className="table-th">Hidden Amount</th>
+                    <th className="table-th-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentRows.map((row, index) => (
 
-             <tr
-               key={row.id}
-               style={{
-                 borderBottom: "1px solid #E5E7EB"
-               }}
-             >
-               <td style={{ padding: "12px 8px" }}>{row.slNo}</td>
+             <tr key={row.id} className="table-row">
+               <td className="table-cell">{row.slNo}</td>
            
                {/* GROUP */}
-               <td style={{ padding: "12px 8px", position: "relative" }}>
+               <td className="table-cell relative">
                  {editingRow === row.id ? (
                    <div>
                      <div
@@ -267,38 +236,16 @@ const stopEditing = () => {
                        }}
                        onKeyDown={handleDropdownKeyDown}
                        tabIndex={0}
-                       style={{
-                         width: "100%",
-                         padding: "6px 8px",
-                         border: "1px solid #D1D5DB",
-                         borderRadius: "4px",
-                         fontSize: "14px",
-                         cursor: "pointer",
-                         display: "flex",
-                         justifyContent: "space-between",
-                         alignItems: "center",
-                         backgroundColor: "#fff"
-                       }}
+                       className="w-full px-2 py-1.5 border border-gray-300 rounded flex justify-between items-center cursor-pointer bg-white text-sm"
                      >
                        <span>{row.group}</span>
-                       <ChevronDown size={20} style={{ color: "#000000" }} />
+                       <ChevronDown size={20} className="text-black" />
                      </div>
            
                      {showGroupDropdown === row.id && (
                        <div
                          onClick={(e) => e.stopPropagation()}
-                         style={{
-                           position: "absolute",
-                           top: "100%",
-                           left: "8px",
-                           right: "8px",
-                           backgroundColor: "#fff",
-                           border: "1px solid #D1D5DB",
-                           borderRadius: "4px",
-                           marginTop: "4px",
-                           zIndex: 10,
-                           boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-                         }}
+                         className="absolute top-full left-2 right-2 bg-white border border-gray-300 rounded mt-1 z-10 shadow-md"
                        >
                          {groupMasters.map((option, idx) => (
                            <div
@@ -309,17 +256,7 @@ const stopEditing = () => {
                                stopEditing();
                              }}
                              tabIndex={0}
-                             style={{
-                               padding: "8px 12px",
-                               cursor: "pointer",
-                               fontSize: "14px"
-                             }}
-                             onMouseEnter={(e) =>
-                               (e.currentTarget.style.backgroundColor = "#F9FAFB")
-                             }
-                             onMouseLeave={(e) =>
-                               (e.currentTarget.style.backgroundColor = "transparent")
-                             }
+                             className="px-3 py-2 cursor-pointer text-sm hover:bg-gray-50"
                            >
                              {option}
                            </div>
@@ -333,7 +270,7 @@ const stopEditing = () => {
                </td>
            
                {/* SPECIFICATION */}
-               <td style={{ padding: "12px 8px", position: "relative" }}>
+               <td className="table-cell relative">
                  {editingRow === row.id ? (
                    <div>
                      <div
@@ -343,38 +280,16 @@ const stopEditing = () => {
                        }}
                        onKeyDown={handleDropdownKeyDown}
                        tabIndex={0}
-                       style={{
-                         width: "100%",
-                         padding: "6px 8px",
-                         border: "1px solid #D1D5DB",
-                         borderRadius: "4px",
-                         fontSize: "14px",
-                         cursor: "pointer",
-                         display: "flex",
-                         justifyContent: "space-between",
-                         alignItems: "center",
-                         backgroundColor: "#fff"
-                       }}
+                       className="w-full px-2 py-1.5 border border-gray-300 rounded flex justify-between items-center cursor-pointer bg-white text-sm"
                      >
                        <span>{row.specification}</span>
-                       <ChevronDown size={20} style={{ color: "#000000" }} />
+                       <ChevronDown size={20} className="text-black" />
                      </div>
            
                      {showSpecDropdown === row.id && (
                        <div
                          onClick={(e) => e.stopPropagation()}
-                         style={{
-                           position: "absolute",
-                           top: "100%",
-                           left: "8px",
-                           right: "8px",
-                           backgroundColor: "#fff",
-                           border: "1px solid #D1D5DB",
-                           borderRadius: "4px",
-                           marginTop: "4px",
-                           zIndex: 10,
-                           boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-                         }}
+                         className="absolute top-full left-2 right-2 bg-white border border-gray-300 rounded mt-1 z-10 shadow-md"
                        >
                          {specMasters.map((option, idx) => (
                            <div
@@ -385,17 +300,7 @@ const stopEditing = () => {
                                stopEditing();
                              }}
                              tabIndex={0}
-                             style={{
-                               padding: "8px 12px",
-                               cursor: "pointer",
-                               fontSize: "14px"
-                             }}
-                             onMouseEnter={(e) =>
-                               (e.currentTarget.style.backgroundColor = "#F9FAFB")
-                             }
-                             onMouseLeave={(e) =>
-                               (e.currentTarget.style.backgroundColor = "transparent")
-                             }
+                             className="px-3 py-2 cursor-pointer text-sm hover:bg-gray-50"
                            >
                              {option}
                            </div>
@@ -409,20 +314,14 @@ const stopEditing = () => {
                </td>
            
                {/* DIMENSION */}
-               <td style={{ padding: "12px 8px" }}>
+               <td className="table-cell">
                  {editingRow === row.id ? (
                    <input
                      type="text"
                      value={row.dimension}
                      onChange={(e) => updateRow(row.id, "dimension", e.target.value)}
                      onKeyDown={(e) => e.key === "Enter" && stopEditing()}
-                     style={{
-                       width: "100%",
-                       padding: "6px 8px",
-                       border: "1px solid #D1D5DB",
-                       borderRadius: "4px",
-                       fontSize: "14px"
-                     }}
+                     className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
                    />
                  ) : (
                    <span>{row.dimension}</span>
@@ -430,7 +329,7 @@ const stopEditing = () => {
                </td>
            
                {/* NO OF UNIT */}
-               <td style={{ padding: "12px 8px" }}>
+               <td className="table-cell">
                  {editingRow === row.id ? (
                    <input
                      type="number"
@@ -439,13 +338,7 @@ const stopEditing = () => {
                        updateRow(row.id, "noOfUnit", parseInt(e.target.value))
                      }
                      onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                     style={{
-                       width: "80px",
-                       padding: "6px 8px",
-                       border: "1px solid #D1D5DB",
-                       borderRadius: "4px",
-                       fontSize: "14px"
-                     }}
+                     className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm"
                    />
                  ) : (
                    <span>{row.noOfUnit}</span>
@@ -453,7 +346,7 @@ const stopEditing = () => {
                </td>
            
                {/* AMOUNT */}
-               <td style={{ padding: "12px 8px" }}>
+               <td className="table-cell">
                  {editingRow === row.id ? (
                    <input
                      type="number"
@@ -462,13 +355,7 @@ const stopEditing = () => {
                        updateRow(row.id, "amount", parseFloat(e.target.value))
                      }
                      onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                     style={{
-                       width: "96px",
-                       padding: "6px 8px",
-                       border: "1px solid #D1D5DB",
-                       borderRadius: "4px",
-                       fontSize: "14px"
-                     }}
+                     className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
                    />
                  ) : (
                    <span>₹ {row.amount.toFixed(2)}</span>
@@ -476,7 +363,7 @@ const stopEditing = () => {
                </td>
            
                {/* HIDDEN AMOUNT */}
-               <td style={{ padding: "12px 8px" }}>
+               <td className="table-cell">
                  {editingRow === row.id ? (
                    <input
                      type="number"
@@ -485,13 +372,7 @@ const stopEditing = () => {
                        updateRow(row.id, "hiddenAmount", parseFloat(e.target.value))
                      }
                      onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                     style={{
-                       width: "96px",
-                       padding: "6px 8px",
-                       border: "1px solid #D1D5DB",
-                       borderRadius: "4px",
-                       fontSize: "14px"
-                     }}
+                     className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
                    />
                  ) : (
                    <span>₹ {row.hiddenAmount.toFixed(2)}</span>
@@ -499,59 +380,32 @@ const stopEditing = () => {
                </td>
            
                {/* ACTIONS */}
-               <td style={{ padding: "12px 8px" }}>
-                 <div
-                   style={{
-                     display: "flex",
-                     gap: "8px",
-                     justifyContent: "center",
-                     position: "relative"
-                   }}
-                 >
+               <td className="table-cell-center">
+                 <div className="table-actions relative">
                    <button
                      onClick={() => toggleMenu(index)}
-                     style={{
-                       background: "transparent",
-                       border: "none",
-                       cursor: "pointer",
-                       padding: "4px"
-                     }}
+                     className="btn-action"
                    >
-                     <Menu size={18} style={{ color: "#374151" }} />
+                     <Menu size={18} className="text-gray-700" />
                    </button>
            
                    {openMenuIndex === index && (
-                     <div
-                       style={{
-                         position: "absolute",
-                         right: "16px",
-                         top: "50%",
-                         transform: "translateY(-50%)",
-                         backgroundColor: "#fff",
-                         border: "1px solid #E5E7EB",
-                         borderRadius: "6px",
-                         boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                         display: "flex",
-                         gap: "8px",
-                         padding: "8px",
-                         zIndex: 10
-                       }}
-                     >
+                     <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-md shadow-md flex gap-2 p-2 z-10">
                        <Plus size={18} 
-                       style={{ color: "#16A34A", cursor: "pointer"  }} 
+                       className="text-green-600 cursor-pointer" 
                         onClick={() => {
                         handleInsertRow(row.id);
                         setOpenMenuIndex(null);
                         }}
                        />
                        <Edit2 size={18} 
-                       style={{ color: "#374151", cursor: "pointer" }}
+                       className="text-gray-700 cursor-pointer"
                         onClick={() => {
                         handleEdit(index);
                         setOpenMenuIndex(null);
                         }} />
                        <Trash2 size={18} 
-                       style={{ color: "#DC2626", cursor: "pointer" }} 
+                       className="text-red-600 cursor-pointer" 
                        onClick={() => {
                        handleDelete(index);
                        setOpenMenuIndex(null);
@@ -563,68 +417,44 @@ const stopEditing = () => {
              </tr>
            ))}
            
-                           </tbody>
-                         </table>
-                       </div>
-            <div style={{
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: '8px',
-  marginBottom: '20px'
-}}>
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage(p => p - 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-    }}
-  >
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="pagination-container">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => p - 1)}
+                className={currentPage === 1 ? 'pagination-btn pagination-btn-disabled' : 'pagination-btn pagination-btn-active'}
+              >
                 <ChevronLeft />
+              </button>
 
-  </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={currentPage === page ? 'pagination-page-btn pagination-page-active' : 'pagination-page-btn pagination-page-inactive'}
+                >
+                  {page}
+                </button>
+              ))}
 
-  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-    <button
-      key={page}
-      onClick={() => setCurrentPage(page)}
-      style={{
-        padding: '6px 12px',
-        borderRadius: '4px',
-        border: '1px solid #d1d5db',
-        backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-        color: currentPage === page ? '#ffffff' : '#000000',
-        cursor: 'pointer'
-      }}
-    >
-      {page}
-    </button>
-  ))}
-
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage(p => p + 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-    }}
-  >
-     <ChevronRight />
-  </button>
-</div>
-
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => p + 1)}
+                className={currentPage === totalPages ? 'pagination-btn pagination-btn-disabled' : 'pagination-btn pagination-btn-active'}
+              >
+                <ChevronRight />
+              </button>
+            </div>
 
            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+            <div className="flex justify-end mb-5">
               <button
                 onClick={handleAddButtonClick}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', border: 'none', borderRadius: '6px', backgroundColor: '#991b1b', color: 'white', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}
+                className="btn-smallbtn flex items-center gap-2"
               >
                 <Plus size={18} />
                 Add Row
@@ -632,26 +462,26 @@ const stopEditing = () => {
             </div>
 
             {showAddForm && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '12px', alignItems: 'end', paddingBottom: '8px' }}>
-                  <div style={{backgroundcolor: '#fde2e2',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px', fontWeight: 'bold' }}>Sl No</label>
+                <div className="grid grid-cols-8 gap-3 items-end pb-2">
+                  <div className="bg-red-50 p-2.5 rounded border border-gray-300">
+                    <label className="block text-[11px] text-gray-600 mb-1.5 font-bold">Sl No</label>
                     <input
                       type="text"
                       placeholder="Input"
                       value={newRowData.slNo}
                       onChange={(e) => setNewRowData({ ...newRowData, slNo: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{backgroundcolor: 'white',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                      <label style={{ fontSize: '11px', color: '#6b7280', fontWeight: 'bold', margin: 0 }}>Template Group</label>
+                  <div className="bg-white p-2.5 rounded border border-gray-300">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <label className="text-[11px] text-gray-600 font-bold m-0">Template Group</label>
                       <button
                         onClick={() => { setCurrentRowForModal('newRow'); setShowGroupModal(true); }}
-                        style={{ padding: '0', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        className="p-0 border-none bg-transparent cursor-pointer flex items-center"
                       >
-                        <ChevronDown size={14} style={{ color: '#6b7280' }} />
+                        <ChevronDown size={14} className="text-gray-600" />
                       </button>
                     </div>
                     <input
@@ -659,18 +489,18 @@ const stopEditing = () => {
                       placeholder="Input"
                       value={newRowData.group}
                       onChange={(e) => setNewRowData({ ...newRowData, group: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{backgroundcolor: 'white',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                      <label style={{ fontSize: '11px', color: '#6b7280', fontWeight: 'bold', margin: 0 }}>Template Specification</label>
+                  <div className="bg-white p-2.5 rounded border border-gray-300">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <label className="text-[11px] text-gray-600 font-bold m-0">Template Specification</label>
                       <button
                         onClick={() => { setCurrentRowForModal('newRow'); setShowSpecModal(true); }}
-                        style={{ padding: '0', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        className="p-0 border-none bg-transparent cursor-pointer flex items-center"
                       >
-                        <ChevronDown size={14} style={{ color: '#6b7280' }} />
+                        <ChevronDown size={14} className="text-gray-600" />
                       </button>
                     </div>
                     <input
@@ -678,58 +508,58 @@ const stopEditing = () => {
                       placeholder="Input"
                       value={newRowData.specification}
                       onChange={(e) => setNewRowData({ ...newRowData, specification: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{backgroundcolor: 'white',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px', fontWeight: 'bold' }}>Dimension</label>
+                  <div className="bg-white p-2.5 rounded border border-gray-300">
+                    <label className="block text-[11px] text-gray-600 mb-1.5 font-bold">Dimension</label>
                     <input
                       type="text"
                       placeholder="Input"
                       value={newRowData.dimension}
                       onChange={(e) => setNewRowData({ ...newRowData, dimension: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px',outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{backgroundcolor: 'white',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px', fontWeight: 'bold' }}>No. of Unit</label>
+                  <div className="bg-white p-2.5 rounded border border-gray-300">
+                    <label className="block text-[11px] text-gray-600 mb-1.5 font-bold">No. of Unit</label>
                     <input
                       type="text"
                       placeholder="20*8*8.6"
                       value={newRowData.noOfUnit}
                       onChange={(e) => setNewRowData({ ...newRowData, noOfUnit: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{backgroundcolor: 'white',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px', fontWeight: 'bold' }}>Amount</label>
+                  <div className="bg-white p-2.5 rounded border border-gray-300">
+                    <label className="block text-[11px] text-gray-600 mb-1.5 font-bold">Amount</label>
                     <input
                       type="text"
                       placeholder="₹ 10,00,000"
                       value={newRowData.amount}
                       onChange={(e) => setNewRowData({ ...newRowData, amount: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{backgroundcolor: 'white',padding:'10px', borderRadius:'4px',border: '1px solid #d1d5db'}}>
-                    <label style={{ display: 'block', fontSize: '11px', color: '#6b7280', marginBottom: '6px', fontWeight: 'bold' }}>Hidden Amount</label>
+                  <div className="bg-white p-2.5 rounded border border-gray-300">
+                    <label className="block text-[11px] text-gray-600 mb-1.5 font-bold">Hidden Amount</label>
                     <input
                       type="text"
                       placeholder="₹ 10,00,000"
                       value={newRowData.hiddenAmount}
                       onChange={(e) => setNewRowData({ ...newRowData, hiddenAmount: e.target.value })}
-                      style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none'  }}
+                      className="filter-input text-[13px]"
                     />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                  <div className="flex items-end">
                     <button
                       onClick={handleSaveNewRow}
-                      style={{ width: '100%', padding: '8px 24px', border: 'none', borderRadius: '4px', backgroundColor: '#991b1b', color: 'white', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}
+                      className="btn-smallbtn w-full"
                     >
                       Save
                     </button>
@@ -738,121 +568,108 @@ const stopEditing = () => {
             )}
       
 
-            <div style={{ marginBottom: '20px', border: '1px solid#9CA3AF', borderRadius: '6px', overflow: 'hidden' }}>
-              <div style={{ backgroundColor: '#f3f4f6', padding: '12px 16px', borderBottom: '1px solid #9CA3AF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#111827', margin: 0 }}>Terms And Conditions</h3>
-                <button style={{ padding: '4px', border: 'none', backgroundColor: 'transparent', color: '#6b7280', cursor: 'pointer' }}>
+            <div className="mb-5 border border-gray-400 rounded-md overflow-hidden">
+              <div className="bg-gray-100 px-4 py-3 border-b border-gray-400 flex justify-between items-center">
+                <h3 className="text-sm font-semibold text-gray-900 m-0">Terms And Conditions</h3>
+                <button className="p-1 border-none bg-transparent text-gray-600 cursor-pointer">
                   <Edit2 size={16} />
                 </button>
               </div>
-              <div style={{ padding: '16px', fontSize: '12px', color: '#4b5563', lineHeight: '1.8' }}>
-                <p style={{ margin: '0 0 8px 0' }}>1. This rate is valid for 2 weeks from the quotation date</p>
-                <p style={{ margin: '0 0 8px 0' }}>2. Delivery: Fabrication will take a minimum of 21 days to complete.</p>
-                <p style={{ margin: '0 0 8px 0' }}>3. Payment Terms: 50% advance & balance 40% on completion and before loading</p>
-                <p style={{ margin: '0 0 8px 0' }}>4. Transportation & Unloading: To be arranged by the customer at site.</p>
-                <p style={{ margin: '0 0 8px 0' }}>5. Warranty: Seller has a buy-back policy once the container or cabin duration expires.</p>
-                <p style={{ margin: '0 0 8px 0' }}>6. Warranty: Six months from the date of delivery. Warranty excludes physical damage, misuse and unauthorised alterations.</p>
-                <p style={{ margin: '0' }}>7. Transit Insurance: Transit insurance can be arranged on request and will be billed separately, subject to customer acceptance.</p>
+              <div className="p-4 text-xs text-gray-600 leading-relaxed">
+                <p className="m-0 mb-2">1. This rate is valid for 2 weeks from the quotation date</p>
+                <p className="m-0 mb-2">2. Delivery: Fabrication will take a minimum of 21 days to complete.</p>
+                <p className="m-0 mb-2">3. Payment Terms: 50% advance & balance 40% on completion and before loading</p>
+                <p className="m-0 mb-2">4. Transportation & Unloading: To be arranged by the customer at site.</p>
+                <p className="m-0 mb-2">5. Warranty: Seller has a buy-back policy once the container or cabin duration expires.</p>
+                <p className="m-0 mb-2">6. Warranty: Six months from the date of delivery. Warranty excludes physical damage, misuse and unauthorised alterations.</p>
+                <p className="m-0">7. Transit Insurance: Transit insurance can be arranged on request and will be billed separately, subject to customer acceptance.</p>
               </div>
             </div>
 
-            <div style={{ marginBottom: '20px', border: '1px solid #9CA3AF', borderRadius: '6px', padding: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>Total Amount</h3>
+            <div className="mb-5 border border-gray-400 rounded-md p-3">
+              <h3 className="section-title">Total Amount</h3>
               
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', paddingBottom: '5px' }}>
-                <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '14px', fontWeight: '500' }}>
-                  <div style={{ fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Total</div>
+              <div className="grid grid-cols-4 gap-4 pb-1.5">
+                <div className="filter-grid-red">
+                  <div className="filter-label">Total</div>
                    <input
                            readOnly
                             value={`₹ ${calculateTotal().toFixed(2)}`}
-                             style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'transparent'  }}
+                             className="filter-input bg-transparent"
                         />
                 </div>
                 
-                <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '14px', fontWeight: '500' }}>
-                  <div style={{ fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Discount</div>
+                <div className="filter-grid-red">
+                  <div className="filter-label">Discount</div>
                   <input
         type="number"
         value={discount}
         onChange={(e) => setDiscount(Number(e.target.value) || 0)}
-         style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'transparent'  }}
+         className="filter-input bg-transparent"
       />
                 </div>
                 
-                <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '14px', fontWeight: '500' }}>
-                  <div style={{ fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Taxable Value</div>
+                <div className="filter-grid-red">
+                  <div className="filter-label">Taxable Value</div>
                     <input
         readOnly
         value={`₹ ${calculateTaxableValue().toFixed(2)}`}
-         style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'transparent'  }}
+         className="filter-input bg-transparent"
       />
                   </div>
                 
-                <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '14px', fontWeight: '500' }}>
-                  <div style={{ fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>GST 18%</div>
+                <div className="filter-grid-red">
+                  <div className="filter-label">GST 18%</div>
                     <input
         type="number"
         value={gstPercentage}
         onChange={(e) => setGstPercentage(Number(e.target.value) || 0)}
-        style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'transparent'  }}
+        className="filter-input bg-transparent"
       />
                   </div>
               </div>
 
-              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '14px', fontWeight: '500' }}>
-                <div style={{ fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Net Amount</div>
+              <div className="filter-grid-red">
+                <div className="filter-label">Net Amount</div>
                 <input
       readOnly
       value={`₹ ${calculateNetAmount().toFixed(2)}`}
-       style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '13px', outline: 'none', backgroundColor: 'transparent'  }}
+       className="filter-input bg-transparent"
     />
                 </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div className="flex justify-end">
                <button 
-            onclick={{handleSubmit}}
-                    style={{ 
-                      width: '150px',
-                      height:'50px',
-                      padding: '10px 24px', 
-                      backgroundColor: '#A63128', 
-                      color: 'white', 
-                      borderRadius: '15px', 
-                      fontSize: '14px', 
-                      fontWeight: '500', 
-                      border: 'none', 
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}
+            onClick={handleSubmit}
+            className="btn-all"
                   >
                     <span>✓</span>
                 <span>Submit</span>
                   </button>
             </div>
+             <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
+            </div> 
+             
           </div>
-           <button 
-            onClick={() => navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
-              <span>←</span>
-              <span>Back</span>
-            </button>
+          
         </div>
       </div>
 
       {showGroupModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', width: '400px', maxHeight: '500px', overflow: 'auto' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Select Group</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]">
+          <div className="bg-white rounded-lg p-6 w-[400px] max-h-[500px] overflow-auto">
+            <h3 className="text-lg font-semibold mb-4">Select Group</h3>
+            <div className="flex flex-col gap-2">
               {groupMasters.map((group, idx) => (
                 <button
                   key={idx}
                   onClick={() => selectFromMaster('group', group)}
-                  style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '4px', cursor: 'pointer', textAlign: 'left', backgroundColor: 'white', fontSize: '14px' }}
+                  className="p-3 border border-gray-200 rounded cursor-pointer text-left bg-white text-sm hover:bg-gray-50"
                 >
                   {group}
                 </button>
@@ -860,7 +677,7 @@ const stopEditing = () => {
             </div>
             <button
               onClick={() => setShowGroupModal(false)}
-              style={{ marginTop: '16px', padding: '10px 20px', border: 'none', borderRadius: '4px', backgroundColor: '#6b7280', color: 'white', cursor: 'pointer', width: '100%' }}
+              className="mt-4 py-2.5 px-5 border-none rounded bg-gray-600 text-white cursor-pointer w-full"
             >
               Close
             </button>
@@ -869,15 +686,15 @@ const stopEditing = () => {
       )}
 
       {showSpecModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', width: '500px', maxHeight: '500px', overflow: 'auto' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Select Specification</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]">
+          <div className="bg-white rounded-lg p-6 w-[500px] max-h-[500px] overflow-auto">
+            <h3 className="text-lg font-semibold mb-4">Select Specification</h3>
+            <div className="flex flex-col gap-2">
               {specMasters.map((spec, idx) => (
                 <button
                   key={idx}
                   onClick={() => selectFromMaster('spec', spec)}
-                  style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '4px', cursor: 'pointer', textAlign: 'left', backgroundColor: 'white', fontSize: '13px' }}
+                  className="p-3 border border-gray-200 rounded cursor-pointer text-left bg-white text-[13px] hover:bg-gray-50"
                 >
                   {spec}
                 </button>
@@ -885,13 +702,18 @@ const stopEditing = () => {
             </div>
             <button
               onClick={() => setShowSpecModal(false)}
-              style={{ marginTop: '16px', padding: '10px 20px', border: 'none', borderRadius: '4px', backgroundColor: '#6b7280', color: 'white', cursor: 'pointer', width: '100%' }}
+              className="mt-4 py-2.5 px-5 border-none rounded bg-gray-600 text-white cursor-pointer w-full"
             >
               Close
             </button>
           </div>
         </div>
       )}
+
+       
     </div>
+
+    
+    
   );
 }

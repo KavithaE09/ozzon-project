@@ -188,79 +188,37 @@ const currentRecords = filteredRecords.slice(
     setCurrentPage(1);
   };
 
-  const inputContainerStyle = {
-    backgroundColor: 'white',
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #9CA3AF',
-    borderRight: '3px solid #DC2626'
-  };
-
-  const labelStyle = {
-    display: 'block',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#374151',
-    marginBottom: '6px'
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '1px 1px',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '12px',
-    outline: 'none',
-    appearance: 'none',
-    backgroundColor: 'white'
-  };
-
-  const dropdownStyle = {
-    position: 'absolute',
-    top: '100%',
-    left: '0',
-    right: '0',
-    marginTop: '4px',
-    backgroundColor: 'white',
-    border: '1px solid #D1D5DB',
-    borderRadius: '4px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    maxHeight: '200px',
-    overflowY: 'auto',
-    zIndex: 1000
-  };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
-      <div style={{ display: 'flex', flex: 1 }}>
-        <div style={{ flex: 1, padding: '20px', backgroundColor: '#f5e6e8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '10px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '19px', marginTop: 0 }}>Material List</h2>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Material List</h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '15px' }}>
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Product Code</label>
+            <div className="filter-grid mb-4">
+              <div className="filter-grid-red">
+                <label className="filter-label">Product Code</label>
                 <input
                   type="text"
                   value={formData.productCode}
                   onChange={(e) => setFormData({ ...formData, productCode: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Product Name</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">Product Name</label>
                 <input
                   type="text"
                   value={formData.productName}
                   onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div ref={groupRef} style={{ ...inputContainerStyle, position: 'relative' }}>
-                <label style={labelStyle}>Group</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={groupRef} className="filter-grid-red">
+                <label className="filter-label">Group</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={groupSearch}
@@ -270,15 +228,12 @@ const currentRecords = filteredRecords.slice(
                     }}
                     onFocus={() => setIsGroupOpen(true)}
                     placeholder="Type or select..."
-                    style={{ ...inputStyle, cursor: 'text' }}
+                    className="dropdown-input text-xs"
                   />
-                  <ChevronDown
-                    size={20}
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }}
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isGroupOpen && (
-                  <div style={dropdownStyle}>
+                  <div className="dropdown-menu">
                     {filteredGroups.length > 0 ? (
                       filteredGroups.map((option, index) => (
                         <div
@@ -290,29 +245,23 @@ const currentRecords = filteredRecords.slice(
                           }}
                           onMouseEnter={() => setHoveredGroup(option)}
                           onMouseLeave={() => setHoveredGroup(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredGroup === option ? 'white' : '#374151',
-                            backgroundColor: hoveredGroup === option ? '#A63128' : 'white',
-                            borderBottom: index < filteredGroups.length - 1 ? '1px solid #E5E7EB' : 'none',
-                            transition: 'all 0.2s ease'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredGroup === option ? 'dropdown-item-hovered' : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div ref={unitRef} style={{ ...inputContainerStyle, position: 'relative' }}>
-                <label style={labelStyle}>Unit</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={unitRef} className="filter-grid-red">
+                <label className="filter-label">Unit</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={unitSearch}
@@ -322,15 +271,12 @@ const currentRecords = filteredRecords.slice(
                     }}
                     onFocus={() => setIsUnitOpen(true)}
                     placeholder="Type or select..."
-                    style={{ ...inputStyle, cursor: 'text' }}
+                    className="dropdown-input text-xs"
                   />
-                  <ChevronDown
-                    size={20}
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }}
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isUnitOpen && (
-                  <div style={dropdownStyle}>
+                  <div className="dropdown-menu">
                     {filteredUnits.length > 0 ? (
                       filteredUnits.map((option, index) => (
                         <div
@@ -342,110 +288,90 @@ const currentRecords = filteredRecords.slice(
                           }}
                           onMouseEnter={() => setHoveredUnit(option)}
                           onMouseLeave={() => setHoveredUnit(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredUnit === option ? 'white' : '#374151',
-                            backgroundColor: hoveredUnit === option ? '#A63128' : 'white',
-                            borderBottom: index < filteredUnits.length - 1 ? '1px solid #E5E7EB' : 'none',
-                            transition: 'all 0.2s ease'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredUnit === option ? 'dropdown-item-hovered' : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '15px' }}>
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Selling Rate</label>
+            <div className="filter-grid mb-4">
+              <div className="filter-grid-red">
+                <label className="filter-label">Selling Rate</label>
                 <input
                   type="text"
                   value={formData.sellingRate}
                   onChange={(e) => setFormData({ ...formData, sellingRate: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Maximum Stock Quantity</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">Maximum Stock Quantity</label>
                 <input
                   type="text"
                   value={formData.maxStock}
                   onChange={(e) => setFormData({ ...formData, maxStock: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Minimum Stock Quantity</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">Minimum Stock Quantity</label>
                 <input
                   type="text"
                   value={formData.minStock}
                   onChange={(e) => setFormData({ ...formData, minStock: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>GST %</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">GST %</label>
                 <input
                   type="text"
                   value={formData.gst}
                   onChange={(e) => setFormData({ ...formData, gst: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '15px' }}>
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>HSN Code</label>
+            <div className="filter-grid mb-4">
+              <div className="filter-grid-red">
+                <label className="filter-label">HSN Code</label>
                 <input
                   type="text"
                   value={formData.hsnCode}
                   onChange={(e) => setFormData({ ...formData, hsnCode: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Re-Order Level</label>
+              <div className="filter-grid-red">
+                <label className="filter-label">Re-Order Level</label>
                 <input
                   type="text"
                   value={formData.reOrderLevel}
                   onChange={(e) => setFormData({ ...formData, reOrderLevel: e.target.value })}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
+              
               <div></div>
-            <div style={{ display: 'grid', justifyContent: 'flex-start', marginTop: '20px' }}>
 
+              <div className="grid justify-start mt-5">
                 <button 
                   onClick={handleSubmit}
-                  style={{ 
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px', 
-                    backgroundColor: '#A63128', 
-                    color: 'white', 
-                    borderRadius: '15px', 
-                    fontSize: '14px', 
-                    fontWeight: '500', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
+                  className="btn-all"
                 >
                   <span>✓</span>
                   <span>Submit</span>
@@ -453,23 +379,23 @@ const currentRecords = filteredRecords.slice(
               </div>
             </div>
 
-            <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '19px', marginTop: 0 }}>Record List</h2>
+            <h2 className="section-title">Record List</h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '15px' }}>
-              <div style={inputContainerStyle}>
-                <label style={labelStyle}>Search By</label>
+            <div className="filter-grid mb-4">
+              <div className="filter-grid-red">
+                <label className="filter-label">Search By</label>
                 <input
                   type="text"
                   placeholder="Material List Name"
                   value={searchBy}
                   onChange={(e) => setSearchBy(e.target.value)}
-                  style={inputStyle}
+                  className="filter-input text-xs"
                 />
               </div>
 
-              <div ref={groupnameRef} style={{ ...inputContainerStyle, position: 'relative' }}>
-                <label style={labelStyle}>Group Name</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={groupnameRef} className="filter-grid-red">
+                <label className="filter-label">Group Name</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={groupnameSearch}
@@ -479,15 +405,12 @@ const currentRecords = filteredRecords.slice(
                     }}
                     onFocus={() => setIsGroupnameOpen(true)}
                     placeholder="Type or select..."
-                    style={{ ...inputStyle, cursor: 'text' }}
+                    className="dropdown-input text-xs"
                   />
-                  <ChevronDown
-                    size={20}
-                    style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }}
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isGroupnameOpen && (
-                  <div style={dropdownStyle}>
+                  <div className="dropdown-menu">
                     {filteredGroupsname.length > 0 ? (
                       filteredGroupsname.map((option, index) => (
                         <div
@@ -499,171 +422,108 @@ const currentRecords = filteredRecords.slice(
                           }}
                           onMouseEnter={() => setHoveredGroupname(option)}
                           onMouseLeave={() => setHoveredGroupname(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredGroupname === option ? 'white' : '#374151',
-                            backgroundColor: hoveredGroupname === option ? '#A63128' : 'white',
-                            borderBottom: index < filteredGroupsname.length - 1 ? '1px solid #E5E7EB' : 'none',
-                            transition: 'all 0.2s ease'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredGroupname === option ? 'dropdown-item-hovered' : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
               
-              <div style={{ display: 'grid', alignItems: 'end' }}></div>
+              <div></div>
 
-             <div style={{ display: 'grid', justifyContent: 'flex-start', marginTop: '20px' }}>
-
+              <div className="grid justify-start mt-5">
                 <button
                   onClick={handleSearch}
-                  style={{
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px',
-                    backgroundColor: '#A63128',
-                    color: 'white',
-                    borderRadius: '15px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
+                  className="btn-all"
                 >
                   <Search size={18} /> Search
                 </button>
               </div>
             </div>
 
-            <div style={{ border: '1px solid #9CA3AF', borderRadius: '6px', overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#fde2e2', borderBottom: '1px solid #9CA3AF' }}>
-                    <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '16px', fontWeight: '500', color: '#000000', textTransform: 'uppercase', width: '50px' }}></th>
-                    <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '16px', fontWeight: 'bold', color: '#000000', textTransform: 'uppercase' }}>Material List Name</th>
-                    <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '16px', fontWeight: 'bold', color: '#000000', textTransform: 'uppercase' }}>Selling Rate</th>
-                    <th style={{ padding: '12px 24px', textAlign: 'center', fontSize: '16px', fontWeight: 'bold', color: '#000000', textTransform: 'uppercase', width: '120px' }}></th>
+            <div className="border border-gray-400 rounded-md overflow-hidden">
+              <table className="data-table">
+                <thead className="table-header">
+                  <tr>
+                    <th className="table-th w-[50px]"></th>
+                    <th className="table-th uppercase">Material List Name</th>
+                    <th className="table-th uppercase">Selling Rate</th>
+                    <th className="table-th-center uppercase w-[120px]"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentRecords.length > 0 ? (
                   currentRecords.map((record, idx) => (
-
-
-                      <tr
-                        key={record.id}
-                        style={{ borderTop: idx > 0 ? '1px solid #9CA3AF' : 'none', transition: 'background-color 0.2s' }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                      >
-                        <td style={{ padding: '16px 24px' }}>
+                      <tr key={record.id} className="table-row">
+                        <td className="table-cell">
                           <button
                           onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
-
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                            className="bg-transparent border-none cursor-pointer p-0 flex items-center"
                           >
                             {expandedRow === idx ?
-                              <ChevronDown style={{ width: '16px', height: '16px' }} /> :
-                              <ChevronRight style={{ width: '16px', height: '16px' }} />
+                              <ChevronDown className="w-4 h-4" /> :
+                              <ChevronRight className="w-4 h-4" />
                             }
                           </button>
                         </td>
-                        <td style={{ padding: '8px 16px', fontSize: '11px', color: '#111827' }}>
+                        <td className="table-cell text-[11px]">
                           {editingId === record.id ? (
                             <input
                               type="text"
                               value={editingData.name}
                               onChange={(e) => setEditingData({ ...editingData, name: e.target.value })}
-                              style={{
-                                padding: '4px 8px',
-                                border: '1px solid #9CA3AF',
-                                borderRadius: '4px',
-                                fontSize: '11px',
-                                outline: 'none',
-                                backgroundColor: 'white'
-                              }}
+                              className="px-2 py-1 border border-gray-400 rounded text-[11px] outline-none bg-white"
                             />
                           ) : (
                             record.name
                           )}
                         </td>
-                        <td style={{ padding: '8px 16px', fontSize: '11px', color: '#111827' }}>
+                        <td className="table-cell text-[11px]">
                           {editingId === record.id ? (
                             <input
                               type="text"
                               value={editingData.rate}
                               onChange={(e) => setEditingData({ ...editingData, rate: e.target.value })}
                               placeholder="Enter amount"
-                              style={{
-                                padding: '4px 8px',
-                                border: '1px solid #9CA3AF',
-                                borderRadius: '4px',
-                                fontSize: '11px',
-                                outline: 'none',
-                                backgroundColor: 'white',
-                                width: '100px'
-                              }}
+                              className="w-[100px] px-2 py-1 border border-gray-400 rounded text-[11px] outline-none bg-white"
                             />
                           ) : (
                             record.rate
                           )}
                         </td>
-                        <td style={{ padding: '8px 16px', textAlign: 'center' }}>
+                        <td className="table-cell-center">
                           {editingId === record.id ? (
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                            <div className="table-actions">
                               <button
                                 onClick={() => handleUpdate(record.id)}
-                                style={{
-                                  padding: '4px 12px',
-                                  backgroundColor: '#A63128',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '4px',
-                                  fontSize: '11px',
-                                  cursor: 'pointer',
-                                  fontWeight: '500'
-                                }}
+                                className="btn-smallbtn text-[11px]"
                               >
                                 Update
                               </button>
                               <button
                                 onClick={handleCancelEdit}
-                                style={{
-                                  padding: '4px 12px',
-                                  backgroundColor: '#6B7280',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '4px',
-                                  fontSize: '11px',
-                                  cursor: 'pointer',
-                                  fontWeight: '500'
-                                }}
+                                className="px-3 py-1 bg-gray-600 text-white border-none rounded text-[11px] cursor-pointer font-medium"
                               >
                                 Cancel
                               </button>
                             </div>
                           ) : (
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                            <div className="table-actions">
                               <Edit2 
                                 size={18} 
-                                style={{ color: '#6B7280', cursor: 'pointer' }}
+                                className="text-gray-600 cursor-pointer"
                                 onClick={() => handleEdit(record)}
                               />
                               <Trash2 
                                 size={18} 
-                                style={{ color: '#DC2626', cursor: 'pointer' }}
+                                className="text-red-600 cursor-pointer"
                                 onClick={() => handleDelete(record.id)}
                               />
                             </div>
@@ -673,10 +533,7 @@ const currentRecords = filteredRecords.slice(
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan="4"
-                        style={{ padding: '16px 24px', textAlign: 'center', fontSize: '14px', color: '#6b7280' }}
-                      >
+                      <td colSpan="4" className="no-data-cell">
                         No records found
                       </td>
                     </tr>
@@ -685,77 +542,44 @@ const currentRecords = filteredRecords.slice(
               </table>
             </div>
           </div>
-            <div style={{
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: '8px',
-  marginTop: '12px'
-}}>
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage(p => p - 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-    }}
-  >
-     <ChevronLeft />
-  </button>
+          
+          {/* Pagination */}
+          <div className="pagination-container mt-3">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => p - 1)}
+              className={currentPage === 1 ? 'pagination-btn pagination-btn-disabled' : 'pagination-btn pagination-btn-active'}
+            >
+              <ChevronLeft />
+            </button>
 
-  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-    <button
-      key={page}
-      onClick={() => setCurrentPage(page)}
-      style={{
-        padding: '6px 12px',
-        borderRadius: '4px',
-        border: '1px solid #d1d5db',
-        backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-        color: currentPage === page ? '#ffffff' : '#000000',
-        cursor: 'pointer'
-      }}
-    >
-      {page}
-    </button>
-  ))}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={currentPage === page ? 'pagination-page-btn pagination-page-active' : 'pagination-page-btn pagination-page-inactive'}
+              >
+                {page}
+              </button>
+            ))}
 
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage(p => p + 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-    }}
-  >
- <ChevronRight />
-  </button>
-</div>
-          <button
-           onClick={() => navigate(-1)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 20px',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#B91C1C',
-              border: '2px solid #B91C1C',
-              borderRadius: '4px',
-              backgroundColor: 'white',
-              cursor: 'pointer'
-            }}
-          >
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => p + 1)}
+              className={currentPage === totalPages ? 'pagination-btn pagination-btn-disabled' : 'pagination-btn pagination-btn-active'}
+            >
+              <ChevronRight />
+            </button>
+          </div>
+
+          {/* Back Button */}
+          <button onClick={() => navigate(-1)} className="btn-back">
             <span>←</span>
             <span>Back</span>
           </button>
+            
         </div>
+        
       </div>
     </div>
   );

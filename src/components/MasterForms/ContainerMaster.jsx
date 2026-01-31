@@ -151,287 +151,206 @@ export default function ContainerMaster() {
     setEditingData({ ...editingData, [field]: value });
   };
 
-  const handleBack = () => {
-    alert('Going back...');
-  };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#F9FAFB' }}>
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Main Content */}
-        <div style={{ flex: 1, overflow: 'auto', padding: '20px', backgroundColor: '#F3E8E8' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', marginBottom: '12px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '24px' }}>Container Status Master</h2>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-start',
-                gap: '40px',
-                marginBottom: '24px'
-              }}
-            >
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Container Status Master</h2>
+            
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', gap: '40px', marginBottom: '24px' }}>
               {/* Container Status Name Input */}
-              <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    color: '#374151',
-                    marginBottom: '8px'
-                  }}
-                >
-                  Container Status Name
-                </label>
+              <div className="filter-grid-red" style={{ width: '300px' }}>
+                <label className="filter-label">Container Status Name</label>
                 <input
                   type="text"
                   value={formData.containerStatusName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, containerStatusName: e.target.value })
-                  }
-                  style={{
-                    width: '256px',
-                    padding: '4px 8px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    backgroundColor: 'white'
-                  }}
+                  onChange={(e) => setFormData({ ...formData, containerStatusName: e.target.value })}
+                  className="filter-input"
                 />
               </div>
 
-              <div></div>
-
               {/* Submit Button */}
-              <div>
-                <button
-                  style={{
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px',
-                    backgroundColor: '#A63128',
-                    color: 'white',
-                    borderRadius: '15px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <span>✓</span>
-                  <span>Submit</span>
-                </button>
-              </div>
+              <button className="btn-all">
+                <span>✓</span>
+                <span>Submit</span>
+              </button>
             </div>
 
-            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginTop: '32px' }}>Container List</h3>
+            <h3 className="section-title" style={{ marginTop: '32px' }}>Container List</h3>
 
             {/* Table */}
-            <div style={{ borderRadius: '8px', border: '1px solid #D1D5DB', overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#fde2e2' }}>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>S/No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Container No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Party Name</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Sz/Type</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Grade</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Liner</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Yard</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>MFG Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>In Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Delivery Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Photo</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#000000', fontSize: '16px' }}>Actions</th>
+            <div className="table-container">
+              <table className="data-table">
+                <thead className="table-header">
+                  <tr>
+                    <th className="table-th">S/No</th>
+                    <th className="table-th">Container No</th>
+                    <th className="table-th">Party Name</th>
+                    <th className="table-th">Sz/Type</th>
+                    <th className="table-th">Grade</th>
+                    <th className="table-th">Liner</th>
+                    <th className="table-th">Yard</th>
+                    <th className="table-th">MFG Date</th>
+                    <th className="table-th">In Date</th>
+                    <th className="table-th">Delivery Date</th>
+                    <th className="table-th">Photo</th>
+                    <th className="table-th">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedData.map((row, index) => (
-                    <tr key={index} style={{ borderBottom: '1px solid #E5E7EB' }}>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                    <tr key={index} className="table-row">
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.sNo}
                             onChange={(e) => handleEditFieldChange('sNo', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           `${row.sNo}.`
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.containerNo}
                             onChange={(e) => handleEditFieldChange('containerNo', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.containerNo
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.partyName}
                             onChange={(e) => handleEditFieldChange('partyName', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.partyName
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.szType}
                             onChange={(e) => handleEditFieldChange('szType', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.szType
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.grade}
                             onChange={(e) => handleEditFieldChange('grade', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.grade
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.liner}
                             onChange={(e) => handleEditFieldChange('liner', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.liner
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.yard}
                             onChange={(e) => handleEditFieldChange('yard', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.yard
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.mfgDate}
                             onChange={(e) => handleEditFieldChange('mfgDate', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.mfgDate
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.inDate}
                             onChange={(e) => handleEditFieldChange('inDate', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.inDate
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.deliveryDate}
                             onChange={(e) => handleEditFieldChange('deliveryDate', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.deliveryDate
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px', color: '#374151' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
                           <input
                             type="text"
                             value={editingData.photo}
                             onChange={(e) => handleEditFieldChange('photo', e.target.value)}
-                            style={{ width: '100%', padding: '4px', border: '1px solid #9CA3AF', borderRadius: '4px', fontSize: '12px' }}
+                            className="master-edit-input"
                           />
                         ) : (
                           row.photo
                         )}
                       </td>
-                      <td style={{ padding: '12px 8px' }}>
+                      <td className="table-cell">
                         {editingIndex === indexOfFirstRow + index ? (
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <button
-                              onClick={() => handleUpdate(index)}
-                              style={{
-                                padding: '4px 12px',
-                                backgroundColor: '#A63128',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                                fontWeight: '500'
-                              }}
-                            >
+                          <div className="table-actions">
+                            <button onClick={() => handleUpdate(index)} className="btn-smallbtn">
                               Update
                             </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              style={{
-                                padding: '4px 12px',
-                                backgroundColor: '#6B7280',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                                fontWeight: '500'
-                              }}
-                            >
+                            <button onClick={handleCancelEdit} className="btn-smallbtn">
                               Cancel
                             </button>
                           </div>
                         ) : (
-                          <div style={{ display: 'flex', gap: '12px' }}>
-                            <Edit2
-                              size={18}
-                              style={{ color: '#6B7280', cursor: 'pointer' }}
-                              onClick={() => handleEdit(index)}
-                            />
-                            <Trash2
-                              size={18}
-                              style={{ color: '#DC2626', cursor: 'pointer' }}
-                              onClick={() => handleDelete(index)}
-                            />
+                          <div className="table-actions">
+                            <button onClick={() => handleEdit(index)} className="btn-action">
+                              <Edit2 size={18} style={{ color: '#6B7280' }} />
+                            </button>
+                            <button onClick={() => handleDelete(index)} className="btn-action">
+                              <Trash2 size={18} style={{ color: '#DC2626' }} />
+                            </button>
                           </div>
                         )}
                       </td>
@@ -440,42 +359,24 @@ export default function ContainerMaster() {
                 </tbody>
               </table>
             </div>
-          </div>
+          
 
           {/* Pagination */}
           {tableData.length > rowsPerPage && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '8px',
-              marginBottom: '12px'
-            }}>
+            <div className="pagination-container">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(prev => prev - 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-                }}
+                className={`pagination-btn ${currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
               >
-                <ChevronLeft />
+                <ChevronLeft size={18} />
               </button>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    border: '1px solid #d1d5db',
-                    backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-                    color: currentPage === page ? '#ffffff' : '#000000',
-                    cursor: 'pointer'
-                  }}
+                  className={`pagination-page-btn ${currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
                 >
                   {page}
                 </button>
@@ -484,25 +385,18 @@ export default function ContainerMaster() {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(prev => prev + 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-                }}
+                className={`pagination-btn ${currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
               >
-                <ChevronRight />
+                <ChevronRight size={18} />
               </button>
             </div>
           )}
 
-          <button
-            onClick={() => navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
+          <button onClick={() => navigate(-1)} className="btn-back">
             <span>←</span>
             <span>Back</span>
           </button>
+        </div>
         </div>
       </div>
     </div>

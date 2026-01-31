@@ -21,7 +21,7 @@ export default function ProformaInvoiceApproval() {
     return `${year}-${month}-${day}`;
   };
 
- const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     formdate: getTodayDate(),
     todate: getTodayDate(),
     customerName: ''
@@ -50,13 +50,13 @@ export default function ProformaInvoiceApproval() {
     opt.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
- const handleSelectCustomer = (option) => {
+  const handleSelectCustomer = (option) => {
     setCustomerName(option);
     setSearchTerm(option);
     setIsDropdownOpen(false);
   };
 
- useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsDropdownOpen(false);
@@ -133,72 +133,56 @@ export default function ProformaInvoiceApproval() {
   const paginatedData = filteredData.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
-  const handleBack = () => {
-    alert('Going back...');
-  };
-
-  const icon = { cursor: 'pointer', color: '#374151' };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <div style={{ flex: 1, padding: '24px', background: '#f5e6e8' }}>
-          <div style={{ background: '#fff', borderRadius: '8px', padding: '24px', marginBottom: '10px' }}>
-            <h3 style={{ marginBottom: '20px', fontSize: '20px' }}>Proforma Invoice Approval</h3>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h3 className="page-title">Proforma Invoice Approval</h3>
 
             {/* FILTER ROW */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'flex-end' }}>
-              <div style={fieldBox}>
-                <label style={label}>From Date</label>
+            <div className="flex gap-4 mb-6 items-end">
+              <div className="filter-grid-red w-64">
+                <label className="filter-label">From Date</label>
                 <input
                   type="date"
                   value={formData.formdate}
                   onChange={(e) =>
                     setFormData({ ...formData, formdate: e.target.value })
                   }
-                  style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
+                  className="filter-input"
                 />
               </div>
 
-              <div style={fieldBox}>
-                <label style={label}>To Date</label>
+              <div className="filter-grid-red w-64">
+                <label className="filter-label">To Date</label>
                 <input
                   type="date"
                   value={formData.todate}
                   onChange={(e) =>
                     setFormData({ ...formData, todate: e.target.value })
                   }
-                  style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
+                  className="filter-input"
                 />
               </div>
 
               {/* CUSTOMER DROPDOWN */}
-              <div ref={dropdownRef} style={{ ...fieldBox1, position: 'relative' }}>
-                <label style={label}>Customer Name</label>
-                <div style={{ position: 'relative' }}>
+              <div ref={dropdownRef} className="filter-grid-green w-64">
+                <label className="filter-label">Customer Name</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={handleInputChange}
                     onFocus={() => setIsDropdownOpen(true)}
                     placeholder="Type or select..."
-                    style={input}
+                    className="dropdown-input"
                   />
-                  <ChevronDown
-                    size={20}
-                    style={{
-                      position: 'absolute',
-                      right: '4px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      color: '#000000',
-                      pointerEvents: 'none'
-                    }}
-                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
 
                 {isDropdownOpen && (
-                  <div style={dropdownMenu}>
+                  <div className="dropdown-menu">
                     {filteredOptions.length > 0 ? (
                       filteredOptions.map((option, index) => (
                         <div
@@ -206,83 +190,75 @@ export default function ProformaInvoiceApproval() {
                           onClick={() => handleSelectCustomer(option)}
                           onMouseEnter={() => setHoveredOption(option)}
                           onMouseLeave={() => setHoveredOption(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredOption === option ? 'white' : '#374151',
-                            backgroundColor:
-                              hoveredOption === option
-                                ? '#A63128'
-                                : customerName === option
-                                  ? '#FEE2E2'
-                                  : 'white',
-                            borderBottom: index < filteredOptions.length - 1 ? '1px solid #E5E7EB' : 'none'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredOption === option
+                              ? 'dropdown-item-hovered'
+                              : customerName === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
-                        No matches found
-                      </div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
 
-              <button onClick={handleSearch} style={searchBtn}>
+              <button onClick={handleSearch} className="btn-search ml-11">
                 <Search size={18} /> Search
               </button>
             </div>
 
             {/* TABLE */}
             {isSearched && (
-              <div style={{ border: '1px solid #e5e7eb', marginTop: 89, borderRadius: '8px', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead style={{ background: '#fde2e2' }}>
+              <div className="table-container mt-[89px]">
+                <table className="data-table">
+                  <thead className="table-header">
                     <tr>
                       {['Sl No', 'Proforma Invoice No', 'PI Date', 'Customer Name', 'Sales Person', 'Total Cost', 'Print', 'Approval']
-                        .map(h => <th key={h} style={th}>{h}</th>)}
+                        .map(h => <th key={h} className="table-th">{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedData.length > 0 ? (
                       paginatedData.map((row, index) => (
-                        <tr key={row.id}>
-                          <td style={td}>{indexOfFirstRow + index + 1}</td>
-                          <td style={td}>{row.qno}</td>
-                          <td style={td}>{row.date}</td>
-                          <td style={td}>{row.customer}</td>
-                          <td style={td}>{row.sales}</td>
-                          <td style={td}>{row.amount}</td>
-                          <td style={td}>
+                        <tr key={row.id} className="table-row">
+                          <td className="table-cell">{indexOfFirstRow + index + 1}</td>
+                          <td className="table-cell">{row.qno}</td>
+                          <td className="table-cell">{row.date}</td>
+                          <td className="table-cell">{row.customer}</td>
+                          <td className="table-cell">{row.sales}</td>
+                          <td className="table-cell">{row.amount}</td>
+                          <td className="table-cell">
                             <Printer 
                               size={18} 
-                              style={icon} 
+                              className="cursor-pointer text-gray-700 print-primary hover:opacity-70"
                               onClick={() => handlePrint(row)}
                             />
                           </td>
-                          <td style={td}>
+                          <td className="table-cell">
                             {row.status === 'approved' ? (
-                              <span style={{ color: '#16a34a', fontWeight: '600', fontSize: '14px' }}>
+                              <span className="text-green-600 font-semibold text-sm">
                                 Approved
                               </span>
                             ) : row.status === 'rejected' ? (
-                              <span style={{ color: '#dc2626', fontWeight: '600', fontSize: '14px' }}>
+                              <span className="text-red-600 font-semibold text-sm">
                                 Rejected
                               </span>
                             ) : (
-                              <div style={{ display: 'flex', gap: '12px' }}>
+                              <div className="flex gap-3">
                                 <CheckCircle 
                                   size={18} 
-                                  style={{ ...icon, color: '#16a34a' }} 
+                                  className="cursor-pointer text-green-600 hover:opacity-70"
                                   onClick={() => handleApprove(row.id)}
                                 />
                                 <XCircle 
                                   size={18} 
-                                  style={{ ...icon, color: '#dc2626' }} 
+                                  className="cursor-pointer text-red-600 hover:opacity-70"
                                   onClick={() => handleReject(row.id)}
                                 />
                               </div>
@@ -292,7 +268,7 @@ export default function ProformaInvoiceApproval() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="8" style={{ ...td, textAlign: 'center', padding: '32px' }}>
+                        <td colSpan="8" className="no-data-cell">
                           No records found
                         </td>
                       </tr>
@@ -303,39 +279,26 @@ export default function ProformaInvoiceApproval() {
             )}
           </div>
 
+          {/* PAGINATION */}
           {isSearched && totalPages > 1 && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '8px',
-              marginBottom: '12px'
-            }}>
+            <div className="pagination-container">
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(p => p - 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-                }}
+                className={`pagination-btn ${
+                  currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                }`}
               >
-                <ChevronLeft />
+                <ChevronLeft size={16} />
               </button>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  style={{
-                    backgroundColor: currentPage === page ? '#A63128' : '#fff',
-                    color: currentPage === page ? '#fff' : '#000',
-                    border: '1px solid #d1d5db',
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
+                  className={`pagination-page-btn ${
+                    currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                  }`}
                 >
                   {page}
                 </button>
@@ -344,22 +307,16 @@ export default function ProformaInvoiceApproval() {
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(p => p + 1)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-                }}
+                className={`pagination-btn ${
+                  currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                }`}
               >
-                <ChevronRight />
+                <ChevronRight size={16} />
               </button>
             </div>
           )}
 
-          <button
-            onClick={() => navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
+          <button onClick={() => navigate(-1)} className="btn-back">
             <span>←</span>
             <span>Back</span>
           </button>
@@ -368,85 +325,3 @@ export default function ProformaInvoiceApproval() {
     </div>
   );
 }
-
-/* ===== STYLES ===== */
-
-const fieldBox = {
-  width: 255,
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #DC2626',
-  borderRadius: 4.94,
-  padding: '10px 12px',
-  background: '#ffffff'
-};
-
-const fieldBox1 = {
-  width: 255,
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #22c55e',
-  borderRadius: 4.94,
-  padding: '10px 12px',
-  background: '#ffffff'
-};
-
-const label = {
-  fontSize: 16,
-  fontWeight: 600,
-  marginBottom: 6,
-  color: '#374151',
-  display: 'block'
-};
-
-const input = {
-  width: '100%',
-  border: 'none',
-  outline: 'none',
-  fontSize: 14,
-  background: 'transparent'
-};
-
-const dropdownMenu = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  right: 0,
-  marginTop: 4,
-  backgroundColor: 'white',
-  border: '1px solid #D1D5DB',
-  borderRadius: 4,
-  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-  maxHeight: 200,
-  overflowY: 'auto',
-  zIndex: 1000
-};
-
-const searchBtn = {
-  width: '150px',
-  height: '50px',
-  backgroundColor: '#A63128',
-  color: 'white',
-  borderRadius: '15px',
-  border: 'none',
-  cursor: 'pointer',
-  marginLeft: 45,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '8px'
-};
-
-const th = {
-  padding: '14px 16px',
-  textAlign: 'left',
-  fontSize: 16,
-  fontWeight: 600,
-  background: '#fde2e2',
-  color: '#000000'
-};
-
-const td = {
-  padding: '14px 16px',
-  fontSize: 13,
-  color: '#111827',
-  borderBottom: '1px solid #f3f4f6'
-};

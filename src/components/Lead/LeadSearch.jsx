@@ -48,11 +48,6 @@ export default function LeadSearch() {
     { slNo: 7, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'kumar', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
   ];
 
-  // Show all data on first load
-  useEffect(() => {
-    setFilteredData(allInvoiceData);
-  }, []);
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
