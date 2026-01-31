@@ -189,7 +189,7 @@ export default function UserRoleSettings() {
                 )}
               </div>
 
-              <div className="flex justify-end items-end">
+              <div className="btn-container">
                 <button onClick={handleSubmit} className="btn-search">
                   <span>✓</span>
                   <span>Submit</span>
@@ -225,7 +225,7 @@ export default function UserRoleSettings() {
                             type="checkbox"
                             checked={selectedRoleData[key]}
                             onChange={() => handlePermissionChange(key)}
-                            className="accent-primary w-4 h-4 cursor-pointer"
+                            className="radio-input accent-primary"
                           />
                         </td>
                       ))}
@@ -240,7 +240,7 @@ export default function UserRoleSettings() {
               <>
                 <h2 className="section-title mt-8">Record List</h2>
 
-                <div className="flex items-end justify-start gap-10 mb-6">
+                <div className="filter-grid">
                   <div className="filter-grid-green w-[280px]">
                     <label className="filter-label">Search</label>
                     <input
@@ -318,7 +318,7 @@ export default function UserRoleSettings() {
                 </div>
               </>
             )}
-          </div>
+          
 
           {/* Pagination */}
           {showRecordList && displayRoles.length > rowsPerPage && (
@@ -362,6 +362,7 @@ export default function UserRoleSettings() {
             <span>Back</span>
           </button>
         </div>
+      </div>
       </div>
     </div>
   );
