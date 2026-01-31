@@ -588,13 +588,13 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen , isDark
   style={{
     backgroundColor: isDark
       ? active
-        ? "#29333E"     // selected - dark
+        ? "#29333E"  
         : hover
-        ? "#262F38"     // hover - dark
-        : "#212830"     // normal - dark
+        ? "#262F38"     
+        : "#212830"     
       : active
-      ? "#FFFFFF"      // selected - light
-      : "#A63028",     // normal - light
+      ? "#FFFFFF"      
+      : "#A63028",     
 
     color: isDark
       ? "#FFFFFF"
