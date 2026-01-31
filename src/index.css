@@ -881,20 +881,4 @@ body {
   .btn-back:hover {
     background: #fef2f2 !important;
   }
-  /* 🌙 DARK MODE (PURE BLACK) */
-  .dark {
-    --primary-bg: #0b0b0b;     /* page background - black */
-    --primary-color: #f3f4f6;
-
-    --card-bg: #121212;       /* card / header bg */
-    --text-color: #f3f4f6;    /* white text */
-    --border-color: #2a2a2a;  /* dark border */
-  }
-
-  body {
-    font-family: "Nunito Sans", sans-serif;
-    background-color: var(--primary-bg);
-    color: var(--text-color);
-    margin: 0;
-  
-}
+ 
