@@ -73,7 +73,7 @@ export default function App() {
 
       <Route path="/" element={<Admin />} />
       <Route path="/Layout" element={<Layout />}>
-        <Route index element={<div className=" flex h-full w-full items-center  justify-center">
+        <Route index element={<div className=" flex h-full w-full items-center  justify-center pt-16">
           <h1 className="text-4xl  font-bold italic tracking-wider text-[var(--primary-color)]">
             COMING SOON !!!
           </h1>  </div>} />

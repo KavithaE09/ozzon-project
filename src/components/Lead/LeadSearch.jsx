@@ -48,11 +48,6 @@ export default function LeadSearch() {
     { slNo: 7, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'kumar', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
   ];
 
-  // Show all data on first load
-  useEffect(() => {
-    setFilteredData(allInvoiceData);
-  }, []);
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -120,7 +115,8 @@ export default function LeadSearch() {
     <div className="page-container">
       <div className="content-wrapper">
         <div className="main-section">
-          <div className="content-card">
+          <div className="content-card bg-white dark:bg-[#353C44]">
+
             <h2 className="page-title">Lead</h2>
 
             {/* Filter Section */}

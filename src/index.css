@@ -8,9 +8,39 @@
   }
    :root {
     --primary-bg: #f6eaea;     
-    --primary-color: #a63128;  
+    --primary-color: #a63128;
+     --card-bg: #ffffff;
+      --sidebar-bg: linear-gradient(
+    180deg,
+    #370606 0%,
+    #751616 25%,
+    #A63128 50%,
+    #751616 75%,
+    #370606 100%
+  );
+  --sidebar-border: transparent;
+   
   }
 }
+/* 🌙 DARK MODE (PURE BLACK) */
+  .dark {
+    --primary-bg: #151B23;     /* page background - black */
+    --primary-color: #f3f4f6;
+     --sidebar-bg: #151B23;
+  --sidebar-border: #353C44;
+  --mainsection-bg:#151B23;
+    --card-bg: #29333E;       
+    --text-color: #f3f4f6;   
+    --border-color: #2a2a2a; 
+  
+  }
+
+  body {
+    font-family: "Nunito Sans", sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    margin: 0;
+  }
 
 @layer components {
   .login-box {
@@ -25,7 +55,25 @@
     @apply block mb-2 text-base font-semibold;
   }
 
+.sidebar {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    height: calc(100vh - 76px);
+    position: fixed;
+    top: 76px;
+    left: 0;
+    z-index: 40;
+    transition: all 0.3s ease;
+  }
 
+  .sidebar-open {
+    width: 240px;
+  }
+
+  .sidebar-closed {
+    width: 0;
+    overflow: hidden;
+  }
 
 /*header*/
   .header {
@@ -88,14 +136,7 @@
   }
 }
 
-}
-
-
-
-
-
-
-
+} 
 
 @layer utilities {
   .bg-primary {
@@ -131,16 +172,17 @@
     flex: 1;
     overflow: auto;
     padding: 24px;
-    background-color: #F3E8E8;
+    background: var(--mainsection-bg);
   }
   .content-card {
-    background-color: white;
+   background-color: var(--card-bg);
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     padding: 32px;
     max-width: 1280px;
     margin: 0 auto;
     margin-Bottom: 10px;
+    
   }
   .page-title {
     font-size: 18px;
@@ -148,6 +190,9 @@
     margin-bottom: 24px;
     color: #111827;
   }
+  .dark .page-title {
+  color: #ffffff;
+}
   /* Section Title */
   .section-title {
     font-size: 16px;
@@ -835,12 +880,3 @@ body {
   .btn-back:hover {
     background: #fef2f2 !important;
   }
-
-
-
-
-
-
-
-
-
