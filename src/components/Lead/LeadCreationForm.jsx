@@ -241,61 +241,7 @@ const jobList = [
           status: 'Sold Out'
         }
       ]);
-   const stepWrapper = {
-  position: 'relative',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  width: 140
-};
 
-const circleStyle = {
-  width: 36,
-  height: 36,
-  borderRadius: '50%',
-  border: '2px solid #9CA3AF',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontWeight: 600,
-  background: '#fff',
-  color: '#374151',
-  zIndex: 2
-};
-
-const activeCircle = {
-  ...circleStyle,
-  background: '#DC2626',
-  color: '#fff',
-  border: 'none'
-};
-
-const lineStyle = {
-  position: 'absolute',
-  top: 18,             
-  left: '50%',
-  width: '100%',
-  height: 2,
-  backgroundColor: '#D1D5DB',
-  zIndex: 1
-};
-
-const labelStyle = {
-  marginTop: 8,
-  fontSize: 12,
-  textAlign: 'center'
-};
-
-const activeLabel = {
-  ...labelStyle,
-  color: '#DC2626',
-  fontWeight: 600
-};
-const tdStyle = {
-  padding: '12px 10px',
-  textAlign: 'center',
-  whiteSpace: 'nowrap'
-};
 const jobOrders = [
   {
     jobOrderNo: 'TCKU 1524662',
@@ -343,23 +289,7 @@ const jobOrders = [
     remark: 'Working'
   }
 ];
-const tdCenter = {
-  padding: '12px 10px',
-  textAlign: 'center',
-  whiteSpace: 'nowrap'
-};
 
-const tdLeft = {
-  padding: '12px 10px',
-  textAlign: 'left'
-};
-
-const tdRight = {
-  padding: '12px 10px',
-  textAlign: 'right',
-  whiteSpace: 'nowrap'
-  
-};
 const jobReviewList = [
   {
     description: 'Door - MODIFICATION OF PLAIN OFFICE WITH COUNTER WINDOW',
@@ -395,12 +325,12 @@ const jobReviewList = [
 
   return (
     
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#F9FAFB' }}>
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <div style={{ flex: 1, overflow: 'auto', padding: '20px', backgroundColor: '#F3E8E8' }}>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
           
-          <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '24px', fontSize: '14px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="content-card">
+          <div className="flex justify-center">
 
   {[
     'Lead',
@@ -411,18 +341,24 @@ const jobReviewList = [
     'Job completed',
     'Sold out'
   ].map((label, index) => (
-    <div key={index} style={stepWrapper}>
+    <div key={index} className="relative flex flex-col items-center w-[140px]">
 
       {/* LINE (except last) */}
-      {index !== 6 && <div style={lineStyle} />}
+      {index !== 6 && <div className="absolute top-[18px] left-1/2 w-full h-0.5 bg-gray-300 z-[1]" />}
 
       {/* CIRCLE */}
-      <div style={index === 0 ? activeCircle : circleStyle}>
+      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold z-[2] ${
+        index === 0 
+          ? 'bg-red-600 text-white' 
+          : 'border-2 border-gray-400 bg-white text-gray-700'
+      }`}>
         {index === 0 ? '✓' : index + 1}
       </div>
 
       {/* LABEL */}
-      <div style={index === 0 ? activeLabel : labelStyle}>
+      <div className={`mt-2 text-xs text-center ${
+        index === 0 ? 'text-red-600 font-semibold' : ''
+      }`}>
         {label}
       </div>
 
@@ -431,37 +367,25 @@ const jobReviewList = [
 
 </div>
 
-            <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1F2937', marginBottom: '20px' }}>Lead</h2>
+            <h2 className="page-title">Lead</h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            <div className="filter-grid">
               {/* Lead Owner Dropdown */}
-              <div
-                ref={leadOwnerDropdownRef}
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  border: '1px solid #9CA3AF',
-                  borderRight: '3px solid #DC2626',
-                  position: 'relative'
-                }}
-              >
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>
-                  Lead Owner
-                </label>
-                <div style={{ position: 'relative' }}>
+              <div ref={leadOwnerDropdownRef} className="filter-grid-red">
+                <label className="filter-label">Lead Owner</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={leadOwnerSearch}
                     onChange={handleLeadOwnerInput}
                     onFocus={() => setIsLeadOwnerOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', fontSize: '14px', outline: 'none', backgroundColor: 'white' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown size={20} style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isLeadOwnerOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', maxHeight: '180px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredLeadOwners.length > 0 ? (
                       filteredLeadOwners.map((option, index) => (
                         <div
@@ -469,103 +393,90 @@ const jobReviewList = [
                           onClick={() => handleLeadOwnerSelect(option)}
                           onMouseEnter={() => setHoveredLeadOwner(option)}
                           onMouseLeave={() => setHoveredLeadOwner(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredLeadOwner === option ? 'white' : '#374151',
-                            backgroundColor: hoveredLeadOwner === option ? '#A63128' : formData.leadOwner === option ? '#FEE2E2' : 'white',
-                            borderBottom: index < filteredLeadOwners.length - 1 ? '1px solid #E5E7EB' : 'none'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredLeadOwner === option 
+                              ? 'dropdown-item-hovered' 
+                              : formData.leadOwner === option 
+                              ? 'dropdown-item-selected' 
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Company</label>
-                <input type="text" name="company" value={formData.company} onChange={handleChange} placeholder="Logic-Tech" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Company</label>
+                <input type="text" name="company" value={formData.company} onChange={handleChange} placeholder="Logic-Tech" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Raneesh" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">First Name</label>
+                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Raneesh" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Kumar" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Last Name</label>
+                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Kumar" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Lead Name</label>
-                <input type="text" name="leadName" value={formData.leadName} onChange={handleChange} placeholder="Ranee" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Lead Name</label>
+                <input type="text" name="leadName" value={formData.leadName} onChange={handleChange} placeholder="Ranee" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Figma-Design" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Title</label>
+                <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Figma-Design" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #2c1eed'}}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Nathan@gmail.com" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-blue">
+                <label className="filter-label">Email</label>
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Nathan@gmail.com" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #2c1eed'}}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Phone No</label>
-                <input type="text" name="phoneNo" value={formData.phoneNo} onChange={handleChange} placeholder="2481-7764" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-blue">
+                <label className="filter-label">Phone No</label>
+                <input type="text" name="phoneNo" value={formData.phoneNo} onChange={handleChange} placeholder="2481-7764" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Mobile No</label>
-                <input type="text" name="mobileNo" value={formData.mobileNo} onChange={handleChange} placeholder="9638527410" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Mobile No</label>
+                <input type="text" name="mobileNo" value={formData.mobileNo} onChange={handleChange} placeholder="9638527410" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF',borderRight: '3px solid #2c1eed'}}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Website</label>
-                <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="WWW.com" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-blue">
+                <label className="filter-label">Website</label>
+                <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="WWW.com" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>City</label>
-                <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Tirupatpur" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">City</label>
+                <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Tirupatpur" className="filter-input" />
               </div>
 
               {/* Lead Status Dropdown */}
-              <div
-                ref={leadStatusDropdownRef}
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  border: '1px solid #9CA3AF',
-                  borderRight: '3px solid #DC2626',
-                  position: 'relative'
-                }}
-              >
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>
-                  Lead Status
-                </label>
-                <div style={{ position: 'relative' }}>
+              <div ref={leadStatusDropdownRef} className="filter-grid-red">
+                <label className="filter-label">Lead Status</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={leadStatusSearch}
                     onChange={handleLeadStatusInput}
                     onFocus={() => setIsLeadStatusOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', fontSize: '14px', outline: 'none', backgroundColor: 'white' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown size={20} style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isLeadStatusOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', maxHeight: '180px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredLeadStatuses.length > 0 ? (
                       filteredLeadStatuses.map((option, index) => (
                         <div
@@ -573,53 +484,40 @@ const jobReviewList = [
                           onClick={() => handleLeadStatusSelect(option)}
                           onMouseEnter={() => setHoveredLeadStatus(option)}
                           onMouseLeave={() => setHoveredLeadStatus(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredLeadStatus === option ? 'white' : '#374151',
-                            backgroundColor: hoveredLeadStatus === option ? '#A63128' : formData.leadStatus === option ? '#FEE2E2' : 'white',
-                            borderBottom: index < filteredLeadStatuses.length - 1 ? '1px solid #E5E7EB' : 'none'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredLeadStatus === option 
+                              ? 'dropdown-item-hovered' 
+                              : formData.leadStatus === option 
+                              ? 'dropdown-item-selected' 
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
 
               {/* Lead Source Dropdown */}
-              <div
-                ref={leadSourceDropdownRef}
-                style={{
-                  backgroundColor: '#ffffff',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  border: '1px solid #9CA3AF',
-                  borderRight: '3px solid #DC2626',
-                  position: 'relative'
-                }}
-              >
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>
-                  Lead Source
-                </label>
-                <div style={{ position: 'relative' }}>
+              <div ref={leadSourceDropdownRef} className="filter-grid-red">
+                <label className="filter-label">Lead Source</label>
+                <div className="dropdown-wrapper">
                   <input
                     type="text"
                     value={leadSourceSearch}
                     onChange={handleLeadSourceInput}
                     onFocus={() => setIsLeadSourceOpen(true)}
                     placeholder="Type or select..."
-                    style={{ width: '100%', padding: '1px 1px', border: 'none', fontSize: '14px', outline: 'none', backgroundColor: 'white' }}
+                    className="dropdown-input"
                   />
-                  <ChevronDown size={20} style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#000000', pointerEvents: 'none' }} />
+                  <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isLeadSourceOpen && (
-                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', backgroundColor: 'white', border: '1px solid #D1D5DB', borderRadius: '4px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', maxHeight: '180px', overflowY: 'auto', zIndex: 1000 }}>
+                  <div className="dropdown-menu">
                     {filteredLeadSources.length > 0 ? (
                       filteredLeadSources.map((option, index) => (
                         <div
@@ -627,119 +525,106 @@ const jobReviewList = [
                           onClick={() => handleLeadSourceSelect(option)}
                           onMouseEnter={() => setHoveredLeadSource(option)}
                           onMouseLeave={() => setHoveredLeadSource(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredLeadSource === option ? 'white' : '#374151',
-                            backgroundColor: hoveredLeadSource === option ? '#A63128' : formData.leadSource === option ? '#FEE2E2' : 'white',
-                            borderBottom: index < filteredLeadSources.length - 1 ? '1px solid #E5E7EB' : 'none'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredLeadSource === option 
+                              ? 'dropdown-item-hovered' 
+                              : formData.leadSource === option 
+                              ? 'dropdown-item-selected' 
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                     ) : (
-                      <div style={{ padding: '8px', fontSize: '14px', color: '#9CA3AF' }}>No matches found</div>
+                      <div className="dropdown-no-matches">No matches found</div>
                     )}
                   </div>
                 )}
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Requirements</label>
-                <input type="text" name="requirements" value={formData.requirements} onChange={handleChange} placeholder="House Model" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Requirements</label>
+                <input type="text" name="requirements" value={formData.requirements} onChange={handleChange} placeholder="House Model" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #2c1eed'}}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Other Requirements</label>
-                <input type="text" name="otherRequirements" value={formData.otherRequirements} onChange={handleChange} placeholder="Reffer Container" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-blue">
+                <label className="filter-label">Other Requirements</label>
+                <input type="text" name="otherRequirements" value={formData.otherRequirements} onChange={handleChange} placeholder="Reffer Container" className="filter-input" />
               </div>
 
-              <div style={{ backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Lead Priority</label>
-                <input type="text" name="leadPriority" value={formData.leadPriority} onChange={handleChange} placeholder="Warm" style={{ width: '100%', padding: '1px 1px', fontSize: '14px', border: 'none', borderRadius: '4px', outline: 'none' }} />
+              <div className="filter-grid-red">
+                <label className="filter-label">Lead Priority</label>
+                <input type="text" name="leadPriority" value={formData.leadPriority} onChange={handleChange} placeholder="Warm" className="filter-input" />
               </div>
             </div>
 
             {/* Description with Auto-expand */}
-            <div style={{ marginTop: '16px', backgroundColor: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #9CA3AF', borderRight: '3px solid #2c1eed'}}>
-              <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '6px', fontWeight: '600' }}>Remark</label>
+            <div className="filter-grid-blue mt-4">
+              <label className="filter-label">Remark</label>
               <textarea 
                 name="description" 
                 value={formData.description} 
                 onChange={handleDescriptionChange} 
                 placeholder="Enter Remarks here..." 
                 rows="1" 
-                style={{ 
-                  width: '100%', 
-                  padding: '1px 1px', 
-                  fontSize: '16px', 
-                  border: 'none', 
-                  borderRadius: '4px', 
-                  outline: 'none', 
-                  fontFamily: 'inherit',
-                  resize: 'none',
-                  minHeight: '24px',
-                  lineHeight: '20px',
-                  overflow: 'hidden'
-                }} 
+                className="multiline-field"
               />
             </div>
           </div>
 
           
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={handleClear} style={{ display: 'flex',  marginTop: '30px' , marginLeft: 'auto' ,alignItems: 'center', gap: '8px', padding: '8px 24px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
+            <div className="flex gap-8">
+              <button onClick={handleClear} className="btn-back ml-auto mt-8" >
                 <span>✕</span>
                 <span>Clear</span>
               </button> 
               
-              <button onClick={handleSubmit} style={{ display: 'flex', marginTop: '30px', alignItems: 'center', gap: '8px', padding: '8px 24px', fontSize: '13px', fontWeight: '500', color: 'white', backgroundColor: '#B91C1C', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              <button onClick={handleSubmit} className="btn-all mt-6" >
                 <span>✓</span>
                 <span>Submit</span>
               </button>
             </div>
-            <div style={{ display: 'flex',width: '100%', marginTop: "24px", flexDirection: 'column', backgroundColor: '#F9FAFB',borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <div className="flex w-full mt-6 flex-col bg-gray-50 rounded-xl shadow-sm">
               
-              <div style={{ marginTop: '15px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginLeft: '18px' }}>Container List</h3>
-          <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db' , width: '98%',marginLeft: '18px' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                <thead>
-                   <tr style={{ backgroundColor: '#fde2e2' }}>
+              <div className="mt-4">
+          <h3 className="section-title ml-[18px]">Container List</h3>
+          <div className="table-container w-[98%] ml-[18px]">
+            <div className="overflow-x-auto">
+              <table className="data-table">
+                <thead className="table-header">
+                   <tr>
                    
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>S/No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Container No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Party Name</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Sz/Type</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Grade</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Liner</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Yard</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>MFG Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>In Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Delivery Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Photo</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Status</th>
+                    <th className="table-th">S/No</th>
+                    <th className="table-th">Container No</th>
+                    <th className="table-th">Party Name</th>
+                    <th className="table-th">Sz/Type</th>
+                    <th className="table-th">Grade</th>
+                    <th className="table-th">Liner</th>
+                    <th className="table-th">Yard</th>
+                    <th className="table-th">MFG Date</th>
+                    <th className="table-th">In Date</th>
+                    <th className="table-th">Delivery Date</th>
+                    <th className="table-th">Photo</th>
+                    <th className="table-th">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {containers.map((container) => (
-                    <tr key={container.id} style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr key={container.id} className="table-row">
                       
-                      <td style={{ padding: '12px 8px' }}>{container.sNo}.</td>
-                      <td style={{ padding: '12px 8px' }}>{container.containerNo}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.partyName}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.szType}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.grade}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.liner}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.yard}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.mfgDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.inDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.deliveryDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.photo}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.status}</td>
+                      <td className="table-cell">{container.sNo}.</td>
+                      <td className="table-cell">{container.containerNo}</td>
+                      <td className="table-cell">{container.partyName}</td>
+                      <td className="table-cell">{container.szType}</td>
+                      <td className="table-cell">{container.grade}</td>
+                      <td className="table-cell">{container.liner}</td>
+                      <td className="table-cell">{container.yard}</td>
+                      <td className="table-cell">{container.mfgDate}</td>
+                      <td className="table-cell">{container.inDate}</td>
+                      <td className="table-cell">{container.deliveryDate}</td>
+                      <td className="table-cell">{container.photo}</td>
+                      <td className="table-cell">{container.status}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -747,27 +632,12 @@ const jobReviewList = [
             </div>
           </div>
       </div>
-      <div style={{ marginTop: '15px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginLeft: '18px' }}>Job order</h3>
-          <div
-  style={{
-    overflowX: 'auto',
-    border: '1px solid #9ca3af',
-    borderRadius: '6px',
-    width: '98%',
-    marginLeft: '18px',
-    backgroundColor: '#fff'
-  }}
->
-  <table
-    style={{
-      width: '100%',
-      borderCollapse: 'collapse',
-      fontSize: '13px'
-    }}
-  >
-    <thead>
-      <tr style={{ backgroundColor: '#fde2e2' }}>
+      <div className="mt-4">
+          <h3 className="section-title ml-[18px]">Job order</h3>
+          <div className="table-container w-[98%] ml-[18px]">
+  <table className="data-table">
+    <thead className="table-header">
+      <tr>
         {[
           'S/No',
           'Job Order No',
@@ -778,16 +648,7 @@ const jobReviewList = [
           'Status',
           'Remark'
         ].map((head, i) => (
-          <th
-            key={i}
-            style={{
-              padding: '12px 10px',
-              textAlign: 'center',
-              fontWeight: 600,
-              borderBottom: '1px solid #9ca3af',
-              whiteSpace: 'nowrap'
-            }}
-          >
+          <th key={i} className="table-th-center">
             {head}
           </th>
         ))}
@@ -796,47 +657,27 @@ const jobReviewList = [
 
     <tbody>
       {jobOrders.map((row, index) => (
-        <tr
-          key={index}
-          style={{
-            borderBottom: '1px solid #e5e7eb'
-          }}
-        >
-          <td style={tdStyle}>{index + 1}.</td>
-          <td style={tdStyle}>{row.jobOrderNo}</td>
-          <td style={tdStyle}>{row.jobDate}</td>
-          <td style={tdStyle}>{row.customerName}</td>
-          <td style={tdStyle}>{row.salesPerson}</td>
-          <td style={tdStyle}>{row.narration}</td>
-          <td style={tdStyle}>{row.status}</td>
-          <td style={tdStyle}>{row.remark}</td>
+        <tr key={index} className="table-row">
+          <td className="table-cell-center">{index + 1}.</td>
+          <td className="table-cell-center">{row.jobOrderNo}</td>
+          <td className="table-cell-center">{row.jobDate}</td>
+          <td className="table-cell-center">{row.customerName}</td>
+          <td className="table-cell-center">{row.salesPerson}</td>
+          <td className="table-cell-center">{row.narration}</td>
+          <td className="table-cell-center">{row.status}</td>
+          <td className="table-cell-center">{row.remark}</td>
         </tr>
       ))}
     </tbody>
   </table>
 </div>
-<div style={{ marginTop: '15px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginLeft: '18px' }}>task assign</h3>
+<div className="mt-4">
+          <h3 className="section-title ml-[18px]">task assign</h3>
           </div>
-<div
-  style={{
-    overflowX: 'auto',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    width: '98%',
-    marginLeft: '18px',
-    backgroundColor: '#fff'
-  }}
->
-  <table
-    style={{
-      width: '100%',
-      borderCollapse: 'collapse',
-      fontSize: '13px'
-    }}
-  >
-    <thead>
-      <tr style={{ backgroundColor: '#fde2e2' }}>
+<div className="table-container w-[98%] ml-[18px]">
+  <table className="data-table">
+    <thead className="table-header">
+      <tr>
         {[
           'S/No',
           'Lead No',
@@ -848,16 +689,7 @@ const jobReviewList = [
           'Sales Person',
           'Customer Name'
         ].map((head, index) => (
-          <th
-            key={index}
-            style={{
-              padding: '12px 10px',
-              textAlign: 'center',
-              fontWeight: 600,
-              borderBottom: '1px solid #d1d5db',
-              whiteSpace: 'nowrap'
-            }}
-          >
+          <th key={index} className="table-th-center">
             {head}
           </th>
         ))}
@@ -866,48 +698,28 @@ const jobReviewList = [
 
     <tbody>
       {jobList.map((row, index) => (
-        <tr
-          key={index}
-          style={{
-            borderBottom: '1px solid #e5e7eb'
-          }}
-        >
-          <td style={tdStyle}>{index + 1}.</td>
-          <td style={tdStyle}>{row.leadNo}</td>
-          <td style={tdStyle}>{row.quotationNo}</td>
-          <td style={tdStyle}>{row.piNo}</td>
-          <td style={tdStyle}>{row.jobOrderNo}</td>
-          <td style={tdStyle}>{row.jobOrderDate}</td>
-          <td style={tdStyle}>{row.assignDate}</td>
-          <td style={tdStyle}>{row.salesPerson}</td>
-          <td style={tdStyle}>{row.customerName}</td>
+        <tr key={index} className="table-row">
+          <td className="table-cell-center">{index + 1}.</td>
+          <td className="table-cell-center">{row.leadNo}</td>
+          <td className="table-cell-center">{row.quotationNo}</td>
+          <td className="table-cell-center">{row.piNo}</td>
+          <td className="table-cell-center">{row.jobOrderNo}</td>
+          <td className="table-cell-center">{row.jobOrderDate}</td>
+          <td className="table-cell-center">{row.assignDate}</td>
+          <td className="table-cell-center">{row.salesPerson}</td>
+          <td className="table-cell-center">{row.customerName}</td>
         </tr>
       ))}
     </tbody>
   </table>
 </div>
-<div style={{ marginTop: '15px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', marginLeft: '18px' }}>task completion</h3>
+<div className="mt-4">
+          <h3 className="section-title ml-[18px]">task completion</h3>
           </div>
-          <div
-  style={{
-    overflowX: 'auto',
-    border: '1px solid #9ca3af',
-    borderRadius: '6px',
-    width: '98%',
-    marginLeft: '18px',
-    backgroundColor: '#fff'
-  }}
->
-  <table
-    style={{
-      width: '100%',
-      borderCollapse: 'collapse',
-      fontSize: '13px'
-    }}
-  >
-    <thead>
-      <tr style={{ backgroundColor: '#fde2e2' }}>
+          <div className="table-container w-[98%] ml-[18px]">
+  <table className="data-table">
+    <thead className="table-header">
+      <tr>
         {[
           'Sl No',
           'Description',
@@ -916,21 +728,7 @@ const jobReviewList = [
           'Amount',
           'Hidden Amount'
         ].map((head, index) => (
-          <th
-            key={index}
-            style={{
-              padding: '12px 10px',
-              textAlign: index === 1 ? 'left' : 'center',
-              fontWeight: 600,
-              borderBottom: '1px solid #9ca3af',
-              whiteSpace: 'nowrap',
-              padding: '12px 10px',
-    textAlign: 'center',     // 🔥 IMPORTANT
-    fontWeight: 600,
-    borderBottom: '1px solid #9ca3af',
-    whiteSpace: 'nowrap'
-            }}
-          >
+          <th key={index} className={index === 1 ? 'table-th' : 'table-th-center'}>
             {head}
           </th>
         ))}
@@ -939,21 +737,18 @@ const jobReviewList = [
 
     <tbody>
       {jobReviewList.map((row, index) => (
-        <tr
-          key={index}
-          style={{ borderBottom: '1px solid #e5e7eb' }}
-        >
-          <td style={tdCenter}>{index + 1}</td>
+        <tr key={index} className="table-row">
+          <td className="table-cell-center">{index + 1}</td>
 
-          <td style={tdLeft}>
+          <td className="table-cell">
             {row.description}
           </td>
 
-          <td style={tdCenter}>{row.dimension}</td>
-          <td style={tdCenter}>{row.unit}</td>
+          <td className="table-cell-center">{row.dimension}</td>
+          <td className="table-cell-center">{row.unit}</td>
 
-          <td style={tdRight}>₹ {row.amount.toLocaleString()}</td>
-          <td style={tdRight}>₹ {row.hiddenAmount.toLocaleString()}</td>
+          <td className="table-cell text-right whitespace-nowrap">₹ {row.amount.toLocaleString()}</td>
+          <td className="table-cell text-right whitespace-nowrap">₹ {row.hiddenAmount.toLocaleString()}</td>
         </tr>
       ))}
     </tbody>
@@ -962,8 +757,8 @@ const jobReviewList = [
 
             </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '30px', maxWidth: '1250px' }}>
-            <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
+            <div className="footer-container max-w-[1250px] mt-8">
+            <button onClick={() => navigate(-1)} className="btn-back">
               <span>←</span>
               <span>Back</span>
             </button>
