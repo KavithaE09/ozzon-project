@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Edit2,Printer } from "lucide-react";
+import { Plus, Trash2, Edit2, Printer } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+
 export default function GoodsReceiptNotes() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
 
   const [rows, setRows] = useState([
@@ -54,260 +55,188 @@ export default function GoodsReceiptNotes() {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h3 style={styles.title}>G.R.N (Goods Receipt Note)</h3>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <main className="main-section">
+          <div className="content-card">
+            <h1 className="page-title">G.R.N (Goods Receipt Note)</h1>
 
-        {/* PO LIST */}
-        <div style={styles.box}>
-          <table style={styles.table}>
-            <thead>
-              <tr style={styles.thead}>
-                <th style={styles.th}>Select</th>
-                <th style={styles.th}>S.No</th>
-                <th style={styles.th}>PO No</th>
-                <th style={styles.th}>PO Date</th>
-                <th style={styles.th}>Supplier</th>
-                <th style={styles.th}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[1, 2].map((r, i) => (
-                <tr key={i}>
-                  <td style={styles.td}>
-                    <input type="radio" />
-                  </td>
-                  <td style={styles.td}>{r}</td>
-                  <td style={styles.td}>PONO00{r}</td>
-                  <td style={styles.td}>20-05-2025</td>
-                  <td style={styles.td}>Raneesh</td>
-                  <td style={styles.td}>
-                    <Printer size={16} />
-                    
-                    <Edit2 size={16} style={styles.actionIcon} />
-                    <Trash2 size={16} style={{ ...styles.actionIcon, color: "red" }} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            {/* PO LIST */}
+            <div className="master-table-container mb-4">
+              <div className="table-container">
+                <table className="data-table">
+                  <thead className="table-header">
+                    <tr>
+                      <th className="table-th">Select</th>
+                      <th className="table-th">S.No</th>
+                      <th className="table-th">PO No</th>
+                      <th className="table-th">PO Date</th>
+                      <th className="table-th">Supplier</th>
+                      <th className="table-th">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[1, 2].map((r, i) => (
+                      <tr key={i} className="table-row">
+                        <td className="table-cell-center">
+                          <input 
+                            type="radio" 
+                            name="po-selection"
+                            className="accent-primary"
+                          />
+                        </td>
+                        <td className="table-cell">{r}</td>
+                        <td className="table-cell">PONO00{r}</td>
+                        <td className="table-cell">20-05-2025</td>
+                        <td className="table-cell">Raneesh</td>
+                        <td className="table-cell">
+                          <div className="table-actions">
+                            <Printer 
+                              size={16} 
+                              className="cursor-pointer print-primary hover:text-[#3730a3]"
+                            />
+                            <Edit2 
+                              size={16} 
+                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]"
+                            />
+                            <Trash2 
+                              size={16} 
+                              className="cursor-pointer text-[#B91C1C] hover:text-[#DC2626]"
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-        {/* MATERIAL LIST */}
-        <h4 style={styles.subTitle}>Material List</h4>
-        <div style={styles.box}>
-          <table style={styles.table}>
-            <thead>
-              <tr style={styles.thead}>
-                {[
-                  "S.No",
-                  "Code",
-                  "Product",
-                  "Unit",
-                  "Order Qty",
-                  "Previous Received Qty",
-                  "Arrival Qty",
-                  "Rejected Qty",
-                  "Accepted Qty",
-                  "Remark",
-                  "Action"
-                ].map(h => (
-                  <th key={h} style={styles.th}>{h}</th>
-                ))}
-              </tr>
-            </thead>
+            {/* MATERIAL LIST */}
+            <h2 className="section-title">Material List</h2>
+            <div className="master-table-container">
+              <div className="table-container">
+                <table className="data-table">
+                  <thead className="table-header">
+                    <tr>
+                      <th className="table-th">S.No</th>
+                      <th className="table-th">Code</th>
+                      <th className="table-th">Product</th>
+                      <th className="table-th">Unit</th>
+                      <th className="table-th">Order Qty</th>
+                      <th className="table-th whitespace-nowrap">Previous Received Qty</th>
+                      <th className="table-th">Arrival Qty</th>
+                      <th className="table-th">Rejected Qty</th>
+                      <th className="table-th">Accepted Qty</th>
+                      <th className="table-th">Remark</th>
+                      <th className="table-th">Action</th>
+                    </tr>
+                  </thead>
 
-            <tbody>
-              {rows.map((row, i) => (
-                <tr key={i}>
-                  <td style={styles.td}>{i + 1}</td>
-                  <td style={styles.td}>{row.code}</td>
-                  <td style={styles.td}>{row.product}</td>
-                  <td style={styles.td}>{row.unit}</td>
-                  <td style={styles.td}>{row.orderQty}</td>
-                  <td style={styles.td}>{row.prevQty}</td>
+                  <tbody>
+                    {rows.map((row, i) => (
+                      <tr key={i} className="table-row">
+                        <td className="table-cell">{i + 1}</td>
+                        <td className="table-cell">{row.code}</td>
+                        <td className="table-cell">{row.product}</td>
+                        <td className="table-cell">{row.unit}</td>
+                        <td className="table-cell">{row.orderQty}</td>
+                        <td className="table-cell">{row.prevQty}</td>
 
-                  <td style={styles.td}>
-                    <input
-                      type="number"
-                      style={styles.smallInput}
-                      value={row.arrivalQty}
-                      onChange={e =>
-                        handleChange(i, "arrivalQty", e.target.value)
-                      }
-                    />
-                  </td>
+                        <td className="table-cell">
+                          <input
+                            type="number"
+                            className="w-20 h-8 px-1.5 py-1 rounded-md border border-gray-300 text-sm outline-none"
+                            value={row.arrivalQty}
+                            onChange={e =>
+                              handleChange(i, "arrivalQty", e.target.value)
+                            }
+                          />
+                        </td>
 
-                  <td style={styles.td}>
-                    <input
-                      type="number"
-                      style={styles.smallInput}
-                      value={row.rejectedQty}
-                      onChange={e =>
-                        handleChange(i, "rejectedQty", e.target.value)
-                      }
-                    />
-                  </td>
+                        <td className="table-cell">
+                          <input
+                            type="number"
+                            className="w-20 h-8 px-1.5 py-1 rounded-md border border-gray-300 text-sm outline-none"
+                            value={row.rejectedQty}
+                            onChange={e =>
+                              handleChange(i, "rejectedQty", e.target.value)
+                            }
+                          />
+                        </td>
 
-                  <td style={styles.td}>
-                    <input
-                      type="number"
-                      style={styles.smallInput}
-                      value={row.acceptedQty}
-                      readOnly
-                    />
-                  </td>
+                        <td className="table-cell">
+                          <input
+                            type="number"
+                            className="w-20 h-8 px-1.5 py-1 rounded-md border border-gray-300 text-sm outline-none bg-gray-100"
+                            value={row.acceptedQty}
+                            readOnly
+                          />
+                        </td>
 
-                  <td style={styles.td}>
-                    <input
-                      placeholder="Remark"
-                      style={styles.remarkInput}
-                      value={row.remark}
-                      onChange={e =>
-                        handleChange(i, "remark", e.target.value)
-                      }
-                    />
-                  </td>
+                        <td className="table-cell">
+                          <input
+                            placeholder="Remark"
+                            className="w-[140px] h-8 px-1.5 py-1 rounded-md border border-gray-300 text-sm outline-none"
+                            value={row.remark}
+                            onChange={e =>
+                              handleChange(i, "remark", e.target.value)
+                            }
+                          />
+                        </td>
 
-                  <td style={styles.td}>
-                    <Plus size={16} style={styles.actionIcon} onClick={addRow} />
-                    <Edit2 size={16} />
-                    <Trash2
-                      size={16}
-                      style={{ ...styles.actionIcon, color: "red" }}
-                      onClick={() => deleteRow(i)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        <td className="table-cell">
+                          <div className="table-actions">
+                            <Plus 
+                              size={16} 
+                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]"
+                              onClick={addRow} 
+                            />
+                            <Edit2 
+                              size={16} 
+                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]"
+                            />
+                            <Trash2
+                              size={16}
+                              className="cursor-pointer text-[#B91C1C] hover:text-[#DC2626]"
+                              onClick={() => deleteRow(i)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
-          {/* ADD ROW */}
-          <div style={styles.rowFooter}>
-            <button style={styles.addRowBtn}>+ Row</button>
+                {/* ADD ROW */}
+                <div className="flex justify-end mt-2.5">
+                  <button 
+                    onClick={addRow}
+                    className="px-3.5 py-1.5 rounded-md border border-gray-300 bg-white cursor-pointer font-semibold text-sm hover:bg-gray-50"
+                  >
+                    + Row
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* SUBMIT BUTTON */}
+            <div className="flex justify-end mt-6">
+              <button className="btn-search">
+                Submit
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* SUBMIT BUTTON */}
-        <div style={styles.submitWrap}>
-          <button style={styles.submit}>Submit</button>
-        </div>
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="btn-back"
+          >
+            ← Back
+          </button>
+        </main>
       </div>
-            <button
-        onClick={() => navigate(-1)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 20px',
-          fontSize: '13px',
-          fontWeight: '500',
-          color: '#B91C1C',
-          border: '2px solid #B91C1C',
-          borderRadius: '4px',
-          backgroundColor: 'white',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease'
-        }}
-      >
-        <span>←</span>
-        <span>Back</span>
-      </button>
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#f5eaea",
-    padding: "30px"
-  },
-  card: {
-    background: "#fff",
-    borderRadius: "12px",
-    padding: "24px",
-    maxWidth: "1200px",
-    margin: "auto",
-    marginBottom: "10px"
-  },
-  title: {
-    marginBottom: "16px"
-  },
-  subTitle: {
-    margin: "20px 0 10px",
-    fontWeight: 600
-  },
-  box: {
-    border: "1px solid #E5E7EB",
-    borderRadius: "10px",
-    padding: "16px",
-    marginBottom: "16px"
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse"
-  },
-  thead: {
-    background: "#FDE2E2"
-  },
-  th: {
-    padding: "10px",
-    fontSize: "13px",
-    textAlign: "left",
-    whiteSpace: "nowrap"
-  },
-  td: {
-    padding: "10px",
-    fontSize: "13px",
-    verticalAlign: "middle"
-  },
-  smallInput: {
-    width: "80px",
-    height: "32px",
-    padding: "4px 6px",
-    borderRadius: "6px",
-    border: "1px solid #D1D5DB"
-  },
-  remarkInput: {
-    width: "140px",
-    height: "32px",
-    padding: "4px 6px",
-    borderRadius: "6px",
-    border: "1px solid #D1D5DB"
-  },
-  actionIcon: {
-    cursor: "pointer",
-    marginRight: "8px"
-  },
-  rowFooter: {
-    display: "flex",
-    justifyContent: "flex-end",
-    marginTop: "10px"
-  },
-  addRowBtn: {
-    padding: "6px 14px",
-    borderRadius: "6px",
-    border: "1px solid #D1D5DB",
-    background: "#fff",
-    cursor: "pointer",
-    fontWeight: 600
-  },
-  submitWrap: {
-    display: "flex",
-    justifyContent: "flex-end",
-    marginTop: "24px"
-  },
-  submit: {
-    background: "#A63128",
-    color: "#fff",
-    border: "none",
-    padding: "12px 44px",
-    borderRadius: "10px",
-    fontWeight: 700,
-    cursor: "pointer"
-  }
-};

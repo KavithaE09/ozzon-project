@@ -205,10 +205,10 @@ export default function ContainerHoldRequestForm() {
             </div>
 
             {/* Container List */}
-          
+            
               
                 <h2 className="master-table-title">Container List</h2>
-            
+              
 
               <div className="table-container">
                 <table className="data-table">
@@ -260,13 +260,17 @@ export default function ContainerHoldRequestForm() {
                           <td className="table-cell">{container.inDate}</td>
                           <td className="table-cell">{container.deliveryDate}</td>
                           <td className="table-cell">{container.photo}</td>
-                          <td className="table-cell">{container.status}</td>
+                          <td className="table-cell font-semibold">
+                            <span className={container.status === 'Hold' ? 'text-orange-500' : 'add-primary'}>
+                              {container.status}
+                            </span>
+                          </td>
                         </tr>
                       ))
                     )}
                   </tbody>
                 </table>
-            
+              
             </div>
 
             {/* Submit Button */}
