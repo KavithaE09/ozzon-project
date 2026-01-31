@@ -141,8 +141,8 @@ export default function ProformaInvoiceApproval() {
             <h3 className="page-title">Proforma Invoice Approval</h3>
 
             {/* FILTER ROW */}
-            <div className="flex gap-4 mb-6 items-end">
-              <div className="filter-grid-red w-64">
+            <div className="filter-grid">
+              <div className="filter-grid-red ">
                 <label className="filter-label">From Date</label>
                 <input
                   type="date"
@@ -154,7 +154,7 @@ export default function ProformaInvoiceApproval() {
                 />
               </div>
 
-              <div className="filter-grid-red w-64">
+              <div className="filter-grid-red ">
                 <label className="filter-label">To Date</label>
                 <input
                   type="date"
@@ -167,7 +167,7 @@ export default function ProformaInvoiceApproval() {
               </div>
 
               {/* CUSTOMER DROPDOWN */}
-              <div ref={dropdownRef} className="filter-grid-green w-64">
+              <div ref={dropdownRef} className="filter-grid-green ">
                 <label className="filter-label">Customer Name</label>
                 <div className="dropdown-wrapper">
                   <input
@@ -208,14 +208,14 @@ export default function ProformaInvoiceApproval() {
                 )}
               </div>
 
-              <button onClick={handleSearch} className="btn-search ml-11">
+              <button onClick={handleSearch} className="btn-search ">
                 <Search size={18} /> Search
               </button>
             </div>
 
             {/* TABLE */}
             {isSearched && (
-              <div className="table-container mt-[89px]">
+              <div className="table-container">
                 <table className="data-table">
                   <thead className="table-header">
                     <tr>

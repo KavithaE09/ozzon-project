@@ -137,8 +137,8 @@ export default function ContainerHoldRequestApprovalForm() {
           <div className="content-card">
             <h2 className="page-title">Container Hold Request Approval</h2>
 
-            <div className="table-container mt-10">
-              <table className="data-table text-[13px]">
+            <div className="table-container">
+              <table className="data-table">
                 <thead className="table-header">
                   <tr>
                     <th className="table-th">S/No</th>
@@ -187,7 +187,7 @@ export default function ContainerHoldRequestApprovalForm() {
                             Rejected
                           </span>
                         ) : (
-                          <div className="flex gap-3.5 items-center">
+                          <div className="filter-grid">
                             <button 
                               onClick={() => handleApprove(row.sNo)}
                               className="btn-action"
@@ -208,7 +208,7 @@ export default function ContainerHoldRequestApprovalForm() {
                 </tbody>
               </table>
             </div>
-          </div>
+          
 
           {/* PAGINATION */}
           {totalPages > 1 && (
@@ -251,6 +251,7 @@ export default function ContainerHoldRequestApprovalForm() {
             <span>←</span>
             <span>Back</span>
           </button>
+          </div>
         </main>
       </div>
     </div>
