@@ -252,21 +252,21 @@ export default function LeadSearch() {
                                 className="btn-action"
                                 title="Print"
                               >
-                                <Printer size={18} className="text-[#374151]" />
+                                <Printer size={18}className="print-primary"/>
                               </button>
                             <button
                                 onClick={() => navigate("/layout/lead/lead")}
                                 className="btn-action"
                                 title="Edit"
                               >
-                                <Edit2 size={18} className="text-[#374151]" />
+                                 <Edit2 size={18} />
                               </button>
                               <button
                                 onClick={(e) => handleDelete(index, e)}
                                 className="btn-action"
                                 title="Delete"
                               >
-                                <Trash2 size={18} className="text-[#dc2626]" />
+                                 <Trash2 size={18} className="text-primary" />
                               </button>
                             </div>
                           </td>
