@@ -253,7 +253,7 @@ export default function JobOrderAcceptance() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h3 className="page-title">Quotation Approval</h3>
+            <h3 className="page-title">Job Order Acceptance</h3>
 
         {/* Job Orders Table */}
         <div className="table-container">
