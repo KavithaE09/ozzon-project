@@ -40,7 +40,7 @@ import ContainerPurchase from "./components/Purchase/ContainerPurchase";
 import QuotationApproval from "./components/Quotation/QuotationApproval";
 import ProformaInvoiceApproval from "./components/ProformaInvoice/ProformaInvoiceApproval";
 import UnitMaster from "./components/MasterForms/UnitMaster";
-
+import PurchaseMaster from "./components/Purchase/PurchaseMaster";
 import ContainerStatus from "./components/MasterForms/ContainerStatus";
 
 import Grade from "./components/MasterForms/Grade";
@@ -123,7 +123,7 @@ export default function App() {
         <Route path="unitmaster" element={<UnitMaster />} />
         <Route path="purchaseorder" element={<PurchaseOrder />} />
         <Route path="ContainerStatus" element={<ContainerStatus />} />
-
+        <Route path="PurchaseMaster" element={<PurchaseMaster />}/>
         <Route path="Grade" element={<Grade />} />
         <Route path="Group" element={<Group />} />
         <Route path="GroupUnder" element={<GroupUnder />} />

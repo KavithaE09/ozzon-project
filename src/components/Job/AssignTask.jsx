@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {  Plus,ChevronDown, Printer, Edit2, Trash2 ,ChevronLeft, ChevronRight} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 export default function AssignTask() {
   const navigate = useNavigate();
   
@@ -47,10 +48,10 @@ export default function AssignTask() {
     }
   ]);
   const jobPerPage = 5;
-// Job Orders
-const jobTotalPages = Math.ceil(jobOrders.length / jobPerPage);
-const jobStart = (jobPage - 1) * jobPerPage;
-const jobData = jobOrders.slice(jobStart, jobStart + jobPerPage);
+  // Job Orders
+  const jobTotalPages = Math.ceil(jobOrders.length / jobPerPage);
+  const jobStart = (jobPage - 1) * jobPerPage;
+  const jobData = jobOrders.slice(jobStart, jobStart + jobPerPage);
 
   const [formData, setformData] = useState({
     expecteddate: getTodayDate(),
@@ -61,11 +62,11 @@ const jobData = jobOrders.slice(jobStart, jobStart + jobPerPage);
     { id: 3, slNo: 3, description: 'Flooring - Vitrified tiles 2x2 feet', dimension: '20*8*8.6', noOfUnit: 1, amount: 100000, hiddenAmount: 100000, assignLabour: 'Varshini' ,expecteddate: '28-01-2026',remark:'kumar' },
     { id: 4, slNo: 4, description: 'Roofing - MS sheet roofing with insulation', dimension: '20*8*8.6', noOfUnit: 1, amount: 100000, hiddenAmount: 100000, assignLabour: 'Sasi',expecteddate: '28-01-2026',remark:'kumar'  }
   ]);
-const rowPerPage = 5;
-// Rows
-const rowTotalPages = Math.ceil(rows.length / rowPerPage);
-const rowStart = (rowPage - 1) * rowPerPage;
-const rowData = rows.slice(rowStart, rowStart + rowPerPage);
+  const rowPerPage = 5;
+  // Rows
+  const rowTotalPages = Math.ceil(rows.length / rowPerPage);
+  const rowStart = (rowPage - 1) * rowPerPage;
+  const rowData = rows.slice(rowStart, rowStart + rowPerPage);
 
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
@@ -89,15 +90,15 @@ const rowData = rows.slice(rowStart, rowStart + rowPerPage);
     'Varshini',
     'Sasi'
   ];
-   const [containers, setContainers] = useState([
-      { id: 1, selected: false, sNo: 1, containerNo: 'TCKU 1524662', partyName: 'Christine Brooks', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04-09-2019', photo: '', status: '' },
-      { id: 2, selected: false, sNo: 2, containerNo: 'TCKU 1524662', partyName: 'Rosie Pearson', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04 Sep 2019', photo: '', status: '' }
-    ]);
+  const [containers, setContainers] = useState([
+    { id: 1, selected: false, sNo: 1, containerNo: 'TCKU 1524662', partyName: 'Christine Brooks', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04-09-2019', photo: '', status: '' },
+    { id: 2, selected: false, sNo: 2, containerNo: 'TCKU 1524662', partyName: 'Rosie Pearson', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04 Sep 2019', photo: '', status: '' }
+  ]);
   const containerPerPage = 5;
   // Containers
-const containerTotalPages = Math.ceil(containers.length / containerPerPage);
-const containerStart = (containerPage - 1) * containerPerPage;
-const containerData = containers.slice(containerStart, containerStart + containerPerPage);
+  const containerTotalPages = Math.ceil(containers.length / containerPerPage);
+  const containerStart = (containerPage - 1) * containerPerPage;
+  const containerData = containers.slice(containerStart, containerStart + containerPerPage);
 
   const [newRowData, setNewRowData] = useState({
     slNo: '',
@@ -196,22 +197,22 @@ const containerData = containers.slice(containerStart, containerStart + containe
   };
   
   const selectFromMaster = (type, value) => {
-      if (currentRowForModal === 'newRow') {
-        setNewRowData({ ...newRowData, description: value });
-      } else {
-        updateRow(currentRowForModal, 'description', value);
-      }
-      setShowSpecModal(false);
+    if (currentRowForModal === 'newRow') {
+      setNewRowData({ ...newRowData, description: value });
+    } else {
+      updateRow(currentRowForModal, 'description', value);
+    }
+    setShowSpecModal(false);
     setCurrentRowForModal(null);
   };
 
-    const selectMaster = (type, value) => {
-      if (currentRowForModal === 'newRow') {
-        setNewRowData({ ...newRowData, assignLabour: value });
-      } else {
-        updateRow(currentRowForModal, 'assignLabour', value);
-      }
-      setshowlabourModal(false);
+  const selectMaster = (type, value) => {
+    if (currentRowForModal === 'newRow') {
+      setNewRowData({ ...newRowData, assignLabour: value });
+    } else {
+      updateRow(currentRowForModal, 'assignLabour', value);
+    }
+    setshowlabourModal(false);
     setCurrentRowForModal(null);
   };
 
@@ -222,14 +223,14 @@ const containerData = containers.slice(containerStart, containerStart + containe
   };
 
   const handleContainerSelect = (id) => {
-  setContainers(prev =>
-    prev.map(container =>
-      container.id === id
-        ? { ...container, selected: true }
-        : { ...container, selected: false }
-    )
-  );
-};
+    setContainers(prev =>
+      prev.map(container =>
+        container.id === id
+          ? { ...container, selected: true }
+          : { ...container, selected: false }
+      )
+    );
+  };
 
   const handleJobOrderSelect = (id) => {
     setJobOrders(prev =>
@@ -238,6 +239,7 @@ const containerData = containers.slice(containerStart, containerStart + containe
       )
     );
   };
+
   const handlePrintJobOrder = (index, e) => {
     e.stopPropagation();
     const row = jobOrders[index];
@@ -281,1217 +283,709 @@ const containerData = containers.slice(containerStart, containerStart + containe
       setJobOrders(updatedData);
     }
   };
-const Pagination = ({ currentPage, totalPages, setCurrentPage }) => (
-      <div style={{
-  display: 'flex',
-  justifyContent: 'flex-end',
-  gap: '8px',
-  marginTop: '12px'
-}}>
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage(p => p - 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === 1 ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-    }}
-  >
-     <ChevronLeft />
-  </button>
 
-  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-    <button
-      key={page}
-      onClick={() => setCurrentPage(page)}
-      style={{
-        padding: '6px 12px',
-        borderRadius: '4px',
-        border: '1px solid #d1d5db',
-        backgroundColor: currentPage === page ? '#A63128' : '#ffffff',
-        color: currentPage === page ? '#ffffff' : '#000000',
-        cursor: 'pointer'
-      }}
-    >
-      {page}
-    </button>
-  ))}
+  const Pagination = ({ currentPage, totalPages, setCurrentPage }) => (
+    <div className="pagination-container">
+      <button
+        disabled={currentPage === 1}
+        onClick={() => setCurrentPage(p => p - 1)}
+        className={`pagination-btn ${currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+      >
+        <ChevronLeft />
+      </button>
 
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage(p => p + 1)}
-    style={{
-      padding: '6px 12px',
-      borderRadius: '4px',
-      border: '1px solid #d1d5db',
-      backgroundColor: currentPage === totalPages ? '#e5e7eb' : '#ffffff',
-      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-    }}
-  >
- <ChevronRight />
-  </button>
-</div>
-);
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+        <button
+          key={page}
+          onClick={() => setCurrentPage(page)}
+          className={`pagination-page-btn ${currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
+        >
+          {page}
+        </button>
+      ))}
 
+      <button
+        disabled={currentPage === totalPages}
+        onClick={() => setCurrentPage(p => p + 1)}
+        className={`pagination-btn ${currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+      >
+        <ChevronRight />
+      </button>
+    </div>
+  );
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F3E8E8', padding: '24px' }}>
-      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '32px', marginBottom: '10px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', color: '#111827' }}>Assign Task</h2>
-        <h4 style={{fontSize:'20px',fontWeight:'bold',marginLeft:'20px',marginBottom:'24px',color:'#1118827'}}>Accepted Job List</h4>
-        {/* Job Orders Table */}
-        <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-              <thead>
-                 <tr style={{ backgroundColor: '#fde2e2' }}>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Select</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>S/No</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Lead No</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Quotation No</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>PI No</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Job Order No</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Job Order Date</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Assign Date</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Sales Person</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Customer Name</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: '600' }}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jobOrders.map((order, index) => (
-                  <tr key={order.id} style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb' }}>
-                    <td style={{ padding: '12px 8px' }}>
-                      <input
-                        type="radio"
-                        checked={order.selected}
-                        onChange={() => handleJobOrderSelect(order.id)}
-                        style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-                      />
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>{order.sno}.</td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h2 className="page-title">Assign Task</h2>
+            <h4 className="section-title" style={{ marginLeft: '20px' }}>Accepted Job List</h4>
+            
+            {/* Job Orders Table */}
+            <div className="table-container">
+              <table className="data-table">
+                <thead className="table-header">
+                  <tr>
+                    <th className="table-th">Select</th>
+                    <th className="table-th">S/No</th>
+                    <th className="table-th">Lead No</th>
+                    <th className="table-th">Quotation No</th>
+                    <th className="table-th">PI No</th>
+                    <th className="table-th">Job Order No</th>
+                    <th className="table-th">Job Order Date</th>
+                    <th className="table-th">Assign Date</th>
+                    <th className="table-th">Sales Person</th>
+                    <th className="table-th">Customer Name</th>
+                    <th className="table-th-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {jobOrders.map((order, index) => (
+                    <tr key={order.id} className="table-row">
+                      <td className="table-cell">
                         <input
-                          type="text"
-                          value={order.leadNo}
-                          onChange={(e) => handleJobOrderFieldChange(index, 'leadNo', e.target.value)}
-                          style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                          type="radio"
+                          checked={order.selected}
+                          onChange={() => handleJobOrderSelect(order.id)}
+                          className="radio-input accent-primary"
                         />
-                      ) : (
-                        order.leadNo
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
-                        <input
-                          type="text"
-                          value={order.quotationNo}
-                          onChange={(e) => handleJobOrderFieldChange(index, 'quotationNo', e.target.value)}
-                          style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
-                        />
-                      ) : (
-                        order.quotationNo
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
+                      </td>
+                      <td className="table-cell">{order.sno}.</td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
+                          <input
+                            type="text"
+                            value={order.leadNo}
+                            onChange={(e) => handleJobOrderFieldChange(index, 'leadNo', e.target.value)}
+                            className="master-edit-input"
+                          />
+                        ) : (
+                          order.leadNo
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
+                          <input
+                            type="text"
+                            value={order.quotationNo}
+                            onChange={(e) => handleJobOrderFieldChange(index, 'quotationNo', e.target.value)}
+                            className="master-edit-input"
+                          />
+                        ) : (
+                          order.quotationNo
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
                           <input
                             type="text"
                             value={order.piNo}
                             onChange={(e) => handleJobOrderFieldChange(index, 'piNo', e.target.value)}
-                            style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                            className="master-edit-input"
                           />
-                      ) : (
-                        order.piNo
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
+                        ) : (
+                          order.piNo
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
                           <input
                             type="text"
                             value={order.joborderNo}
-                            onChange={(e) => handleJobOrderFieldChange(index, 'piNo', e.target.value)}
-                            style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                            onChange={(e) => handleJobOrderFieldChange(index, 'joborderNo', e.target.value)}
+                            className="master-edit-input"
                           />
-                      ) : (
-                        order.joborderNo
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
+                        ) : (
+                          order.joborderNo
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
                           <input
                             type="text"
                             value={order.joborderDate}
-                            onChange={(e) => handleJobOrderFieldChange(index, 'piNo', e.target.value)}
-                            style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                            onChange={(e) => handleJobOrderFieldChange(index, 'joborderDate', e.target.value)}
+                            className="master-edit-input"
                           />
-                      ) : (
-                        order.joborderDate
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
+                        ) : (
+                          order.joborderDate
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
                           <input
                             type="text"
                             value={order.assignDate}
-                            onChange={(e) => handleJobOrderFieldChange(index, 'piNo', e.target.value)}
-                            style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                            onChange={(e) => handleJobOrderFieldChange(index, 'assignDate', e.target.value)}
+                            className="master-edit-input"
                           />
-                      ) : (
-                        order.assignDate
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
-                        <input
+                        ) : (
+                          order.assignDate
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
+                          <input
                             type="text"
                             value={order.salesPerson}
                             onChange={(e) => handleJobOrderFieldChange(index, 'salesPerson', e.target.value)}
-                            style={{ width: '100px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                            className="master-edit-input"
                           />
-                      ) : (
-                        order.salesPerson
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      {order.isEditing ? (
+                        ) : (
+                          order.salesPerson
+                        )}
+                      </td>
+                      <td className="table-cell">
+                        {order.isEditing ? (
                           <input
                             type="text"
                             value={order.customerName}
                             onChange={(e) => handleJobOrderFieldChange(index, 'customerName', e.target.value)}
-                            style={{ width: '100px', padding: '4px 20px 4px 4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px', outline: 'none' }}
+                            className="master-edit-input"
                           />
-                      ) : (
-                        order.customerName
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 8px' }}>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        {order.isEditing ? (
-                          <button 
-                            onClick={(e) => handleSaveJobOrder(index, e)}
-                            style={{ 
-                              padding: '4px 12px', 
-                              backgroundColor: '#22C55E', 
-                              color: 'white', 
-                              border: 'none', 
-                              borderRadius: '4px', 
-                              fontSize: '12px', 
-                              cursor: 'pointer',
-                              fontWeight: '500'
-                            }}
-                          >
-                            Save
-                          </button>
                         ) : (
-                          <>
-                            <button 
-                              onClick={(e) => handlePrintJobOrder(index, e)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer'}}
-                              title="Print"
-                            >
-                              <Printer size={18} style={{ color: '#374151' }} />
-                            </button>
-                            <button 
-                              onClick={(e) => handleEditJobOrder(index, e)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                              title="Edit"
-                            >
-                              <Edit2 size={18} style={{ color: '#374151' }} />
-                            </button>
-                            <button 
-                              onClick={(e) => handleDeleteJobOrder(index, e)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                              title="Delete"
-                            >
-                              <Trash2 size={18} style={{ color: '#dc2626' }} />
-                            </button>
-                          </>
+                          order.customerName
                         )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-<Pagination
-  currentPage={jobPage}
-  totalPages={jobTotalPages}
-  setCurrentPage={setJobPage}
-/>
-
-         {/* Container List */}
-        <div style={{ marginTop: '32px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>Container List</h3>
-         <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#fde2e2' }}>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Select</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>S/No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Container No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Party Name</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Sz/Type</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Grade</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Liner</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Yard</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>MFG Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>In Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Delivery Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Photo</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {containerData.map((container) => (
-                    <tr key={container.id} style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '12px 8px' }}>
-                        <input
-                          type="radio"
-                          checked={container.selected}
-                          onChange={() => handleContainerSelect(container.id)}
-                          style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-                        />
                       </td>
-                      <td style={{ padding: '12px 8px' }}>{container.sNo}.</td>
-                      <td style={{ padding: '12px 8px' }}>{container.containerNo}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.partyName}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.szType}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.grade}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.liner}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.yard}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.mfgDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.inDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.deliveryDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.photo}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.status}</td>
+                      <td className="table-cell-center">
+                        <div className="table-actions">
+                          {order.isEditing ? (
+                            <button onClick={(e) => handleSaveJobOrder(index, e)} className="btn-smallbtn">
+                              Save
+                            </button>
+                          ) : (
+                            <>
+                              <button onClick={(e) => handlePrintJobOrder(index, e)} className="btn-action" title="Print">
+                                <Printer size={18} />
+                              </button>
+                              <button onClick={(e) => handleEditJobOrder(index, e)} className="btn-action" title="Edit">
+                                <Edit2 size={18} />
+                              </button>
+                              <button onClick={(e) => handleDeleteJobOrder(index, e)} className="btn-action" title="Delete">
+                                <Trash2 size={18} className="text-primary" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-<Pagination
-  currentPage={containerPage}
-  totalPages={containerTotalPages}
-  setCurrentPage={setContainerPage}
-/>
+            <Pagination currentPage={jobPage} totalPages={jobTotalPages} setCurrentPage={setJobPage} />
 
-        {/* Job Review List */}
-        <div style={{ marginTop: '32px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>Job Review List</h3>
-           <div style={{ overflowX: 'auto', marginBottom: '20px', border: '1px solid #9CA3AF', borderRadius: '8px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '1100px' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#fde2e2', borderBottom: '2px solid #E5E7EB' }}>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Sl No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Description</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Dimension</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>No. of Unit</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Amount</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Hidden Amount</th>
-                     <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Assign Labour</th>
-                     <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Expected Date</th>
-                     <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600', color: '#1F2937' }}>Remark</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: '600', color: '#1F2937' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rowData.map((row, index) => (
-  <tr
-    key={row.id}
-    style={{
-      borderBottom: "1px solid #E5E7EB"
-    }}
-  >
-    <td style={{ padding: "12px 8px" }}>{row.slNo}</td>
+            {/* Container List */}
+            <div className="filter-section">
+              <h3 className="section-title">Container List</h3>
+              <div className="table-container">
+                <table className="data-table">
+                  <thead className="table-header">
+                    <tr>
+                      <th className="table-th">Select</th>
+                      <th className="table-th">S/No</th>
+                      <th className="table-th">Container No</th>
+                      <th className="table-th">Party Name</th>
+                      <th className="table-th">Sz/Type</th>
+                      <th className="table-th">Grade</th>
+                      <th className="table-th">Liner</th>
+                      <th className="table-th">Yard</th>
+                      <th className="table-th">MFG Date</th>
+                      <th className="table-th">In Date</th>
+                      <th className="table-th">Delivery Date</th>
+                      <th className="table-th">Photo</th>
+                      <th className="table-th">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {containerData.map((container) => (
+                      <tr key={container.id} className="table-row">
+                        <td className="table-cell">
+                          <input
+                            type="radio"
+                            checked={container.selected}
+                            onChange={() => handleContainerSelect(container.id)}
+                            className="radio-input accent-primary"
+                          />
+                        </td>
+                        <td className="table-cell">{container.sNo}.</td>
+                        <td className="table-cell">{container.containerNo}</td>
+                        <td className="table-cell">{container.partyName}</td>
+                        <td className="table-cell">{container.szType}</td>
+                        <td className="table-cell">{container.grade}</td>
+                        <td className="table-cell">{container.liner}</td>
+                        <td className="table-cell">{container.yard}</td>
+                        <td className="table-cell">{container.mfgDate}</td>
+                        <td className="table-cell">{container.inDate}</td>
+                        <td className="table-cell">{container.deliveryDate}</td>
+                        <td className="table-cell">{container.photo}</td>
+                        <td className="table-cell">{container.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <Pagination currentPage={containerPage} totalPages={containerTotalPages} setCurrentPage={setContainerPage} />
 
+            {/* Job Review List */}
+            <div className="filter-section">
+              <h3 className="section-title">Job Review List</h3>
+              <div className="table-container">
+                <table className="data-table" style={{ minWidth: '1100px' }}>
+                  <thead className="table-header">
+                    <tr>
+                      <th className="table-th">Sl No</th>
+                      <th className="table-th">Description</th>
+                      <th className="table-th">Dimension</th>
+                      <th className="table-th">No. of Unit</th>
+                      <th className="table-th">Amount</th>
+                      <th className="table-th">Hidden Amount</th>
+                      <th className="table-th">Assign Labour</th>
+                      <th className="table-th">Expected Date</th>
+                      <th className="table-th">Remark</th>
+                      <th className="table-th-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rowData.map((row, index) => (
+                      <tr key={row.id} className="table-row">
+                        <td className="table-cell">{row.slNo}</td>
 
-    {/* Description */}
-     <td style={{ padding: "12px 8px", position: "relative" }}>
-      {editingRow === row.id ? (
-        <div style={{ position: "relative" }}>
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowSpecDropdown(showSpecDropdown === row.id ? null : row.id);
-            }}
-            onKeyDown={handleDropdownKeyDown}
-            tabIndex={0}
-            style={{
-              width: "100%",
-              minHeight: "34px",
-              padding: "6px 8px",
-              border: "1px solid #D1D5DB",
-              borderRadius: "4px",
-              fontSize: "14px",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "#fff"
-            }}
-          >
-            <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.description}</span>
-            <ChevronDown size={16} style={{ color: "#6B7280", flexShrink: 0, marginLeft: "8px" }} />
-          </div>
+                        {/* Description */}
+                        <td className="table-cell" style={{ position: 'relative' }}>
+                          {editingRow === row.id ? (
+                            <div className="dropdown-wrapper">
+                              <div
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowSpecDropdown(showSpecDropdown === row.id ? null : row.id);
+                                }}
+                                onKeyDown={handleDropdownKeyDown}
+                                tabIndex={0}
+                                className="dropdown-input"
+                                style={{
+                                  minHeight: '34px',
+                                  padding: '6px 8px',
+                                  border: '1px solid #D1D5DB',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center'
+                                }}
+                              >
+                                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.description}</span>
+                                <ChevronDown size={16} className="dropdown-icon" />
+                              </div>
 
-          {showSpecDropdown === row.id && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                position: "absolute",
-                top: "100%",
-                left: "0",
-                right: "0",
-                backgroundColor: "#fff",
-                border: "1px solid #D1D5DB",
-                borderRadius: "4px",
-                marginTop: "4px",
-                zIndex: 10,
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                maxHeight: "200px",
-                overflowY: "auto"
-              }}
-            >
-              {specMasters.map((option, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => {
-                    updateRow(row.id, "description", option);
-                    setShowSpecDropdown(null);
-                    stopEditing();
-                  }}
-                  tabIndex={0}
-                  style={{
-                    padding: "8px 12px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    color: "#374151",
-                    backgroundColor: row.description === option ? "#FEE2E2" : "white",
-                    transition: "all 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#A63128";
-                    e.currentTarget.style.color = "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = row.description === option ? "#FEE2E2" : "white";
-                    e.currentTarget.style.color = "#374151";
-                  }}
-                >
-                  {option}
+                              {showSpecDropdown === row.id && (
+                                <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
+                                  {specMasters.map((option, idx) => (
+                                    <div
+                                      key={idx}
+                                      onClick={() => {
+                                        updateRow(row.id, 'description', option);
+                                        setShowSpecDropdown(null);
+                                        stopEditing();
+                                      }}
+                                      className={`dropdown-item-option ${row.description === option ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                                    >
+                                      {option}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span>{row.description}</span>
+                          )}
+                        </td>
+
+                        {/* Dimension */}
+                        <td className="table-cell">
+                          {editingRow === row.id ? (
+                            <input
+                              type="text"
+                              value={row.dimension}
+                              onChange={(e) => updateRow(row.id, 'dimension', e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="master-edit-input"
+                            />
+                          ) : (
+                            <span>{row.dimension}</span>
+                          )}
+                        </td>
+
+                        {/* No of Unit */}
+                        <td className="table-cell">
+                          {editingRow === row.id ? (
+                            <input
+                              type="number"
+                              value={row.noOfUnit}
+                              onChange={(e) => updateRow(row.id, 'noOfUnit', parseInt(e.target.value))}
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="master-edit-input"
+                              style={{ width: '80px' }}
+                            />
+                          ) : (
+                            <span>{row.noOfUnit}</span>
+                          )}
+                        </td>
+
+                        {/* Amount */}
+                        <td className="table-cell">
+                          {editingRow === row.id ? (
+                            <input
+                              type="number"
+                              value={row.amount}
+                              onChange={(e) => updateRow(row.id, 'amount', parseFloat(e.target.value))}
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="master-edit-input"
+                              style={{ width: '96px' }}
+                            />
+                          ) : (
+                            <span>₹ {row.amount.toFixed(2)}</span>
+                          )}
+                        </td>
+
+                        {/* Hidden Amount */}
+                        <td className="table-cell">
+                          {editingRow === row.id ? (
+                            <input
+                              type="number"
+                              value={row.hiddenAmount}
+                              onChange={(e) => updateRow(row.id, 'hiddenAmount', parseFloat(e.target.value))}
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="master-edit-input"
+                              style={{ width: '96px' }}
+                            />
+                          ) : (
+                            <span>₹ {row.hiddenAmount.toFixed(2)}</span>
+                          )}
+                        </td>
+
+                        {/* Assign Labour */}
+                        <td className="table-cell" style={{ position: 'relative' }}>
+                          {editingRow === row.id ? (
+                            <div className="dropdown-wrapper">
+                              <div
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowlabourDropdown(showlabourDropdown === row.id ? null : row.id);
+                                }}
+                                onKeyDown={handleDropdownKeyDown}
+                                tabIndex={0}
+                                className="dropdown-input"
+                                style={{
+                                  minHeight: '34px',
+                                  padding: '6px 8px',
+                                  border: '1px solid #D1D5DB',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center'
+                                }}
+                              >
+                                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.assignLabour}</span>
+                                <ChevronDown size={16} className="dropdown-icon" />
+                              </div>
+
+                              {showlabourDropdown === row.id && (
+                                <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
+                                  {specLabour.map((option, idx) => (
+                                    <div
+                                      key={idx}
+                                      onClick={() => {
+                                        updateRow(row.id, 'assignLabour', option);
+                                        setShowlabourDropdown(null);
+                                        stopEditing();
+                                      }}
+                                      className={`dropdown-item-option ${row.assignLabour === option ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                                    >
+                                      {option}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span>{row.assignLabour}</span>
+                          )}
+                        </td>
+
+                        {/* Expected Date */}
+                        <td className="table-cell">
+                          {editingRow === row.id ? (
+                            <input
+                              type="date"
+                              value={row.expecteddate}
+                              onChange={(e) => updateRow(row.id, 'expecteddate', e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="master-edit-input"
+                              style={{ width: '120px' }}
+                            />
+                          ) : (
+                            <span>{row.expecteddate}</span>
+                          )}
+                        </td>
+
+                        {/* Remark */}
+                        <td className="table-cell">
+                          {editingRow === row.id ? (
+                            <input
+                              type="text"
+                              value={row.remark}
+                              onChange={(e) => updateRow(row.id, 'remark', e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="master-edit-input"
+                              style={{ width: '100px' }}
+                            />
+                          ) : (
+                            <span>{row.remark}</span>
+                          )}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="table-cell-center">
+                          <div className="table-actions">
+                            <Plus
+                              size={18}
+                              className="add-primary"
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => {
+                                handleInsertRow(row.id);
+                                setOpenMenuIndex(null);
+                              }}
+                            />
+                            <Edit2
+                              size={18}
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => {
+                                handleEdit(index);
+                                setOpenMenuIndex(null);
+                              }}
+                            />
+                            <Trash2
+                              size={18}
+                              className="text-primary"
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => {
+                                handleDelete(index);
+                                setOpenMenuIndex(null);
+                              }}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <span>{row.description}</span>
-      )}
-    </td>
+              <Pagination currentPage={rowPage} totalPages={rowTotalPages} setCurrentPage={setRowPage} />
+              
+          {/* Back Button */}
+          <div className="filter-grid" >
 
-    {/* DIMENSION */}
-    <td style={{ padding: "12px 8px" }}>
-      {editingRow === row.id ? (
-        <input
-          type="text"
-          value={row.dimension}
-          onChange={(e) => updateRow(row.id, "dimension", e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && stopEditing()}
-          style={{
-            width: "100%",
-            padding: "6px 8px",
-            border: "1px solid #D1D5DB",
-            borderRadius: "4px",
-            fontSize: "14px"
-          }}
-        />
-      ) : (
-        <span>{row.dimension}</span>
-      )}
-    </td>
-
-    {/* NO OF UNIT */}
-    <td style={{ padding: "12px 8px" }}>
-      {editingRow === row.id ? (
-        <input
-          type="number"
-          value={row.noOfUnit}
-          onChange={(e) =>
-            updateRow(row.id, "noOfUnit", parseInt(e.target.value))
-          }
-          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-          style={{
-            width: "80px",
-            padding: "6px 8px",
-            border: "1px solid #D1D5DB",
-            borderRadius: "4px",
-            fontSize: "14px"
-          }}
-        />
-      ) : (
-        <span>{row.noOfUnit}</span>
-      )}
-    </td>
-
-    {/* AMOUNT */}
-    <td style={{ padding: "12px 8px" }}>
-      {editingRow === row.id ? (
-        <input
-          type="number"
-          value={row.amount}
-          onChange={(e) =>
-            updateRow(row.id, "amount", parseFloat(e.target.value))
-          }
-          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-          style={{
-            width: "96px",
-            padding: "6px 8px",
-            border: "1px solid #D1D5DB",
-            borderRadius: "4px",
-            fontSize: "14px"
-          }}
-        />
-      ) : (
-        <span>₹ {row.amount.toFixed(2)}</span>
-      )}
-    </td>
-
-    {/* HIDDEN AMOUNT */}
-    <td style={{ padding: "12px 8px" }}>
-      {editingRow === row.id ? (
-        <input
-          type="number"
-          value={row.hiddenAmount}
-          onChange={(e) =>
-            updateRow(row.id, "hiddenAmount", parseFloat(e.target.value))
-          }
-          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-          style={{
-            width: "96px",
-            padding: "6px 8px",
-            border: "1px solid #D1D5DB",
-            borderRadius: "4px",
-            fontSize: "14px"
-          }}
-        />
-      ) : (
-        <span>₹ {row.hiddenAmount.toFixed(2)}</span>
-      )}
-    </td>
-    
-    {/* Assign Labour */}
-     <td style={{ padding: "12px 8px", position: "relative" }}>
-      {editingRow === row.id ? (
-        <div style={{ position: "relative" }}>
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowlabourDropdown(showlabourDropdown === row.id ? null : row.id);
-            }}
-            onKeyDown={handleDropdownKeyDown}
-            tabIndex={0}
-            style={{
-              width: "100%",
-              minHeight: "34px",
-              padding: "6px 8px",
-              border: "1px solid #D1D5DB",
-              borderRadius: "4px",
-              fontSize: "14px",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "#fff"
-            }}
-          >
-            <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.assignLabour}</span>
-            <ChevronDown size={16} style={{ color: "#6B7280", flexShrink: 0, marginLeft: "8px" }} />
-          </div>
-
-          {showlabourDropdown === row.id && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                position: "absolute",
-                top: "100%",
-                left: "0",
-                right: "0",
-                backgroundColor: "#fff",
-                border: "1px solid #D1D5DB",
-                borderRadius: "4px",
-                marginTop: "4px",
-                zIndex: 10,
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                maxHeight: "200px",
-                overflowY: "auto"
-              }}
-            >
-              {specLabour.map((option, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => {
-                    updateRow(row.id, "assignLabour", option);
-                    setShowlabourDropdown(null);
-                    stopEditing();
-                  }}
-                  tabIndex={0}
-                  style={{
-                    padding: "8px 12px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    color: "#374151",
-                    backgroundColor: row.assignLabour === option ? "#FEE2E2" : "white",
-                    transition: "all 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#A63128";
-                    e.currentTarget.style.color = "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = row.assignLabour === option ? "#FEE2E2" : "white";
-                    e.currentTarget.style.color = "#374151";
-                  }}
-                >
-                  {option}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <span>{row.assignLabour}</span>
-      )}
-    </td>
-    
-    {/* Expected Date - FIXED */}
-    <td style={{ padding: "12px 8px" }}>
-      {editingRow === row.id ? (
-        <input
-          type="date"
-          value={row.expecteddate}
-          onChange={(e) =>
-            updateRow(row.id, "expecteddate", e.target.value)
-          }
-          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-          style={{
-            width: "120px",
-            padding: "6px 8px",
-            border: "1px solid #D1D5DB",
-            borderRadius: "4px",
-            fontSize: "14px"
-          }}
-        />
-      ) : (
-        <span>{row.expecteddate}</span>
-      )}
-    </td>
-    
-    {/* Remark - FIXED */}
-    <td style={{ padding: "12px 8px" }}>
-      {editingRow === row.id ? (
-        <input
-          type="text"
-          value={row.remark}
-          onChange={(e) =>
-            updateRow(row.id, "remark", e.target.value)
-          }
-          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-          style={{
-            width: "100px",
-            padding: "6px 8px",
-            border: "1px solid #D1D5DB",
-            borderRadius: "4px",
-            fontSize: "14px"
-          }}
-        />
-      ) : (
-        <span>{row.remark}</span>
-      )}
-    </td>
-
-    {/* ACTIONS */}
-    <td style={{ padding: "12px 8px" }}>
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          justifyContent: "center",
-          position: "relative"
-        }}
-      >
-            <Plus size={18} 
-            style={{ color: "#000000", cursor: "pointer"  }} 
-             onClick={() => {
-             handleInsertRow(row.id);
-             setOpenMenuIndex(null);
-             }}
-            />
-            <Edit2 size={18} 
-            style={{ color: "#374151", cursor: "pointer" }}
-             onClick={() => {
-             handleEdit(index);
-             setOpenMenuIndex(null);
-             }} />
-            <Trash2 size={18} 
-            style={{ color: "#DC2626", cursor: "pointer" }} 
-            onClick={() => {
-            handleDelete(index);
-            setOpenMenuIndex(null);
-            }}/>
-            </div>
-    </td>
-  </tr>
-))}
-
-                </tbody>
-              </table>
-            </div>
-
-        {showAddForm && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(10, 1fr)",
-              gap: "12px",
-              alignItems: "flex-end",
-              paddingBottom: "8px",
-              marginBottom: "20px"
-            }}
-          >
-            {/* SL NO */}
-            <div
-              style={{
-                backgroundColor: "#F9FAFB",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                Sl No
-              </label>
-              <input
-                type="text"
-                placeholder="Input"
-                value={newRowData.slNo}
-                onChange={(e) =>
-                  setNewRowData({ ...newRowData, slNo: e.target.value })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-        
-        {/* Description */}
-<div
-  style={{
-    backgroundColor: "#FFFFFF",
-    padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid #D1D5DB",
-    position: "relative",
-    gridColumn: "span 2"
-  }}
->
-  <label
-    style={{
-      display: "block",
-      fontSize: "12px",
-      color: "#4B5563",
-      marginBottom: "6px",
-      fontWeight: "700"
-    }}
-  >
-    Description
-  </label>
-  <div
-    onClick={() => setShowAddSpecDropdown(!showAddSpecDropdown)}
-    style={{
-      width: "100%",
-      minHeight: "34px",
-      padding: "1px 1px",
-      border: "none",
-      borderRadius: "4px",
-      fontSize: "14px",
-      cursor: "pointer",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      backgroundColor: "#fff"
-    }}
-  >
-    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-      {newRowData.description || "Select description"}
-    </span>
-    <ChevronDown size={16} style={{ color: "#6B7280", flexShrink: 0, marginLeft: "8px" }} />
-  </div>
-  {showAddSpecDropdown && (
-    <div
-      style={{
-        position: "absolute",
-        top: "100%",
-        left: "10px",
-        right: "10px",
-        backgroundColor: "#fff",
-        border: "1px solid #D1D5DB",
-        borderRadius: "4px",
-        marginTop: "4px",
-        zIndex: 20,
-        boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-        maxHeight: "200px",
-        overflowY: "auto"
-      }}
-    >
-      {specMasters.map((spec, idx) => (
-        <div
-          key={idx}
-          onClick={() => {
-            setNewRowData({ ...newRowData, description: spec });
-            setShowAddSpecDropdown(false);
-          }}
-          style={{
-            padding: "8px 12px",
-            cursor: "pointer",
-            fontSize: "14px",
-            color: "#374151",
-            backgroundColor: newRowData.description === spec ? "#FEE2E2" : "white",
-            transition: "all 0.2s ease"
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#A63128";
-            e.currentTarget.style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = newRowData.description === spec ? "#FEE2E2" : "white";
-            e.currentTarget.style.color = "#374151";
-          }}
-        >
-          {spec}
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
-        
-            {/* DIMENSION */}
-            <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                Dimension
-              </label>
-              <input
-                type="text"
-                placeholder="Input"
-                value={newRowData.dimension}
-                onChange={(e) =>
-                  setNewRowData({ ...newRowData, dimension: e.target.value })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-        
-            {/* NO OF UNIT */}
-            <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                No. of Unit
-              </label>
-              <input
-                type="text"
-                placeholder="20*8*8.6"
-                value={newRowData.noOfUnit}
-                onChange={(e) =>
-                  setNewRowData({ ...newRowData, noOfUnit: e.target.value })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-        
-            {/* AMOUNT */}
-            <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                Amount
-              </label>
-              <input
-                type="text"
-                placeholder="₹ 10,00,000"
-                value={newRowData.amount}
-                onChange={(e) =>
-                  setNewRowData({ ...newRowData, amount: e.target.value })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-        
-            {/* HIDDEN AMOUNT */}
-            <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                Hidden Amount
-              </label>
-              <input
-                type="text"
-                placeholder="₹ 10,00,000"
-                value={newRowData.hiddenAmount}
-                onChange={(e) =>
-                  setNewRowData({
-                    ...newRowData,
-                    hiddenAmount: e.target.value
-                  })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-             {/* Assign Labour */}
-<div
-  style={{
-    backgroundColor: "#FFFFFF",
-    padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid #D1D5DB",
-    position: "relative",
-    gridColumn: "span 2"
-  }}
->
-  <label
-    style={{
-      display: "block",
-      fontSize: "12px",
-      color: "#4B5563",
-      marginBottom: "6px",
-      fontWeight: "700"
-    }}
-  >
-    Assign Labour
-  </label>
-  <div
-    onClick={() => setShowAddlabourDropdown(!showAddlabourDropdown)}
-    style={{
-      width: "100%",
-      minHeight: "34px",
-      padding: "1px 1px",
-      border: "none",
-      borderRadius: "4px",
-      fontSize: "14px",
-      cursor: "pointer",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      backgroundColor: "#fff"
-    }}
-  >
-    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-      {newRowData.assignLabour || "Select labour"}
-    </span>
-    <ChevronDown size={16} style={{ color: "#6B7280", flexShrink: 0, marginLeft: "8px" }} />
-  </div>
-  {showAddlabourDropdown && (
-    <div
-      style={{
-        position: "absolute",
-        top: "100%",
-        left: "10px",
-        right: "10px",
-        backgroundColor: "#fff",
-        border: "1px solid #D1D5DB",
-        borderRadius: "4px",
-        marginTop: "4px",
-        zIndex: 20,
-        boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-        maxHeight: "200px",
-        overflowY: "auto"
-      }}
-    >
-      {specLabour.map((labour, idx) => (
-        <div
-          key={idx}
-          onClick={() => {
-            setNewRowData({ ...newRowData, assignLabour: labour });
-            setShowAddlabourDropdown(false);
-          }}
-          style={{
-            padding: "8px 12px",
-            cursor: "pointer",
-            fontSize: "14px",
-            color: "#374151",
-            backgroundColor: newRowData.assignLabour === labour ? "#FEE2E2" : "white",
-            transition: "all 0.2s ease"
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#A63128";
-            e.currentTarget.style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = newRowData.labour === labour? "#FEE2E2" : "white";
-            e.currentTarget.style.color = "#374151";
-          }}
-        >
-          {labour}
-        </div>
-      ))}
-    </div>
-  )}
-</div>
- <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                Expected Date
-              </label>
-              <input
-                type="date"
-                value={newRowData.expecteddate}
-                onChange={(e) =>
-                  setNewRowData({ ...newRowData, expecteddate: e.target.value })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-             <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #D1D5DB"
-              }}
-            >
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "12px",
-                  color: "#4B5563",
-                  marginBottom: "6px",
-                  fontWeight: "700"
-                }}
-              >
-                Remark
-              </label>
-              <input
-                type="text"
-                placeholder="kumar"
-                value={newRowData.remark}
-                onChange={(e) =>
-                  setNewRowData({ ...newRowData, remark: e.target.value })
-                }
-                style={{
-                  width: "100%",
-                  padding: "2px 4px",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
-              />
-            </div>
-
-        
-            {/* SAVE BUTTON */}
-            <div style={{ display: "flex", alignItems: "flex-end" }}>
-              <button
-                onClick={handleSaveNewRow}
-                style={{
-                  width: "100%",
-                  padding: "8px 14px",
-                  border: "none",
-                  borderRadius: "6px",
-                  backgroundColor: "#22C55E",
-                  color: "#FFFFFF",
-                  fontSize: "14px",
-                  fontWeight: 500,
-                  cursor: "pointer"
-                }}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
-           <Pagination
-  currentPage={rowPage}
-  totalPages={rowTotalPages}
-  setCurrentPage={setRowPage}
-/>
-        {/* Submit Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-          <button
-            onClick={handleAcceptJob}
-            type="button"
-            style={{
-              width: '150px',
-              height: '50px',
-              padding: '10px 24px',
-              backgroundColor: '#A63128',
-              color: 'white',
-              borderRadius: '15px',
-              fontSize: '14px',
-              fontWeight: '500',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              transition: 'background-color 0.2s ease'
-            }}
-          >
-            <span>✓</span>
-            Assign Task
+            <div className="btn-container">
+          <button onClick={() => navigate(-1)} className="btn-back">
+            <span>←</span>
+            <span>Back</span>
           </button>
+          </div>
+          <div></div>
+          <div></div>
+              {/* Submit Button */}
+              <div className="btn-container">
+                <button onClick={handleAcceptJob} className="btn-search">
+                  <span>✓</span>
+                  Assign Task
+                </button>
+                </div>
+              </div>
+              </div>
+
+              {showAddForm && (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(10, 1fr)',
+                    gap: '12px',
+                    alignItems: 'flex-end',
+                    paddingBottom: '8px',
+                    marginBottom: '20px'
+                  }}
+                >
+                  {/* Sl No */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Sl No</label>
+                    <input
+                      type="text"
+                      placeholder="Input"
+                      value={newRowData.slNo}
+                      onChange={(e) => setNewRowData({ ...newRowData, slNo: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div className="filter-grid-red" style={{ gridColumn: 'span 2', position: 'relative' }}>
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Description</label>
+                    <div className="dropdown-wrapper">
+                      <div
+                        onClick={() => setShowAddSpecDropdown(!showAddSpecDropdown)}
+                        className="dropdown-input"
+                        style={{
+                          minHeight: '34px',
+                          padding: '6px 8px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {newRowData.description || 'Select description'}
+                        </span>
+                        <ChevronDown size={16} className="dropdown-icon" />
+                      </div>
+                      {showAddSpecDropdown && (
+                        <div className="dropdown-menu" style={{ zIndex: 20 }}>
+                          {specMasters.map((spec, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => {
+                                setNewRowData({ ...newRowData, description: spec });
+                                setShowAddSpecDropdown(false);
+                              }}
+                              className={`dropdown-item-option ${newRowData.description === spec ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                            >
+                              {spec}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Dimension */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Dimension</label>
+                    <input
+                      type="text"
+                      placeholder="Input"
+                      value={newRowData.dimension}
+                      onChange={(e) => setNewRowData({ ...newRowData, dimension: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* No of Unit */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>No. of Unit</label>
+                    <input
+                      type="text"
+                      placeholder="20*8*8.6"
+                      value={newRowData.noOfUnit}
+                      onChange={(e) => setNewRowData({ ...newRowData, noOfUnit: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* Amount */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Amount</label>
+                    <input
+                      type="text"
+                      placeholder="₹ 10,00,000"
+                      value={newRowData.amount}
+                      onChange={(e) => setNewRowData({ ...newRowData, amount: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* Hidden Amount */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Hidden Amount</label>
+                    <input
+                      type="text"
+                      placeholder="₹ 10,00,000"
+                      value={newRowData.hiddenAmount}
+                      onChange={(e) => setNewRowData({ ...newRowData, hiddenAmount: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* Assign Labour */}
+                  <div className="filter-grid-red" style={{ gridColumn: 'span 2', position: 'relative' }}>
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Assign Labour</label>
+                    <div className="dropdown-wrapper">
+                      <div
+                        onClick={() => setShowAddlabourDropdown(!showAddlabourDropdown)}
+                        className="dropdown-input"
+                        style={{
+                          minHeight: '34px',
+                          padding: '6px 8px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {newRowData.assignLabour || 'Select labour'}
+                        </span>
+                        <ChevronDown size={16} className="dropdown-icon" />
+                      </div>
+                      {showAddlabourDropdown && (
+                        <div className="dropdown-menu" style={{ zIndex: 20 }}>
+                          {specLabour.map((labour, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => {
+                                setNewRowData({ ...newRowData, assignLabour: labour });
+                                setShowAddlabourDropdown(false);
+                              }}
+                              className={`dropdown-item-option ${newRowData.assignLabour === labour ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                            >
+                              {labour}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Expected Date */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Expected Date</label>
+                    <input
+                      type="date"
+                      value={newRowData.expecteddate}
+                      onChange={(e) => setNewRowData({ ...newRowData, expecteddate: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* Remark */}
+                  <div className="filter-grid-red">
+                    <label className="filter-label" style={{ fontSize: '12px' }}>Remark</label>
+                    <input
+                      type="text"
+                      placeholder="kumar"
+                      value={newRowData.remark}
+                      onChange={(e) => setNewRowData({ ...newRowData, remark: e.target.value })}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  {/* Save Button */}
+                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <button onClick={handleSaveNewRow} className="btn-smallbtn" style={{ width: '100%', padding: '8px 14px' }}>
+                      Save
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-   
-
-      </div>
-
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 20px',
-          fontSize: '13px',
-          fontWeight: '500',
-          color: '#B91C1C',
-          border: '2px solid #B91C1C',
-          borderRadius: '4px',
-          backgroundColor: 'white',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease'
-        }}
-      >
-        <span>←</span>
-        <span>Back</span>
-      </button>
-    </div>
   );
 }

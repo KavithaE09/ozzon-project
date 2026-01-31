@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Printer, Edit2, Trash2, ChevronDown, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function AssignJob() {
   const navigate = useNavigate();
   
-    const getTodayDate = () => {
+  const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -40,24 +39,22 @@ export default function AssignJob() {
   ]);
 
   const [supervisor, setSupervisor] = useState('');
-  const [expectdate, setExpectdate] = useState('');
   const [supervisorSearch, setSupervisorSearch] = useState('');
   const [isSupervisorOpen, setIsSupervisorOpen] = useState(false);
   const [hoveredSupervisor, setHoveredSupervisor] = useState(null);
-const [remark, setRemark] = useState('');
+  const [remark, setRemark] = useState('');
   
   // Dropdown states for form fields
   const [formSalesPersonDropdown, setFormSalesPersonDropdown] = useState({ isOpen: false, searchTerm: '', hovered: null });
-const [formCustomerDropdown, setFormCustomerDropdown] = useState({ isOpen: false, searchTerm: '', hovered: null });
+  const [formCustomerDropdown, setFormCustomerDropdown] = useState({ isOpen: false, searchTerm: '', hovered: null });
   
   const salesPersonOptions = ['Raneesh', 'Christine Brooks', 'Rosie Pearson'].sort();
- const customerOptions = ['Raneesh', 'Sasi', 'Varshini'].sort();
+  const customerOptions = ['Raneesh', 'Sasi', 'Varshini'].sort();
   const supervisorOptions = ['Supervisor-1', 'Supervisor-2', 'Supervisor-3'].sort();
   
   const formSalesPersonRef = useRef(null);
-  const containerRef = useRef(null);
   const formCustomerRef = useRef(null);
-const supervisorRef = useRef(null);
+  const supervisorRef = useRef(null);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -68,14 +65,14 @@ const supervisorRef = useRef(null);
       if (formSalesPersonRef.current && !formSalesPersonRef.current.contains(event.target)) {
         setFormSalesPersonDropdown(prev => ({ ...prev, isOpen: false }));
       }
-     if (formCustomerRef.current && !formCustomerRef.current.contains(event.target)) {
+      if (formCustomerRef.current && !formCustomerRef.current.contains(event.target)) {
         setFormCustomerDropdown(prev => ({ ...prev, isOpen: false }));
-     }
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
+  }, []);
 
   const handleJobOrderSelect = (id) => {
     setFilteredJobOrders(prev =>
@@ -158,72 +155,42 @@ const supervisorRef = useRef(null);
   };
 
   const handleBack = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F3E8E8', padding: '24px' }}>
-      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '32px', marginBottom: '10px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', color: '#111827' }}>Assign Job Order</h2>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+        <h2 className="page-title">Assign Job Order</h2>
 
         {/* First Row - Form Fields */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '24px' }}>
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #2c1eed' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Job Order No</label>
+        <div className="filter-grid">
+          <div className="filter-grid-blue">
+            <label className="filter-label">Job Order No</label>
             <input
               type="text"
               value={formData.jobOrderNo}
               readOnly
-              style={{ width: '100%', padding: '1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none', backgroundColor: 'white' }}
+              className="filter-input"
             />
           </div>
           
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Sales Person Name</label>
-            <div ref={formSalesPersonRef} style={{ position: 'relative' }}>
+          <div className="filter-grid-red">
+            <label className="filter-label">Sales Person Name</label>
+            <div ref={formSalesPersonRef} className="dropdown-wrapper">
               <input
                 type="text"
                 value={formSalesPersonDropdown.searchTerm}
                 onChange={(e) => setFormSalesPersonDropdown({ ...formSalesPersonDropdown, searchTerm: e.target.value, isOpen: true })}
                 onFocus={() => setFormSalesPersonDropdown({ ...formSalesPersonDropdown, isOpen: true })}
                 placeholder="Type or select..."
-                style={{ 
-                  width: '100%', 
-                  padding: '1px', 
-                  border: 'none', 
-                  borderRadius: '4px', 
-                  fontSize: '14px', 
-                  outline: 'none',
-                  backgroundColor: 'white',
-                  cursor: 'text'
-                }}
+                className="dropdown-input"
               />
-              <ChevronDown 
-                size={16} 
-                style={{ 
-                  position: 'absolute', 
-                  right: '4px', 
-                  top: '50%', 
-                  transform: 'translateY(-50%)',
-                  color: '#6B7280',
-                  pointerEvents: 'none'
-                }} 
-              />
+              <ChevronDown size={16} className="dropdown-icon" />
               {formSalesPersonDropdown.isOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: '0',
-                  right: '0',
-                  marginTop: '4px',
-                  backgroundColor: 'white',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '4px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                  zIndex: 1000
-                }}>
+                <div className="dropdown-menu">
                   {salesPersonOptions.filter(option => option.toLowerCase().includes(formSalesPersonDropdown.searchTerm.toLowerCase())).length > 0 ? (
                     salesPersonOptions.filter(option => option.toLowerCase().includes(formSalesPersonDropdown.searchTerm.toLowerCase())).map((option, index) => (
                       <div
@@ -234,67 +201,50 @@ const supervisorRef = useRef(null);
                         }}
                         onMouseEnter={() => setFormSalesPersonDropdown({ ...formSalesPersonDropdown, hovered: option })}
                         onMouseLeave={() => setFormSalesPersonDropdown({ ...formSalesPersonDropdown, hovered: null })}
-                        style={{
-                          padding: '8px 12px',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          color: formSalesPersonDropdown.hovered === option ? 'white' : '#374151',
-                          backgroundColor: formSalesPersonDropdown.hovered === option ? '#A63128' : (formSalesPersonDropdown.searchTerm === option ? '#FEE2E2' : 'white'),
-                          borderBottom: index < salesPersonOptions.filter(option => option.toLowerCase().includes(formSalesPersonDropdown.searchTerm.toLowerCase())).length - 1 ? '1px solid #E5E7EB' : 'none',
-                          transition: 'all 0.2s ease'
-                        }}
+                        className={`dropdown-item-option ${
+                          formSalesPersonDropdown.hovered === option 
+                            ? 'dropdown-item-hovered' 
+                            : formSalesPersonDropdown.searchTerm === option 
+                            ? 'dropdown-item-selected' 
+                            : 'dropdown-item-default'
+                        }`}
                       >
                         {option}
                       </div>
                     ))
                   ) : (
-                    <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
-                      No matches found
-                    </div>
+                    <div className="dropdown-no-matches">No matches found</div>
                   )}
                 </div>
               )}
             </div>
           </div>
           
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Container No</label>
+          <div className="filter-grid-red">
+            <label className="filter-label">Container No</label>
             <input
               type="text"
               name="containerNo"
               value={formData.containerNo}
               onChange={handleInputChange}
-              style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none' }}
+              className="filter-input"
             />
           </div>
           
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Customer Name</label>
-            <div ref={formCustomerRef} style={{ position: 'relative' }}>
+          <div className="filter-grid-red">
+            <label className="filter-label">Customer Name</label>
+            <div ref={formCustomerRef} className="dropdown-wrapper">
               <input
                 type="text"
                 value={formCustomerDropdown.searchTerm}
                 onChange={(e) => setFormCustomerDropdown({ ...formCustomerDropdown, searchTerm: e.target.value, isOpen: true })}
                 onFocus={() => setFormCustomerDropdown({ ...formCustomerDropdown, isOpen: true })}
                 placeholder="Type or select..."
-                style={{ width: '100%', padding: '1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none', backgroundColor: 'white', cursor: 'text' }}
+                className="dropdown-input"
               />
-              <ChevronDown size={16} style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', color: '#6B7280', pointerEvents: 'none' }} />
+              <ChevronDown size={16} className="dropdown-icon" />
               {formCustomerDropdown.isOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: '0',
-                  right: '0',
-                  marginTop: '4px',
-                  backgroundColor: 'white',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '4px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                  zIndex: 1000
-                }}>
+                <div className="dropdown-menu">
                   {customerOptions.filter(option => option.toLowerCase().includes(formCustomerDropdown.searchTerm.toLowerCase())).length > 0 ? (
                     customerOptions.filter(option => option.toLowerCase().includes(formCustomerDropdown.searchTerm.toLowerCase())).map((option, index) => (
                       <div
@@ -305,23 +255,19 @@ const supervisorRef = useRef(null);
                         }}
                         onMouseEnter={() => setFormCustomerDropdown({ ...formCustomerDropdown, hovered: option })}
                         onMouseLeave={() => setFormCustomerDropdown({ ...formCustomerDropdown, hovered: null })}
-                        style={{
-                          padding: '8px 12px',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          color: formCustomerDropdown.hovered === option ? 'white' : '#374151',
-                          backgroundColor: formCustomerDropdown.hovered === option ? '#A63128' : (formCustomerDropdown.searchTerm === option ? '#FEE2E2' : 'white'),
-                          borderBottom: index < customerOptions.filter(option => option.toLowerCase().includes(formCustomerDropdown.searchTerm.toLowerCase())).length - 1 ? '1px solid #E5E7EB' : 'none',
-                          transition: 'all 0.2s ease'
-                        }}
+                        className={`dropdown-item-option ${
+                          formCustomerDropdown.hovered === option 
+                            ? 'dropdown-item-hovered' 
+                            : formCustomerDropdown.searchTerm === option 
+                            ? 'dropdown-item-selected' 
+                            : 'dropdown-item-default'
+                        }`}
                       >
                         {option}
                       </div>
                     ))
                   ) : (
-                    <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
-                      No matches found
-                    </div>
+                    <div className="dropdown-no-matches">No matches found</div>
                   )}
                 </div>
               )}
@@ -330,268 +276,234 @@ const supervisorRef = useRef(null);
         </div>
 
         {/* Second Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '32px' }}>
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Lead No</label>
+        <div className="filter-grid" style={{ marginBottom: '32px' }}>
+          <div className="filter-grid-green">
+            <label className="filter-label">Lead No</label>
             <input
-             type="text"
+              type="text"
               name="leadNo"
               value={formData.leadNo}
               onChange={handleInputChange}
-              style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none' }}
+              className="filter-input"
             />
           </div>
           
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Quotation No</label>
-           <input
-             type="text"
+          <div className="filter-grid-green">
+            <label className="filter-label">Quotation No</label>
+            <input
+              type="text"
               name="quotationNo"
               value={formData.quotationNo}
               onChange={handleInputChange}
-              style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none' }}
+              className="filter-input"
             />
           </div>
           
-          <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #22C55E' }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>PI No</label>
+          <div className="filter-grid-green">
+            <label className="filter-label">PI No</label>
             <input
-             type="text"
+              type="text"
               name="piNo"
               value={formData.piNo}
               onChange={handleInputChange}
-              style={{ width: '100%', padding: '1px 1px', border: 'none', borderRadius: '4px', fontSize: '14px', outline: 'none' }}
+              className="filter-input"
             />
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '28px' }}>
-            <button 
-              onClick={handleSearch}
-              style={{ 
-                width: '150px',
-                height: '50px',
-                padding: '10px 24px', 
-                backgroundColor: '#A63128', 
-                color: 'white', 
-                borderRadius: '15px', 
-                fontSize: '14px', 
-                fontWeight: '500', 
-                border: 'none', 
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'background-color 0.2s ease'
-              }}
-            >
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+            <button onClick={handleSearch} className="btn-search">
               <Search size={18} /> Search
             </button>
           </div>
         </div>
 
         {/* Job Orders Table */}
-        <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db', marginBottom: '32px' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#fde2e2' }}>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Select</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>S/No</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Lead No</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Quotation No</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>PI No</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Sales Person</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Customer Name</th>
-                <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Advance Amount</th>
-                <th style={{ padding: '12px 8px', textAlign: 'center', fontWeight: '600' }}>Action</th>
+        <div className="table-container">
+          <table className="data-table">
+            <thead className="table-header">
+              <tr>
+                <th className="table-th">Select</th>
+                <th className="table-th">S/No</th>
+                <th className="table-th">Lead No</th>
+                <th className="table-th">Quotation No</th>
+                <th className="table-th">PI No</th>
+                <th className="table-th">Sales Person</th>
+                <th className="table-th">Customer Name</th>
+                <th className="table-th">Advance Amount</th>
+                <th className="table-th-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredJobOrders.map((order, index) => (
-                <tr key={order.id} style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb' }}>
-                  <td style={{ padding: '12px 8px' }}>
+                <tr key={order.id} className="table-row">
+                  <td className="table-cell">
                     <input
                       type="radio"
                       checked={order.selected}
                       onChange={() => handleJobOrderSelect(order.id)}
-                      style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                      className="radio-input accent-primary"
                     />
                   </td>
-                  <td style={{ padding: '12px 8px' }}>{order.sNo}.</td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td className="table-cell">{order.sNo}.</td>
+                  <td className="table-cell">
                     {order.isEditing ? (
                       <input
                         type="text"
                         value={order.leadNo}
                         onChange={(e) => handleJobOrderFieldChange(index, 'leadNo', e.target.value)}
-                        style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                        className="master-edit-input"
                       />
                     ) : (
                       order.leadNo
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td className="table-cell">
                     {order.isEditing ? (
                       <input
                         type="text"
                         value={order.quotationNo}
                         onChange={(e) => handleJobOrderFieldChange(index, 'quotationNo', e.target.value)}
-                        style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                        className="master-edit-input"
                       />
                     ) : (
                       order.quotationNo
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td className="table-cell">
                     {order.isEditing ? (
                       <input
                         type="text"
                         value={order.piNo}
                         onChange={(e) => handleJobOrderFieldChange(index, 'piNo', e.target.value)}
-                        style={{ width: '80px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                        className="master-edit-input"
                       />
                     ) : (
                       order.piNo
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td className="table-cell">
                     {order.isEditing ? (
                       <input
                         type="text"
                         value={order.salesPerson}
                         onChange={(e) => handleJobOrderFieldChange(index, 'salesPerson', e.target.value)}
-                        style={{ width: '100px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                        className="master-edit-input"
                       />
                     ) : (
                       order.salesPerson
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td className="table-cell">
                     {order.isEditing ? (
                       <input
                         type="text"
                         value={order.customerName}
                         onChange={(e) => handleJobOrderFieldChange(index, 'customerName', e.target.value)}
-                        style={{ width: '100px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                        className="master-edit-input"
                       />
                     ) : (
                       order.customerName
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td className="table-cell">
                     {order.isEditing ? (
                       <input
                         type="text"
                         value={order.advanceAmount}
                         onChange={(e) => handleJobOrderFieldChange(index, 'advanceAmount', e.target.value)}
-                        style={{ width: '120px', padding: '4px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '13px' }}
+                        className="master-edit-input"
                       />
                     ) : (
                       order.advanceAmount
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <td className="table-cell-center">
+                    <div className="table-actions">
                       {order.isEditing ? (
                         <button 
                           onClick={(e) => handleSaveJobOrder(index, e)}
-                          style={{ padding: '4px 12px', backgroundColor: '#22C55E', color: 'white', border: 'none', borderRadius: '4px', fontSize: '12px', cursor: 'pointer', fontWeight: '500' }}
+                          className="btn-smallbtn"
                         >
                           Save
                         </button>
                       ) : (
                         <>
-                          <button onClick={(e) => handlePrintJobOrder(index, e)} style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="Print">
-                            <Printer size={18} style={{ color: '#374151' }} />
+                          <button onClick={(e) => handlePrintJobOrder(index, e)} className="btn-action" title="Print">
+                            <Printer size={18}className="print-primary"/>
                           </button>
-                          <button onClick={(e) => handleEditJobOrder(index, e)} style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="Edit">
-                            <Edit2 size={18} style={{ color: '#374151' }} />
+                          <button onClick={(e) => handleEditJobOrder(index, e)} className="btn-action" title="Edit">
+                            <Edit2 size={18} />
                           </button>
-                          <button onClick={(e) => handleDeleteJobOrder(index, e)} style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="Delete">
-                            <Trash2 size={18} style={{ color: '#dc2626' }} />
+                          <button onClick={(e) => handleDeleteJobOrder(index, e)} className="btn-action" title="Delete">
+                            <Trash2 size={18} className="text-primary" />
                           </button>
                         </>
                       )}
                     </div>
                   </td>
                 </tr>
-              ))
-              }
+              ))}
             </tbody>
           </table>
-      </div>
+        </div>
 
         {/* Container List */}
-        <div style={{ marginTop: '32px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>Container List</h3>
-          <div style={{ overflowX: 'auto', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                <thead>
-                   <tr style={{ backgroundColor: '#fde2e2' }}>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Select</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>S/No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Container No</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Party Name</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Sz/Type</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Grade</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Liner</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Yard</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>MFG Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>In Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Delivery Date</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Photo</th>
-                    <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: '600' }}>Status</th>
+        <div className="filter-section">
+          <h3 className="section-title">Container List</h3>
+          <div className="table-container">
+            <table className="data-table">
+              <thead className="table-header">
+                <tr>
+                  <th className="table-th">Select</th>
+                  <th className="table-th">S/No</th>
+                  <th className="table-th">Container No</th>
+                  <th className="table-th">Party Name</th>
+                  <th className="table-th">Sz/Type</th>
+                  <th className="table-th">Grade</th>
+                  <th className="table-th">Liner</th>
+                  <th className="table-th">Yard</th>
+                  <th className="table-th">MFG Date</th>
+                  <th className="table-th">In Date</th>
+                  <th className="table-th">Delivery Date</th>
+                  <th className="table-th">Photo</th>
+                  <th className="table-th">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {containers.map((container) => (
+                  <tr key={container.id} className="table-row">
+                    <td className="table-cell">
+                      <input
+                        type="checkbox"
+                        checked={container.selected}
+                        onChange={() => handleContainerSelect(container.id)}
+                        className="radio-input accent-primary"
+                      />
+                    </td>
+                    <td className="table-cell">{container.sNo}.</td>
+                    <td className="table-cell">{container.containerNo}</td>
+                    <td className="table-cell">{container.partyName}</td>
+                    <td className="table-cell">{container.szType}</td>
+                    <td className="table-cell">{container.grade}</td>
+                    <td className="table-cell">{container.liner}</td>
+                    <td className="table-cell">{container.yard}</td>
+                    <td className="table-cell">{container.mfgDate}</td>
+                    <td className="table-cell">{container.inDate}</td>
+                    <td className="table-cell">{container.deliveryDate}</td>
+                    <td className="table-cell">{container.photo}</td>
+                    <td className="table-cell">{container.status}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {containers.map((container) => (
-                    <tr key={container.id} style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '12px 8px' }}>
-                        <input
-                          type="checkbox"
-                          checked={container.selected}
-                          onChange={() => handleContainerSelect(container.id)}
-                          style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-                        />
-                      </td>
-                      <td style={{ padding: '12px 8px' }}>{container.sNo}.</td>
-                      <td style={{ padding: '12px 8px' }}>{container.containerNo}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.partyName}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.szType}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.grade}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.liner}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.yard}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.mfgDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.inDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.deliveryDate}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.photo}</td>
-                      <td style={{ padding: '12px 8px' }}>{container.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-      </div>
+        </div>
 
         {/* Supervisor and Remark */}
-<div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '24px', marginTop: '24px' ,marginBottom: '10px'}}>
-          <div 
-            ref={supervisorRef}
-            style={{ 
-              backgroundColor: 'white', 
-              padding: '10px', 
-              borderRadius: '4px', 
-              border: '1px solid #9CA3AF', 
-              borderRight: '3px solid #DC2626', 
-              position: 'relative' 
-            }}
-          >
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>
-              Supervisor
-            </label>
-            <div style={{ position: 'relative' }}>
+        <div className="filter-grid" style={{ gridTemplateColumns: '200px 1fr', marginTop: '24px', marginBottom: '10px' }}>
+          <div ref={supervisorRef} className="filter-grid-red">
+            <label className="filter-label">Supervisor</label>
+            <div className="dropdown-wrapper">
               <input
                 type="text"
                 value={supervisorSearch}
@@ -601,43 +513,11 @@ const supervisorRef = useRef(null);
                 }}
                 onFocus={() => setIsSupervisorOpen(true)}
                 placeholder="SuperVisor"
-                style={{ 
-                  width: '100%', 
-                  padding: '1px', 
-                  border: 'none', 
-                  borderRadius: '4px', 
-                  fontSize: '14px', 
-                  outline: 'none',
-                  backgroundColor: 'white',
-                  cursor: 'text'
-                }}
+                className="dropdown-input"
               />
-              <ChevronDown 
-                size={16} 
-                style={{ 
-                  position: 'absolute', 
-                  right: '4px', 
-                  top: '50%', 
-                  transform: 'translateY(-50%)',
-                  color: '#6B7280',
-                  pointerEvents: 'none'
-                }} 
-              />
+              <ChevronDown size={16} className="dropdown-icon" />
               {isSupervisorOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: '0',
-                  right: '0',
-                  marginTop: '4px',
-                  backgroundColor: 'white',
-                  border: '1px solid #D1D5DB',
-                  borderRadius: '4px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                  zIndex: 1000
-                }}>
+                <div className="dropdown-menu">
                   {supervisorOptions.filter(option => 
                     option.toLowerCase().includes(supervisorSearch.toLowerCase())
                   ).length > 0 ? (
@@ -654,58 +534,32 @@ const supervisorRef = useRef(null);
                           }}
                           onMouseEnter={() => setHoveredSupervisor(option)}
                           onMouseLeave={() => setHoveredSupervisor(null)}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: hoveredSupervisor === option ? 'white' : '#374151',
-                            backgroundColor: hoveredSupervisor === option ? '#A63128' : (supervisorSearch === option ? '#FEE2E2' : 'white'),
-                            borderBottom: index < supervisorOptions.filter(option => 
-                              option.toLowerCase().includes(supervisorSearch.toLowerCase())
-                            ).length - 1 ? '1px solid #E5E7EB' : 'none',
-                            transition: 'all 0.2s ease'
-                          }}
+                          className={`dropdown-item-option ${
+                            hoveredSupervisor === option 
+                              ? 'dropdown-item-hovered' 
+                              : supervisorSearch === option 
+                              ? 'dropdown-item-selected' 
+                              : 'dropdown-item-default'
+                          }`}
                         >
                           {option}
                         </div>
                       ))
                   ) : (
-                    <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
-                      No matches found
-                    </div>
+                    <div className="dropdown-no-matches">No matches found</div>
                   )}
                 </div>
               )}
             </div>
           </div>
           
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px',  
-            border: '1px solid #9CA3AF', 
-            borderRight: '3px solid #DC2626',
-            minHeight: '60px'
-          }}>
-            <label style={{ display: 'block', fontSize: '16px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>
-              Remark
-            </label>
+          <div className="filter-grid-red">
+            <label className="filter-label">Remark</label>
             <textarea
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
               rows={1}
-              style={{ 
-                width: '100%', 
-                border: 'none', 
-                borderRadius: '4px', 
-                fontSize: '13px', 
-                outline: 'none', 
-                resize: 'none',
-                overflow: 'hidden',
-                fontFamily: 'inherit',
-                lineHeight: '1.5',
-                minHeight: '20px'
-              }}
+              className="multiline-field"
               placeholder="Enter remarks here..."
               onInput={(e) => {
                 e.target.style.height = 'auto';
@@ -714,56 +568,39 @@ const supervisorRef = useRef(null);
             />
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
-                <div style={{ backgroundColor: 'white',width: '180px', padding: '10px', borderRadius: '4px', border: '1px solid #9CA3AF', borderRight: '3px solid #DC2626' }}>
-                  <label style={{ display: 'block', fontSize: '14px', color: '#374151', marginBottom: '8px', fontWeight: '600' }}>Expected Date of Completion</label>
-                  <input
-                    type="date"
-                    value={formData.expectdate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, expectdate: e.target.value })
-                    }
-                    style={{ width: '100%', padding: '1px', border: 'none', outline: 'none' }}
-                  />
 
-                </div>
-                </div>
-      {/* Submit Button */}
-         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-                <button
-                  onClick={handleSubmit}
-                  type="button"
-                  aria-label="Submit selected containers"
-                  style={{
-                    width: '150px',
-                    height: '50px',
-                    padding: '10px 24px', 
-                    backgroundColor: '#A63128', 
-                    color: 'white', 
-                    borderRadius: '15px', 
-                    fontSize: '14px', 
-                    fontWeight: '500', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <span>✓</span>
-                  Submit
-                </button>
-              </div>
-              </div>
-              <button 
-            onclick={() => navigate(-1)}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
-            <span>←</span>
-            <span>Back</span>
+        {/* Expected Date */}
+        <div className="filter-grid" style={{ marginBottom: '24px' }}>
+          <div className="filter-grid-red">
+            <label className="filter-label">Expected Date of Completion</label>
+            <input
+              type="date"
+              value={formData.expectdate}
+              onChange={(e) => setFormData({ ...formData, expectdate: e.target.value })}
+              className="filter-input"
+            />
+          </div>
+          <div></div>
+          <div></div>
+           {/* Submit Button */}
+        <div className="btn-container">
+          <button onClick={handleSubmit} className="btn-search">
+            <span>✓</span>
+            Submit
           </button>
-      </div>
-     
+        </div>
+        </div>
 
+                   {/* Back Button */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
+            </div>
+      </div>
+        </div>
+      </div>
+    </div>
   );
 }

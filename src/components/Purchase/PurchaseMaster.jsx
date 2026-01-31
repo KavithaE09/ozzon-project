@@ -1,72 +1,74 @@
 import React, { useState } from 'react';
-import { Search, ChevronRight, Edit2, Trash2, ChevronLeft } from 'lucide-react';
+import { ChevronRight, Search, Edit2, Trash2, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function AssignLabour() {
+export default function PurchaseMaster() {
   const navigate = useNavigate();
-  const [labourName, setLabourName] = useState('');
+  const [purchaseName, setPurchaseName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 2;
+  const rowsPerPage = 5;
 
-  const [labourList, setLabourList] = useState([
-    { id: 1, name: 'INTERESTED' }
+  const [purchaseList, setPurchaseList] = useState([
+    { id: 1, name: 'SUPPLIER A' },
+    { id: 2, name: 'SUPPLIER B' }
   ]);
   const [filteredGroups, setFilteredGroups] = useState([
-    { id: 1, name: 'INTERESTED' }
+    { id: 1, name: 'SUPPLIER A' },
+    { id: 2, name: 'SUPPLIER B' }
   ]);
   const [editingId, setEditingId] = useState(null);
-  
+
   const totalPages = Math.ceil(filteredGroups.length / rowsPerPage);
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentGroups = filteredGroups.slice(indexOfFirst, indexOfLast);
 
   const handleSubmit = () => {
-    if (labourName.trim() !== '') {
+    if (purchaseName.trim() !== '') {
       if (editingId) {
         // Update existing record
-        const updatedList = labourList.map(labour =>
-          labour.id === editingId ? { ...labour, name: labourName.toUpperCase() } : labour
+        const updatedList = purchaseList.map(item =>
+          item.id === editingId ? { ...item, name: purchaseName.toUpperCase() } : item
         );
-        setLabourList(updatedList);
+        setPurchaseList(updatedList);
         setFilteredGroups(updatedList);
         setEditingId(null);
       } else {
         // Add new record
-        const newLabour = {
-          id: labourList.length > 0 ? Math.max(...labourList.map(g => g.id)) + 1 : 1,
-          name: labourName.toUpperCase()
+        const newItem = {
+          id: purchaseList.length > 0 ? Math.max(...purchaseList.map(g => g.id)) + 1 : 1,
+          name: purchaseName.toUpperCase()
         };
-        setLabourList([...labourList, newLabour]);
-        setFilteredGroups([...labourList, newLabour]);
+        setPurchaseList([...purchaseList, newItem]);
+        setFilteredGroups([...purchaseList, newItem]);
       }
-      setLabourName('');
+      setPurchaseName('');
       setCurrentPage(1);
     }
   };
 
   const handleSearch = () => {
     if (searchTerm.trim() === '') {
-      setFilteredGroups(labourList);
+      setFilteredGroups(purchaseList);
     } else {
-      const filtered = labourList.filter(labour =>
-        labour.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = purchaseList.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredGroups(filtered);
       setCurrentPage(1);
     }
   };
 
-  const handleEdit = (labour) => {
-    setEditingId(labour.id);
-    setLabourName(labour.name);
+  const handleEdit = (item) => {
+    setEditingId(item.id);
+    setPurchaseName(item.name);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = (labourId) => {
-    const updatedList = labourList.filter(labour => labour.id !== labourId);
-    setLabourList(updatedList);
+  const handleDelete = (itemId) => {
+    const updatedList = purchaseList.filter(item => item.id !== itemId);
+    setPurchaseList(updatedList);
     setFilteredGroups(updatedList);
     setCurrentPage(1);
   };
@@ -76,18 +78,18 @@ export default function AssignLabour() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            {/* Assign Labour Section */}
-            <h2 className="page-title">Assign Labour</h2>
+            {/* Purchase Master Section */}
+            <h2 className="page-title">Purchase Master</h2>
             
             <div className="filter-section">
               <div className="filter-grid">
                 <div className="filter-grid-red">
-                  <label className="filter-label">Labour List</label>
+                  <label className="filter-label">Purchase Name</label>
                   <input
                     type="text"
-                    value={labourName}
-                    onChange={(e) => setLabourName(e.target.value)}
-                    placeholder="Enter Labour name"
+                    value={purchaseName}
+                    onChange={(e) => setPurchaseName(e.target.value)}
+                    placeholder="Enter purchase name"
                     className="filter-input"
                   />
                 </div>
@@ -109,7 +111,7 @@ export default function AssignLabour() {
                   <label className="filter-label">Search By</label>
                   <input
                     type="text"
-                    placeholder="Labour List"
+                    placeholder="Purchase Name"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="filter-input"
@@ -127,26 +129,26 @@ export default function AssignLabour() {
             {/* Table */}
             <div className="master-table-container">
               <div className="master-table-header">
-                <span className="master-table-title">Labour List</span>
+                <span className="master-table-title">Purchase List</span>
               </div>
               <div className="master-table-body">
                 {currentGroups.length > 0 ? (
-                  currentGroups.map((labour, idx) => (
-                    <div key={labour.id} className="master-table-row">
+                  currentGroups.map((item) => (
+                    <div key={item.id} className="master-table-row">
                       <div className="master-table-content">
                         <ChevronRight size={16} style={{ color: '#374151' }} />
-                        <span className="master-name-text">{labour.name}</span>
+                        <span className="master-name-text">{item.name}</span>
                       </div>
                       <div className="table-actions">
                         <button
-                          onClick={() => handleEdit(labour)}
+                          onClick={() => handleEdit(item)}
                           className="btn-action"
                           title="Edit"
                         >
                           <Edit2 size={18} className="text-[#374151]" />
                         </button>
                         <button
-                          onClick={() => handleDelete(labour.id)}
+                          onClick={() => handleDelete(item.id)}
                           className="btn-action"
                           title="Delete"
                         >

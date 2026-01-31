@@ -96,6 +96,7 @@ if (page === "LedgerMasterForm_Accounts")
            if (page === "FollowUp") navigate ("/layout/FollowUp");
             if(page === "PurchaseOrder") navigate("/layout/purchaseorder");
             if(page === "GoodsReceiptNote") navigate("/layout/goodsreceiptnote");
+            if(page === "PurchaseMaster") navigate("/layout/purchasemaster")
           }}
         />
 
