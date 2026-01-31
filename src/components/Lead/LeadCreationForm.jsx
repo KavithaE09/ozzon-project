@@ -753,16 +753,20 @@ const jobReviewList = [
       ))}
     </tbody>
   </table>
+ 
 </div>
 
+
             </div>
+            
             </div>
-            <div className="footer-container max-w-[1250px] mt-8">
+             <div className="footer-container max-w-[1250px] mt-8">
             <button onClick={() => navigate(-1)} className="btn-back">
               <span>←</span>
               <span>Back</span>
             </button>
             </div>
+           
         </div>
       </div>
     </div>

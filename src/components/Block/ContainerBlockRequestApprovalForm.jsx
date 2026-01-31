@@ -210,9 +210,9 @@ const ContainerBlockRequestApprovalForm = () => {
             <h3 className="page-title">Container Block Request Approval</h3>
 
             {/* SEARCH */}
-            <div className="flex gap-5 mt-3.5 flex-wrap">
+            <div className="filter-grid">
               {/* FROM DATE */}
-              <div className="filter-grid-red w-64">
+              <div className="filter-grid-red ">
                 <label className="filter-label">From Date</label>
                 <input
                   type="date"
@@ -225,7 +225,7 @@ const ContainerBlockRequestApprovalForm = () => {
               </div>
 
               {/* TO DATE */}
-              <div className="filter-grid-red w-64">
+              <div className="filter-grid-red ">
                 <label className="filter-label">To Date</label>
                 <input
                   type="date"
@@ -238,7 +238,7 @@ const ContainerBlockRequestApprovalForm = () => {
               </div>
 
               {/* CUSTOMER DROPDOWN */}
-              <div ref={dropdownRef} className="filter-grid-green w-64">
+              <div ref={dropdownRef} className="filter-grid-green ">
                 <label className="filter-label">Customer Name</label>
 
                 <div className="dropdown-wrapper">
@@ -284,7 +284,7 @@ const ContainerBlockRequestApprovalForm = () => {
                 )}
               </div>
 
-              <button onClick={handleSearch} className="btn-search mt-3 ml-7.5">
+              <button onClick={handleSearch} className="btn-search ">
                 <Search size={18} /> Search
               </button>
             </div>
@@ -292,16 +292,16 @@ const ContainerBlockRequestApprovalForm = () => {
             {/* APPROVAL TABLE */}
             {isSearched && (
               <>
-                <div className="mt-5 rounded-lg overflow-hidden">
-                  <table className="data-table text-[13px]">
-                    <thead className="table-header text-sm">
+                <div className="table-container">
+              <table className="data-table">
+                <thead className="table-header">
                       <tr>
                         {[
                           'Select', 'S/No', 'PI No', 'PI Date', 'Advance Receipt No',
                           'Advance Receipt Date', 'Advance Amount', 'Request Date',
                           'Customer Name', 'Sales Person', 'Status', 'Approval'
                         ].map(h => (
-                          <th key={h} className="table-th whitespace-nowrap">{h}</th>
+                          <th key={h} className="table-th ">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -315,7 +315,7 @@ const ContainerBlockRequestApprovalForm = () => {
                                 name="containerSelect"
                                 checked={selectedRow === row.sNo}
                                 onChange={() => setSelectedRow(row.sNo)}
-                                className="accent-primary w-4 h-4 cursor-pointer"
+                                className="accent-primary "
                               />
                             </td>
                             <td className="table-cell">{approvalFirst + i + 1}</td>
@@ -368,7 +368,7 @@ const ContainerBlockRequestApprovalForm = () => {
                 </div>
 
                 {approvalTotalPages > 1 && (
-                  <div className="pagination-container mt-2.5">
+                  <div className="pagination-container">
                     <button
                       disabled={approvalPage === 1}
                       onClick={() => setApprovalPage(p => p - 1)}
@@ -406,17 +406,17 @@ const ContainerBlockRequestApprovalForm = () => {
             )}
 
             {/* CONTAINER LIST */}
-            <h4 className="section-title mt-6">Container List</h4>
+            <h4 className="section-title">Container List</h4>
 
-            <div className="table-container mt-2.5">
-              <table className="data-table text-[13px]">
-                <thead className="table-header text-base">
+           <div className="table-container">
+              <table className="data-table ">
+                <thead className="table-header">
                   <tr>
                     {[
                       'S/No', 'Container No', 'Party Name', 'Sz/Type',
                       'Liner', 'MFG Date', 'In Date', 'Delivery Date', 'Photo', 'Status'
                     ].map(h => (
-                      <th key={h} className="table-th whitespace-nowrap">{h}</th>
+                      <th key={h} className="table-th">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -440,10 +440,10 @@ const ContainerBlockRequestApprovalForm = () => {
                 </tbody>
               </table>
             </div>
-          </div>
+        
 
           {containerTotalPages > 1 && (
-            <div className="pagination-container mt-2.5">
+            <div className="pagination-container">
               <button
                 disabled={containerPage === 1}
                 onClick={() => setContainerPage(p => p - 1)}
@@ -478,10 +478,11 @@ const ContainerBlockRequestApprovalForm = () => {
             </div>
           )}
 
-          <button onClick={handleBack} className="btn-back mt-3">
+          <button onClick={handleBack} className="btn-back ">
             <span>←</span>
             <span>Back</span>
           </button>
+            </div>
         </div>
       </div>
     </div>
