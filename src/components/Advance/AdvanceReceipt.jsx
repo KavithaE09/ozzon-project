@@ -206,7 +206,7 @@ export default function AdvanceReceipt() {
                                 className="btn-action"
                                 title="Print"
                               >
-                                <Printer size={18} className="text-[#374151]" />
+                                <Printer size={18}className="print-primary"/>
                               </button>
                               <button 
                                 onClick={() => navigate("/layout/proformainvoice/advance")}

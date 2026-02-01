@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 export default function StockIssue() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  
   // Auto-populate today's date
   const getTodayDate = () => {
     const today = new Date();
@@ -112,15 +114,10 @@ export default function StockIssue() {
   };
 
   const stopEditing = () => {
-    // Close dropdowns first
     setShowProductDropdown(null);
     setShowUnitDropdown(null);
-    
-    // Clear search states
     setProductSearches({});
     setUnitSearches({});
-    
-    // Finally close edit mode
     setEditingRow(null);
   };
 
@@ -204,7 +201,6 @@ export default function StockIssue() {
   // Handle click outside to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Check product dropdowns
       if (showProductDropdown !== null) {
         const ref = productDropdownRefs.current[showProductDropdown];
         if (ref && !ref.contains(event.target)) {
@@ -215,7 +211,6 @@ export default function StockIssue() {
         }
       }
 
-      // Check unit dropdowns
       if (showUnitDropdown !== null) {
         const ref = unitDropdownRefs.current[showUnitDropdown];
         if (ref && !ref.contains(event.target)) {
@@ -246,84 +241,31 @@ export default function StockIssue() {
   }, [materialTotalPages, materialPage]);
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#fce7e9', 
-      padding: '24px' 
-    }}>
-      <div style={{ 
-        backgroundColor: 'white', 
-        borderRadius: '8px', 
-        padding: '32px', 
-        maxWidth: '1400px', 
-        margin: '0 auto' ,
-        marginBottom: '10px'
-      }}>
-        <h2 style={{ 
-          fontSize: '20px', 
-          fontWeight: '600', 
-          marginBottom: '24px', 
-          color: '#111827' 
-        }}>
+    // NO wrapper div - just content-card and back button
+    <>
+      <div className="content-card">
+        <h2 className="page-title">
           Stock Issue 
         </h2>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(4, 1fr)', 
-          gap: '16px', 
-          marginBottom: '16px' 
-        }}>
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db' ,
-             borderRight: '3px solid #DC2626'
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
-             Issue Date
+        <div className="filter-grid mb-4">
+          <div className="filter-grid-red">
+            <label className="filter-label">
+              Issue Date
             </label>
             <input
               type="date"
               value={issueDate}
               onChange={(e) => setIssueDate(e.target.value)}
-              style={{ 
-                width: '100%', 
-                padding: '2px 4px', 
-                border: '0', 
-                borderRadius: '4px', 
-                fontSize: '14px', 
-                outline: 'none', 
-                cursor: 'pointer' 
-              }}
+              className="filter-input cursor-pointer"
             />
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db', 
-            position: 'relative' ,
-            borderRight: '3px solid #DC2626'
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
+          <div className="filter-grid-red">
+            <label className="filter-label">
               Receiver
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="dropdown-wrapper">
               <input
                 type="text"
                 value={showGiverDropdown ? giverSearch : giver}
@@ -343,43 +285,12 @@ export default function StockIssue() {
                   }, 200);
                 }}
                 placeholder="Type or select..."
-                style={{ 
-                  width: '100%', 
-                  padding: '2px 2px 2px 4px', 
-                  border: '0',
-                  borderRadius: '4px', 
-                  fontSize: '14px', 
-                  outline: 'none',
-                  cursor: 'text'
-                }}
+                className="dropdown-input"
               />
-              <ChevronDown
-                size={16}
-                style={{
-                  position: 'absolute',
-                  right: '4px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#6b7280',
-                  pointerEvents: 'none'
-                }}
-              />
+              <ChevronDown size={16} className="dropdown-icon" />
             </div>
             {showGiverDropdown && (
-              <div style={{ 
-                position: 'absolute', 
-                top: '100%', 
-                left: '0', 
-                right: '0', 
-                backgroundColor: 'white', 
-                border: '1px solid #d1d5db', 
-                borderRadius: '4px', 
-                marginTop: '4px', 
-                zIndex: '1000', 
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                maxHeight: '200px',
-                overflowY: 'auto'
-              }}>
+              <div className="dropdown-menu">
                 {filteredGiverOptions.length > 0 ? (
                   filteredGiverOptions.map((option, idx) => (
                     <div
@@ -392,21 +303,19 @@ export default function StockIssue() {
                       }}
                       onMouseEnter={() => setHoveredGiverOption(option)}
                       onMouseLeave={() => setHoveredGiverOption(null)}
-                      style={{ 
-                        padding: '8px 12px', 
-                        cursor: 'pointer', 
-                        fontSize: '14px',
-                        color: hoveredGiverOption === option ? 'white' : '#374151',
-                        backgroundColor: hoveredGiverOption === option ? '#A63128' : (giver === option ? '#FEE2E2' : 'white'),
-                        borderBottom: idx < filteredGiverOptions.length - 1 ? '1px solid #E5E7EB' : 'none',
-                        transition: 'all 0.2s ease'
-                      }}
+                      className={`dropdown-item-option ${
+                        hoveredGiverOption === option 
+                          ? 'dropdown-item-hovered' 
+                          : giver === option 
+                          ? 'dropdown-item-selected' 
+                          : 'dropdown-item-default'
+                      }`}
                     >
                       {option}
                     </div>
                   ))
                 ) : (
-                  <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
+                  <div className="dropdown-no-matches">
                     No matches found
                   </div>
                 )}
@@ -414,101 +323,40 @@ export default function StockIssue() {
             )}
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db' 
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
+          <div className="bg-white p-3 rounded border border-gray-300 mb-2">
+            <label className="filter-label">
               Issue No
             </label>
             <input
               type="text"
               value={issueReturnNo}
               onChange={(e) => setIssueReturnNo(e.target.value)}
-              style={{ 
-                width: '100%', 
-                padding: '2px 4px', 
-                border: '0', 
-                borderRadius: '4px', 
-                fontSize: '14px', 
-                outline: 'none' 
-              }}
+              className="filter-input"
             />
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db' ,
-            borderRight: '3px solid #DC2626'
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
+          <div className="filter-grid-red">
+            <label className="filter-label">
               Customer Name
             </label>
             <input
               type="text"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
-              style={{ 
-                width: '100%', 
-                padding: '2px 4px', 
-                border: '0', 
-                borderRadius: '4px', 
-                fontSize: '14px', 
-                outline: 'none' 
-              }}
+              className="filter-input"
             />
           </div>
         </div>
 
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db',
-            borderRight: '3px solid #DC2626' 
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
+        <div className="mb-4">
+          <div className="filter-grid-red">
+            <label className="filter-label">
               Remarks
             </label>
             <textarea
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              style={{ 
-                width: '100%', 
-                padding: '4px', 
-                border: '0', 
-                borderRadius: '4px', 
-                fontSize: '14px', 
-                outline: 'none',
-                resize: 'none',
-                minHeight: '40px',
-                maxHeight: '200px',
-                overflow: 'hidden',
-                fontFamily: 'inherit'
-              }}
+              className="multiline-field"
               onInput={(e) => {
                 e.target.style.height = 'auto';
                 e.target.style.height = e.target.scrollHeight + 'px';
@@ -517,26 +365,9 @@ export default function StockIssue() {
           </div>
         </div>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(4, 1fr)', 
-          gap: '16px', 
-          marginBottom: '24px' 
-        }}>
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db' ,
-             borderRight: '3px solid #22C55E'
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
+        <div className="filter-grid mb-6">
+          <div className="filter-grid-green">
+            <label className="filter-label">
               Job Order No
             </label>
             <input
@@ -547,35 +378,15 @@ export default function StockIssue() {
                 setJobReviewPage(1);
               }}
               placeholder="Type to filter..."
-              style={{ 
-                width: '100%', 
-                padding: '2px 4px', 
-                border: '0', 
-                borderRadius: '4px', 
-                fontSize: '14px', 
-                outline: 'none' 
-              }}
+              className="filter-input"
             />
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px', 
-            borderRadius: '4px', 
-            border: '1px solid #d1d5db', 
-            position: 'relative' ,
-             borderRight: '3px solid #22C55E'
-          }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '12px', 
-              color: '#4b5563', 
-              marginBottom: '8px', 
-              fontWeight: '600' 
-            }}>
+          <div className="filter-grid-green">
+            <label className="filter-label">
               Container No
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="dropdown-wrapper">
               <input
                 type="text"
                 value={containerSearch || containerNo}
@@ -591,43 +402,12 @@ export default function StockIssue() {
                   setTimeout(() => setShowContainerDropdown(false), 200);
                 }}
                 placeholder="Type or select..."
-                style={{ 
-                  width: '100%', 
-                  padding: '2px 2px 2px 4px', 
-                  border: '0',
-                  borderRadius: '4px', 
-                  fontSize: '14px', 
-                  outline: 'none',
-                  cursor: 'text'
-                }}
+                className="dropdown-input"
               />
-              <ChevronDown
-                size={16}
-                style={{
-                  position: 'absolute',
-                  right: '4px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#6b7280',
-                  pointerEvents: 'none'
-                }}
-              />
+              <ChevronDown size={16} className="dropdown-icon" />
             </div>
             {showContainerDropdown && (
-              <div style={{ 
-                position: 'absolute', 
-                top: '100%', 
-                left: '0', 
-                right: '0', 
-                backgroundColor: 'white', 
-                border: '1px solid #d1d5db', 
-                borderRadius: '4px', 
-                marginTop: '4px', 
-                zIndex: '10', 
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                maxHeight: '200px',
-                overflowY: 'auto'
-              }}>
+              <div className="dropdown-menu z-10">
                 {filteredContainerOptions.length > 0 ? (
                   filteredContainerOptions.map((option, idx) => (
                     <div
@@ -640,21 +420,19 @@ export default function StockIssue() {
                       }}
                       onMouseEnter={() => setHoveredContainerOption(option)}
                       onMouseLeave={() => setHoveredContainerOption(null)}
-                      style={{ 
-                        padding: '8px 12px', 
-                        cursor: 'pointer', 
-                        fontSize: '14px',
-                        color: hoveredContainerOption === option ? 'white' : '#374151',
-                        backgroundColor: hoveredContainerOption === option ? '#A63128' : (containerNo === option ? '#FEE2E2' : 'white'),
-                        borderBottom: idx < filteredContainerOptions.length - 1 ? '1px solid #E5E7EB' : 'none',
-                        transition: 'all 0.2s ease'
-                      }}
+                      className={`dropdown-item-option ${
+                        hoveredContainerOption === option 
+                          ? 'dropdown-item-hovered' 
+                          : containerNo === option 
+                          ? 'dropdown-item-selected' 
+                          : 'dropdown-item-default'
+                      }`}
                     >
                       {option}
                     </div>
                   ))
                 ) : (
-                  <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
+                  <div className="dropdown-no-matches">
                     No matches found
                   </div>
                 )}
@@ -664,349 +442,133 @@ export default function StockIssue() {
 
           <div></div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '20px' }}>
-            <button
-              onClick={handleSearch}
-              style={{
-                width: '150px',
-                height: '50px',
-                padding: '10px 24px',
-                marginLeft: '40px',
-                backgroundColor: '#A63128',
-                color: 'white',
-                borderRadius: '15px',
-                fontSize: '14px',
-                fontWeight: '500',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '20px'
-              }}
-            >
+          <div className="flex justify-end pt-5">
+            <button onClick={handleSearch} className="btn-search">
               <Search size={18} /> Search
             </button>
           </div>
         </div>
 
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ 
-            fontSize: '16px', 
-            fontWeight: '600', 
-            marginBottom: '12px', 
-            color: '#111827' 
-          }}>
+        <div className="mb-6">
+          <h3 className="section-title">
             Job Review List
           </h3>
-          <div style={{ 
-            border: '1px solid #e5e7eb', 
-            borderRadius: '8px', 
-            overflow: 'hidden' 
-          }}>
-            <table style={{ 
-              width: '100%', 
-              borderCollapse: 'collapse', 
-              fontSize: '14px' 
-            }}>
-              <thead>
-                <tr style={{ backgroundColor: '#fef2f2' }}>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    Select
-                  </th>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    S/No
-                  </th>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    Job Order No
-                  </th>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    Job Date
-                  </th>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    Customer Name
-                  </th>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    Sales Person
-                  </th>
-                  <th style={{ 
-                    padding: '12px 16px', 
-                    textAlign: 'left', 
-                    fontWeight: '600', 
-                    color: '#374151', 
-                    borderBottom: '1px solid #fecaca' 
-                  }}>
-                    Narration
-                  </th>
+          <div className="table-container">
+            <table className="data-table">
+              <thead className="table-header">
+                <tr>
+                  <th className="table-th">Select</th>
+                  <th className="table-th">S/No</th>
+                  <th className="table-th">Job Order No</th>
+                  <th className="table-th">Job Date</th>
+                  <th className="table-th">Customer Name</th>
+                  <th className="table-th">Sales Person</th>
+                  <th className="table-th">Narration</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedJobReviewData.map((row, index) => (
-                  <tr key={index} style={{ backgroundColor: 'white' }}>
-                    <td style={{ padding: '12px 16px' }}>
+                  <tr key={index} className="table-row">
+                    <td className="table-cell">
                       <input 
                         type="radio" 
                         name="jobSelect" 
                         checked={selectedJobRow === row.slNo} 
                         onChange={() => setSelectedJobRow(row.slNo)} 
-                        style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                        className="cursor-pointer w-4 h-4"
                       />
                     </td>
-                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{row.slNo}.</td>
-                    <td style={{ padding: '12px 16px', color: '#374151' }}>{row.jobOrderNo}</td>
-                    <td style={{ padding: '12px 16px', color: '#374151' }}>{row.jobDate}</td>
-                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{row.customerName}</td>
-                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{row.salesPerson}</td>
-                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{row.narration}</td>
+                    <td className="table-cell text-gray-500">{row.slNo}.</td>
+                    <td className="table-cell">{row.jobOrderNo}</td>
+                    <td className="table-cell">{row.jobDate}</td>
+                    <td className="table-cell text-gray-500">{row.customerName}</td>
+                    <td className="table-cell text-gray-500">{row.salesPerson}</td>
+                    <td className="table-cell text-gray-500">{row.narration}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            </div>
-            
-            {jobReviewTotalPages > 1 && (
-              <div style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: '8px',
-                padding: '12px 16px',
-                borderTop: '1px solid #e5e7eb',
-                backgroundColor: 'white'
-              }}>
-                <button
-                  onClick={() => setJobReviewPage(Math.max(1, jobReviewPage - 1))}
-                  disabled={jobReviewPage === 1}
-                  style={{
-                    padding: '6px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '4px',
-                    backgroundColor: jobReviewPage === 1 ? '#e5e7eb' : 'white',
-                    cursor: jobReviewPage === 1 ? 'not-allowed' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                {Array.from({ length: jobReviewTotalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setJobReviewPage(page)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      border: '1px solid #d1d5db',
-                      backgroundColor: jobReviewPage === page ? '#A63128' : '#ffffff',
-                      color: jobReviewPage === page ? '#ffffff' : '#000000',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setJobReviewPage(Math.min(jobReviewTotalPages, jobReviewPage + 1))}
-                  disabled={jobReviewPage === jobReviewTotalPages}
-                  style={{
-                    padding: '6px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '4px',
-                    backgroundColor: jobReviewPage === jobReviewTotalPages ? '#e5e7eb' : 'white',
-                    cursor: jobReviewPage === jobReviewTotalPages ? 'not-allowed' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            )}
           </div>
-        
+            
+          {jobReviewTotalPages > 1 && (
+            <div className="pagination-container">
+              <button
+                onClick={() => setJobReviewPage(Math.max(1, jobReviewPage - 1))}
+                disabled={jobReviewPage === 1}
+                className={`pagination-btn flex items-center gap-1 ${
+                  jobReviewPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                }`}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {Array.from({ length: jobReviewTotalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setJobReviewPage(page)}
+                  className={`pagination-page-btn ${
+                    jobReviewPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setJobReviewPage(Math.min(jobReviewTotalPages, jobReviewPage + 1))}
+                disabled={jobReviewPage === jobReviewTotalPages}
+                className={`pagination-btn flex items-center gap-1 ${
+                  jobReviewPage === jobReviewTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                }`}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
 
-        <div style={{ marginBottom: '16px' }}>
-          <h3 style={{ 
-            fontSize: '16px', 
-            fontWeight: '600', 
-            marginBottom: '12px', 
-            color: '#111827' 
-          }}>
+        <div className="mb-4">
+          <h3 className="section-title">
             Material List
           </h3>
         </div>
 
-        <div style={{ overflowX: 'auto', marginBottom: '4px' }}>
-          <table style={{ width: '100%', fontSize: '14px' }}>
+        <div className="overflow-x-auto mb-1">
+          <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ backgroundColor: '#fef2f2' }}>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca', 
-                  borderLeft: '1px solid #fecaca' 
-                }}>
-                  S/No
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca' 
-                }}>
-                  Code
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca' 
-                }}>
-                  Product
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca' 
-                }}>
-                  Unit
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca' 
-                }}>
-                  Qty
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca' 
-                }}>
-                  Rate
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'left', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca' 
-                }}>
-                  Amount
-                </th>
-                <th style={{ 
-                  padding: '14px 16px', 
-                  textAlign: 'center', 
-                  fontWeight: '600', 
-                  color: '#111827', 
-                  borderTop: '1px solid #fecaca', 
-                  borderBottom: '1px solid #fecaca', 
-                  borderRight: '1px solid #fecaca' 
-                }}>
-                  Actions
-                </th>
+              <tr className="bg-[#fef2f2]">
+                <th className="table-th border-t border-b border-l border-[#fecaca]">S/No</th>
+                <th className="table-th border-t border-b border-[#fecaca]">Code</th>
+                <th className="table-th border-t border-b border-[#fecaca]">Product</th>
+                <th className="table-th border-t border-b border-[#fecaca]">Unit</th>
+                <th className="table-th border-t border-b border-[#fecaca]">Qty</th>
+                <th className="table-th border-t border-b border-[#fecaca]">Rate</th>
+                <th className="table-th border-t border-b border-[#fecaca]">Amount</th>
+                <th className="table-th-center border-t border-b border-r border-[#fecaca]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {paginatedMaterialRows.map((row, index) => {
                 const isLast = index === paginatedMaterialRows.length - 1;
                 return (
-                  <tr key={row.id} style={{ backgroundColor: 'white' }}>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151', 
-                      borderLeft: '1px solid #fecaca',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                  <tr key={row.id} className="bg-white">
+                    <td className={`table-cell border-l border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       {row.slNo}.
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       {editingRow === row.id ? (
                         <input 
                           type="text" 
                           value={row.code} 
                           onChange={(e) => handleFieldChange(row.id, 'code', e.target.value)} 
                           onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                          style={{
-                            width: '100%',
-                            padding: '6px 8px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '4px',
-                            fontSize: '14px'
-                          }}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
                         />
                       ) : (
                         row.code
                       )}
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151',
-                      position: 'relative',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                    <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       {editingRow === row.id ? (
-                        <div 
-                          ref={el => productDropdownRefs.current[row.id] = el}
-                          style={{ position: 'relative' }}
-                        >
+                        <div ref={el => productDropdownRefs.current[row.id] = el} className="relative">
                           <input
                             type="text"
                             value={showProductDropdown === row.id && productSearches[row.id] !== undefined ? productSearches[row.id] : row.product}
@@ -1020,53 +582,19 @@ export default function StockIssue() {
                             }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
-                                // Close dropdown and clear search
                                 setShowProductDropdown(null);
                                 const newSearches = { ...productSearches };
                                 delete newSearches[row.id];
                                 setProductSearches(newSearches);
-                                // Close edit mode
-                                setTimeout(() => {
-                                  stopEditing();
-                                }, 0);
+                                setTimeout(() => stopEditing(), 0);
                               }
                             }}
                             placeholder="Type or select..."
-                            style={{
-                              width: '100%',
-                              padding: '6px 2px 6px 8px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '4px',
-                              fontSize: '14px',
-                              cursor: 'text'
-                            }}
+                            className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
                           />
-                          <ChevronDown
-                            size={16}
-                            style={{
-                              position: 'absolute',
-                              right: '8px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              color: '#6b7280',
-                              pointerEvents: 'none'
-                            }}
-                          />
+                          <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                           {showProductDropdown === row.id && (
-                            <div style={{
-                              position: 'absolute',
-                              top: '100%',
-                              left: '0',
-                              right: '0',
-                              backgroundColor: 'white',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '4px',
-                              marginTop: '4px',
-                              zIndex: 1000,
-                              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                              maxHeight: '200px',
-                              overflowY: 'auto'
-                            }}>
+                            <div className="dropdown-menu">
                               {getFilteredProductOptions(row.id).length > 0 ? (
                                 getFilteredProductOptions(row.id).map((opt, i) => (
                                   <div
@@ -1080,21 +608,19 @@ export default function StockIssue() {
                                     }}
                                     onMouseEnter={() => setHoveredProductOption(opt)}
                                     onMouseLeave={() => setHoveredProductOption(null)}
-                                    style={{
-                                      padding: '8px 12px',
-                                      cursor: 'pointer',
-                                      fontSize: '14px',
-                                      color: hoveredProductOption === opt ? 'white' : '#374151',
-                                      backgroundColor: hoveredProductOption === opt ? '#A63128' : (row.product === opt ? '#FEE2E2' : 'white'),
-                                      borderBottom: i < getFilteredProductOptions(row.id).length - 1 ? '1px solid #E5E7EB' : 'none',
-                                      transition: 'all 0.2s ease'
-                                    }}
+                                    className={`dropdown-item-option ${
+                                      hoveredProductOption === opt 
+                                        ? 'dropdown-item-hovered' 
+                                        : row.product === opt 
+                                        ? 'dropdown-item-selected' 
+                                        : 'dropdown-item-default'
+                                    }`}
                                   >
                                     {opt}
                                   </div>
                                 ))
                               ) : (
-                                <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
+                                <div className="dropdown-no-matches">
                                   No matches found
                                 </div>
                               )}
@@ -1105,17 +631,9 @@ export default function StockIssue() {
                         row.product
                       )}
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151',
-                      position: 'relative',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                    <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       {editingRow === row.id ? (
-                        <div 
-                          ref={el => unitDropdownRefs.current[row.id] = el}
-                          style={{ position: 'relative' }}
-                        >
+                        <div ref={el => unitDropdownRefs.current[row.id] = el} className="relative">
                           <input
                             type="text"
                             value={showUnitDropdown === row.id && unitSearches[row.id] !== undefined ? unitSearches[row.id] : row.unit}
@@ -1129,53 +647,19 @@ export default function StockIssue() {
                             }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
-                                // Close dropdown and clear search
                                 setShowUnitDropdown(null);
                                 const newSearches = { ...unitSearches };
                                 delete newSearches[row.id];
                                 setUnitSearches(newSearches);
-                                // Close edit mode
-                                setTimeout(() => {
-                                  stopEditing();
-                                }, 0);
+                                setTimeout(() => stopEditing(), 0);
                               }
                             }}
                             placeholder="Type or select..."
-                            style={{
-                              width: '100%',
-                              padding: '6px 2px 6px 8px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '4px',
-                              fontSize: '14px',
-                              cursor: 'text'
-                            }}
+                            className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
                           />
-                          <ChevronDown
-                            size={16}
-                            style={{
-                              position: 'absolute',
-                              right: '8px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              color: '#6b7280',
-                              pointerEvents: 'none'
-                            }}
-                          />
+                          <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                           {showUnitDropdown === row.id && (
-                            <div style={{
-                              position: 'absolute',
-                              top: '100%',
-                              left: '0',
-                              right: '0',
-                              backgroundColor: 'white',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '4px',
-                              marginTop: '4px',
-                              zIndex: 1000,
-                              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                              maxHeight: '200px',
-                              overflowY: 'auto'
-                            }}>
+                            <div className="dropdown-menu">
                               {getFilteredUnitOptions(row.id).length > 0 ? (
                                 getFilteredUnitOptions(row.id).map((opt, i) => (
                                   <div
@@ -1189,21 +673,19 @@ export default function StockIssue() {
                                     }}
                                     onMouseEnter={() => setHoveredUnitOption(opt)}
                                     onMouseLeave={() => setHoveredUnitOption(null)}
-                                    style={{
-                                      padding: '8px 12px',
-                                      cursor: 'pointer',
-                                      fontSize: '14px',
-                                      color: hoveredUnitOption === opt ? 'white' : '#374151',
-                                      backgroundColor: hoveredUnitOption === opt ? '#A63128' : (row.unit === opt ? '#FEE2E2' : 'white'),
-                                      borderBottom: i < getFilteredUnitOptions(row.id).length - 1 ? '1px solid #E5E7EB' : 'none',
-                                      transition: 'all 0.2s ease'
-                                    }}
+                                    className={`dropdown-item-option ${
+                                      hoveredUnitOption === opt 
+                                        ? 'dropdown-item-hovered' 
+                                        : row.unit === opt 
+                                        ? 'dropdown-item-selected' 
+                                        : 'dropdown-item-default'
+                                    }`}
                                   >
                                     {opt}
                                   </div>
                                 ))
                               ) : (
-                                <div style={{ padding: '8px 12px', fontSize: '14px', color: '#9CA3AF' }}>
+                                <div className="dropdown-no-matches">
                                   No matches found
                                 </div>
                               )}
@@ -1214,107 +696,45 @@ export default function StockIssue() {
                         row.unit
                       )}
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       {editingRow === row.id ? (
                         <input 
                           type="number" 
                           value={row.qty} 
                           onChange={(e) => handleFieldChange(row.id, 'qty', Number(e.target.value))} 
                           onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                          style={{
-                            width: '100%',
-                            padding: '6px 8px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '4px',
-                            fontSize: '14px'
-                          }}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
                         />
                       ) : (
                         row.qty
                       )}
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       {editingRow === row.id ? (
                         <input 
                           type="number" 
                           value={row.rate} 
                           onChange={(e) => handleFieldChange(row.id, 'rate', Number(e.target.value))} 
                           onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                          style={{
-                            width: '100%',
-                            padding: '6px 8px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '4px',
-                            fontSize: '14px'
-                          }}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
                         />
                       ) : (
                         `₹ ${row.rate.toLocaleString()}`
                       )}
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      color: '#374151',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
+                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                       ₹ {row.amount.toLocaleString()}
                     </td>
-                    <td style={{ 
-                      padding: '14px 16px', 
-                      textAlign: 'center',
-                      borderRight: '1px solid #fecaca',
-                      borderBottom: isLast ? '1px solid #fecaca' : 'none'
-                    }}>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
-                        <button
-                          onClick={() => handleAddRowAbove((materialPage - 1) * materialPerPage + index)}
-                          style={{
-                            backgroundColor: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            padding: '4px',
-                            display: 'flex',
-                            alignItems: 'center'
-                          }}
-                          title="Add Row"
-                        >
-                          <Plus size={18} style={{ color: '#374151' }} />
+                    <td className={`table-cell-center border-r border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                      <div className="table-actions">
+                        <button onClick={() => handleAddRowAbove((materialPage - 1) * materialPerPage + index)} className="btn-action" title="Add Row">
+                          <Plus size={18} className="text-gray-700" />
                         </button>
-                        <button
-                          onClick={() => handleEdit(index)}
-                          style={{
-                            backgroundColor: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            padding: '4px',
-                            display: 'flex',
-                            alignItems: 'center'
-                          }}
-                          title="Edit"
-                        >
-                          <Edit2 size={18} style={{ color: '#374151' }} />
+                        <button onClick={() => handleEdit(index)} className="btn-action" title="Edit">
+                          <Edit2 size={18} className="text-gray-700" />
                         </button>
-                        <button
-                          onClick={() => handleDelete(index)}
-                          style={{
-                            backgroundColor: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            padding: '4px',
-                            display: 'flex',
-                            alignItems: 'center'
-                          }}
-                          title="Delete"
-                        >
-                          <Trash2 size={18} style={{ color: '#dc2626' }} />
+                        <button onClick={() => handleDelete(index)} className="btn-action" title="Delete">
+                          <Trash2 size={18} className="text-red-600" />
                         </button>
                       </div>
                     </td>
@@ -1324,33 +744,10 @@ export default function StockIssue() {
             </tbody>
           </table>
 
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            borderLeft: '1px solid #fecaca',
-            borderRight: '1px solid #fecaca',
-            borderBottom: '1px solid #fecaca',
-            backgroundColor: 'white',
-            padding: '8px 16px'
-          }}>
+          <div className="flex justify-end items-center border-l border-r border-b border-[#fecaca] bg-white py-2 px-4">
             <button 
               onClick={() => handleAddRowAbove(materialRows.length)} 
-              style={{
-                backgroundColor: 'white',
-                color: '#374151',
-                border: '1px solid #d1d5db',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+              className="bg-white text-gray-700 border border-gray-300 px-3 py-1.5 rounded text-sm font-medium cursor-pointer flex items-center gap-2 hover:bg-gray-50 transition-colors"
             >
               <Plus size={16} />
               <span>Row</span>
@@ -1359,22 +756,11 @@ export default function StockIssue() {
         </div>
 
         {materialTotalPages > 1 && (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '8px',
-            marginTop: '12px'
-          }}>
+          <div className="pagination-container">
             <button
               disabled={materialPage === 1}
               onClick={() => setMaterialPage(prev => prev - 1)}
-              style={{
-                padding: '6px 12px',
-                borderRadius: '4px',
-                border: '1px solid #d1d5db',
-                backgroundColor: materialPage === 1 ? '#e5e7eb' : '#ffffff',
-                cursor: materialPage === 1 ? 'not-allowed' : 'pointer'
-              }}
+              className={`pagination-btn ${materialPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
             >
               <ChevronLeft size={16} />
             </button>
@@ -1383,14 +769,7 @@ export default function StockIssue() {
               <button
                 key={page}
                 onClick={() => setMaterialPage(page)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: materialPage === page ? '#A63128' : '#ffffff',
-                  color: materialPage === page ? '#ffffff' : '#000000',
-                  cursor: 'pointer'
-                }}
+                className={`pagination-page-btn ${materialPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
               >
                 {page}
               </button>
@@ -1399,84 +778,36 @@ export default function StockIssue() {
             <button
               disabled={materialPage === materialTotalPages}
               onClick={() => setMaterialPage(prev => prev + 1)}
-              style={{
-                padding: '6px 12px',
-                borderRadius: '4px',
-                border: '1px solid #d1d5db',
-                backgroundColor: materialPage === materialTotalPages ? '#e5e7eb' : '#ffffff',
-                cursor: materialPage === materialTotalPages ? 'not-allowed' : 'pointer'
-              }}
+              className={`pagination-btn ${materialPage === materialTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
             >
               <ChevronRight size={16} />
             </button>
           </div>
         )}
 
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginTop: '12px'
-        }}>
-          <div style={{
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            padding: '12px 20px',
-            backgroundColor: '#f9fafb',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center'
-          }}>
-            <span style={{
-              fontSize: '14px',
-              color: '#4b5563'
-            }}>
+        <div className="flex justify-end mt-3">
+          <div className="border border-gray-200 rounded-lg py-3 px-5 bg-gray-50 flex gap-3 items-center">
+            <span className="text-sm text-gray-600">
               Total Amount :
             </span>
-            <span style={{
-              fontSize: '14px',
-              color: '#111827',
-              fontWeight: '600'
-            }}>
+            <span className="text-sm text-gray-900 font-semibold">
               ₹ {calculateTotalAmount().toLocaleString()}
             </span>
           </div>
         </div>
 
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          paddingTop: '20px'
-        }}>
-          <button
-            onClick={handleSubmit}
-            style={{
-              width: '150px',
-              height: '50px',
-              padding: '10px 30px',
-              marginLeft: '40px',
-              backgroundColor: '#A63128',
-              color: 'white',
-              borderRadius: '15px',
-              fontSize: '14px',
-              fontWeight: '500',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px'
-            }}
-          >
+        <div className="flex justify-end pt-5">
+          <button onClick={handleSubmit} className="btn-search">
             <span>✓</span>
             <span>Submit</span>
           </button>
         </div>
       </div>
-       <button
-              onClick={() => navigate(-1)}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
-              <span>←</span>
-              <span>Back</span>
-            </button>
-    </div>
+      
+      <button onClick={() => navigate(-1)} className="btn-back">
+        <span>←</span>
+        <span>Back</span>
+      </button>
+    </>
   );
 }

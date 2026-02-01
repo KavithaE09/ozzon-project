@@ -92,15 +92,15 @@ export default function GoodsReceiptNotes() {
                         <td className="table-cell">
                           <div className="table-actions">
                             <Printer 
-                              size={16} 
+                              size={18} 
                               className="cursor-pointer print-primary hover:text-[#3730a3]"
                             />
                             <Edit2 
-                              size={16} 
-                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]"
+                              size={18} 
+                              
                             />
                             <Trash2 
-                              size={16} 
+                              size={18} 
                               className="cursor-pointer text-[#B91C1C] hover:text-[#DC2626]"
                             />
                           </div>
@@ -188,16 +188,16 @@ export default function GoodsReceiptNotes() {
                         <td className="table-cell">
                           <div className="table-actions">
                             <Plus 
-                              size={16} 
-                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]"
+                              size={18} 
+                             className="add-primary"
                               onClick={addRow} 
                             />
                             <Edit2 
-                              size={16} 
-                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]"
+                              size={18} 
+                              
                             />
                             <Trash2
-                              size={16}
+                              size={18}
                               className="cursor-pointer text-[#B91C1C] hover:text-[#DC2626]"
                               onClick={() => deleteRow(i)}
                             />

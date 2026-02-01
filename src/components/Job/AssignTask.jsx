@@ -457,7 +457,7 @@ export default function AssignTask() {
                           ) : (
                             <>
                               <button onClick={(e) => handlePrintJobOrder(index, e)} className="btn-action" title="Print">
-                                <Printer size={18} />
+                              <Printer size={18}className="print-primary"/>
                               </button>
                               <button onClick={(e) => handleEditJobOrder(index, e)} className="btn-action" title="Edit">
                                 <Edit2 size={18} />

@@ -151,16 +151,16 @@ export default function PurchaseOrder() {
                         <td className="table-cell">
                           <div className="flex gap-2">
                             <Plus 
-                              size={16} 
-                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]" 
+                              size={18} 
+                             className="add-primary"
                               onClick={addRow} 
                             />
                             <Edit2 
-                              size={16} 
-                              className="cursor-pointer text-[#7C2D12] hover:text-[#A63128]" 
+                              size={18} 
+                              
                             />
                             <Trash2
-                              size={16}
+                              size={18}
                               className="cursor-pointer text-[#B91C1C] hover:text-[#DC2626]"
                               onClick={() => deleteRow(i)}
                             />

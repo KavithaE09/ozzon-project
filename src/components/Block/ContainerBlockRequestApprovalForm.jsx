@@ -212,20 +212,20 @@ const ContainerBlockRequestApprovalForm = () => {
             {/* SEARCH */}
             <div className="filter-grid">
               {/* FROM DATE */}
-              <div className="filter-grid-red ">
+              <div className="filter-grid-red">
                 <label className="filter-label">From Date</label>
                 <input
                   type="date"
-                  value={formData.formdate}
+                  value={formData.fromdate}
                   onChange={(e) =>
-                    setFormData({ ...formData, formdate: e.target.value })
+                    setFormData({ ...formData, fromdate: e.target.value })
                   }
                   className="filter-input"
                 />
               </div>
 
               {/* TO DATE */}
-              <div className="filter-grid-red ">
+              <div className="filter-grid-red">
                 <label className="filter-label">To Date</label>
                 <input
                   type="date"
@@ -238,7 +238,7 @@ const ContainerBlockRequestApprovalForm = () => {
               </div>
 
               {/* CUSTOMER DROPDOWN */}
-              <div ref={dropdownRef} className="filter-grid-green ">
+              <div ref={dropdownRef} className="filter-grid-green">
                 <label className="filter-label">Customer Name</label>
 
                 <div className="dropdown-wrapper">
@@ -284,7 +284,7 @@ const ContainerBlockRequestApprovalForm = () => {
                 )}
               </div>
 
-              <button onClick={handleSearch} className="btn-search ">
+              <button onClick={handleSearch} className="btn-search">
                 <Search size={18} /> Search
               </button>
             </div>
@@ -293,15 +293,15 @@ const ContainerBlockRequestApprovalForm = () => {
             {isSearched && (
               <>
                 <div className="table-container">
-              <table className="data-table">
-                <thead className="table-header">
+                  <table className="data-table">
+                    <thead className="table-header">
                       <tr>
                         {[
                           'Select', 'S/No', 'PI No', 'PI Date', 'Advance Receipt No',
                           'Advance Receipt Date', 'Advance Amount', 'Request Date',
                           'Customer Name', 'Sales Person', 'Status', 'Approval'
                         ].map(h => (
-                          <th key={h} className="table-th ">{h}</th>
+                          <th key={h} className="table-th">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -315,7 +315,7 @@ const ContainerBlockRequestApprovalForm = () => {
                                 name="containerSelect"
                                 checked={selectedRow === row.sNo}
                                 onChange={() => setSelectedRow(row.sNo)}
-                                className="accent-primary "
+                                className="accent-primary"
                               />
                             </td>
                             <td className="table-cell">{approvalFirst + i + 1}</td>
@@ -327,8 +327,10 @@ const ContainerBlockRequestApprovalForm = () => {
                             <td className="table-cell">{row.requestDate}</td>
                             <td className="table-cell">{row.customer}</td>
                             <td className="table-cell">{row.salesPerson}</td>
-                            <td className={`table-cell font-semibold ${row.status === 'Hold' ? 'text-orange-500' : 'text-green-500'}`}>
-                              {row.status}
+                            <td className="table-cell">
+                              <span className={`font-semibold ${row.status === 'Hold' ? 'text-orange-500' : 'text-green-500'}`}>
+                                {row.status}
+                              </span>
                             </td>
                             <td className="table-cell">
                               {row.approvalStatus === 'approved' ? (
@@ -408,8 +410,8 @@ const ContainerBlockRequestApprovalForm = () => {
             {/* CONTAINER LIST */}
             <h4 className="section-title">Container List</h4>
 
-           <div className="table-container">
-              <table className="data-table ">
+            <div className="table-container">
+              <table className="data-table">
                 <thead className="table-header">
                   <tr>
                     {[
@@ -432,57 +434,58 @@ const ContainerBlockRequestApprovalForm = () => {
                       <td className="table-cell">{row.inDate}</td>
                       <td className="table-cell">{row.deliveryDate}</td>
                       <td className="table-cell">{row.photo}</td>
-                      <td className={`table-cell font-semibold ${row.status === 'Hold' ? 'text-orange-500' : 'text-green-500'}`}>
-                        {row.status}
+                      <td className="table-cell">
+                        <span className={`font-semibold ${row.status === 'Hold' ? 'text-orange-500' : 'text-green-500'}`}>
+                          {row.status}
+                        </span>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-        
 
-          {containerTotalPages > 1 && (
-            <div className="pagination-container">
-              <button
-                disabled={containerPage === 1}
-                onClick={() => setContainerPage(p => p - 1)}
-                className={`pagination-btn ${
-                  containerPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
-                }`}
-              >
-                <ChevronLeft size={16} />
-              </button>
-
-              {Array.from({ length: containerTotalPages }, (_, i) => i + 1).map(p => (
+            {containerTotalPages > 1 && (
+              <div className="pagination-container">
                 <button
-                  key={p}
-                  onClick={() => setContainerPage(p)}
-                  className={`pagination-page-btn ${
-                    containerPage === p ? 'pagination-page-active' : 'pagination-page-inactive'
+                  disabled={containerPage === 1}
+                  onClick={() => setContainerPage(p => p - 1)}
+                  className={`pagination-btn ${
+                    containerPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
                   }`}
                 >
-                  {p}
+                  <ChevronLeft size={16} />
                 </button>
-              ))}
 
-              <button
-                disabled={containerPage === containerTotalPages}
-                onClick={() => setContainerPage(p => p + 1)}
-                className={`pagination-btn ${
-                  containerPage === containerTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
-                }`}
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          )}
+                {Array.from({ length: containerTotalPages }, (_, i) => i + 1).map(p => (
+                  <button
+                    key={p}
+                    onClick={() => setContainerPage(p)}
+                    className={`pagination-page-btn ${
+                      containerPage === p ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
 
-          <button onClick={handleBack} className="btn-back ">
-            <span>←</span>
-            <span>Back</span>
-          </button>
-            </div>
+                <button
+                  disabled={containerPage === containerTotalPages}
+                  onClick={() => setContainerPage(p => p + 1)}
+                  className={`pagination-btn ${
+                    containerPage === containerTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+
+            <button onClick={handleBack} className="btn-back">
+              <span>←</span>
+              <span>Back</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

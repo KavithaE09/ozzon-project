@@ -518,7 +518,7 @@ const currentRecords = filteredRecords.slice(
                             <div className="table-actions">
                               <Edit2 
                                 size={18} 
-                                className="text-gray-600 cursor-pointer"
+                                className=" cursor-pointer"
                                 onClick={() => handleEdit(record)}
                               />
                               <Trash2 
