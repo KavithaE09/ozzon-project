@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 export default function StockIssue() {
   const navigate = useNavigate();
   
+  // Tab state
+  const [activeTab, setActiveTab] = React.useState('material');
+  
   // Auto-populate today's date
   const getTodayDate = () => {
     const today = new Date();
@@ -90,6 +93,25 @@ export default function StockIssue() {
   // Refs for dropdown containers
   const productDropdownRefs = useRef({});
   const unitDropdownRefs = useRef({});
+
+  // Previous data (sample)
+  const previousData = [
+    { slNo: 1, issueNo: 'ISS001', issueDate: '15-01-25', receiver: 'Sofi & Co', customer: 'Roneesh', totalAmount: 106500 },
+    { slNo: 2, issueNo: 'ISS002', issueDate: '16-01-25', receiver: 'ABC Corp', customer: 'Kumar', totalAmount: 50000 },
+    { slNo: 3, issueNo: 'ISS003', issueDate: '17-01-25', receiver: 'XYZ Ltd', customer: 'Raja', totalAmount: 75000 },
+    { slNo: 4, issueNo: 'ISS004', issueDate: '18-01-25', receiver: 'Sofi & Co', customer: 'Raneesh', totalAmount: 120000 }
+  ];
+
+  const [previousPage, setPreviousPage] = React.useState(1);
+  const previousPerPage = 3;
+
+  const paginatedPreviousData = React.useMemo(() => {
+    const start = (previousPage - 1) * previousPerPage;
+    const end = start + previousPerPage;
+    return previousData.slice(start, end);
+  }, [previousPage]);
+
+  const previousTotalPages = Math.ceil(previousData.length / previousPerPage);
 
   const filteredGiverOptions = giverOptions.filter(opt => 
     opt.toLowerCase().includes(giverSearch.toLowerCase())
@@ -241,9 +263,8 @@ export default function StockIssue() {
   }, [materialTotalPages, materialPage]);
 
   return (
-    // NO wrapper div - just content-card and back button
     <>
-      <div className="content-card">
+      <div className="content-card" style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto' }}>
         <h2 className="page-title">
           Stock Issue 
         </h2>
@@ -525,283 +546,575 @@ export default function StockIssue() {
           )}
         </div>
 
-        <div className="mb-4">
-          <h3 className="section-title">
+        {/* Tab Container */}
+        <div className="tabs-container">
+          <button 
+            className={`tab-button ${activeTab === 'material' ? 'tab-button-active' : ''}`}
+            onClick={() => setActiveTab('material')}
+          >
             Material List
-          </h3>
-        </div>
-
-        <div className="overflow-x-auto mb-1">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="bg-[#fef2f2]">
-                <th className="table-th border-t border-b border-l border-[#fecaca]">S/No</th>
-                <th className="table-th border-t border-b border-[#fecaca]">Code</th>
-                <th className="table-th border-t border-b border-[#fecaca]">Product</th>
-                <th className="table-th border-t border-b border-[#fecaca]">Unit</th>
-                <th className="table-th border-t border-b border-[#fecaca]">Qty</th>
-                <th className="table-th border-t border-b border-[#fecaca]">Rate</th>
-                <th className="table-th border-t border-b border-[#fecaca]">Amount</th>
-                <th className="table-th-center border-t border-b border-r border-[#fecaca]">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedMaterialRows.map((row, index) => {
-                const isLast = index === paginatedMaterialRows.length - 1;
-                return (
-                  <tr key={row.id} className="bg-white">
-                    <td className={`table-cell border-l border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      {row.slNo}.
-                    </td>
-                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      {editingRow === row.id ? (
-                        <input 
-                          type="text" 
-                          value={row.code} 
-                          onChange={(e) => handleFieldChange(row.id, 'code', e.target.value)} 
-                          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
-                        />
-                      ) : (
-                        row.code
-                      )}
-                    </td>
-                    <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      {editingRow === row.id ? (
-                        <div ref={el => productDropdownRefs.current[row.id] = el} className="relative">
-                          <input
-                            type="text"
-                            value={showProductDropdown === row.id && productSearches[row.id] !== undefined ? productSearches[row.id] : row.product}
-                            onChange={(e) => {
-                              setProductSearches({ ...productSearches, [row.id]: e.target.value });
-                              setShowProductDropdown(row.id);
-                            }}
-                            onFocus={() => {
-                              setShowProductDropdown(row.id);
-                              setProductSearches({ ...productSearches, [row.id]: '' });
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                setShowProductDropdown(null);
-                                const newSearches = { ...productSearches };
-                                delete newSearches[row.id];
-                                setProductSearches(newSearches);
-                                setTimeout(() => stopEditing(), 0);
-                              }
-                            }}
-                            placeholder="Type or select..."
-                            className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
-                          />
-                          <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-                          {showProductDropdown === row.id && (
-                            <div className="dropdown-menu">
-                              {getFilteredProductOptions(row.id).length > 0 ? (
-                                getFilteredProductOptions(row.id).map((opt, i) => (
-                                  <div
-                                    key={i}
-                                    onClick={() => {
-                                      handleFieldChange(row.id, 'product', opt);
-                                      const newSearches = { ...productSearches };
-                                      delete newSearches[row.id];
-                                      setProductSearches(newSearches);
-                                      setShowProductDropdown(null);
-                                    }}
-                                    onMouseEnter={() => setHoveredProductOption(opt)}
-                                    onMouseLeave={() => setHoveredProductOption(null)}
-                                    className={`dropdown-item-option ${
-                                      hoveredProductOption === opt 
-                                        ? 'dropdown-item-hovered' 
-                                        : row.product === opt 
-                                        ? 'dropdown-item-selected' 
-                                        : 'dropdown-item-default'
-                                    }`}
-                                  >
-                                    {opt}
-                                  </div>
-                                ))
-                              ) : (
-                                <div className="dropdown-no-matches">
-                                  No matches found
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        row.product
-                      )}
-                    </td>
-                    <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      {editingRow === row.id ? (
-                        <div ref={el => unitDropdownRefs.current[row.id] = el} className="relative">
-                          <input
-                            type="text"
-                            value={showUnitDropdown === row.id && unitSearches[row.id] !== undefined ? unitSearches[row.id] : row.unit}
-                            onChange={(e) => {
-                              setUnitSearches({ ...unitSearches, [row.id]: e.target.value });
-                              setShowUnitDropdown(row.id);
-                            }}
-                            onFocus={() => {
-                              setShowUnitDropdown(row.id);
-                              setUnitSearches({ ...unitSearches, [row.id]: '' });
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                setShowUnitDropdown(null);
-                                const newSearches = { ...unitSearches };
-                                delete newSearches[row.id];
-                                setUnitSearches(newSearches);
-                                setTimeout(() => stopEditing(), 0);
-                              }
-                            }}
-                            placeholder="Type or select..."
-                            className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
-                          />
-                          <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-                          {showUnitDropdown === row.id && (
-                            <div className="dropdown-menu">
-                              {getFilteredUnitOptions(row.id).length > 0 ? (
-                                getFilteredUnitOptions(row.id).map((opt, i) => (
-                                  <div
-                                    key={i}
-                                    onClick={() => {
-                                      handleFieldChange(row.id, 'unit', opt);
-                                      const newSearches = { ...unitSearches };
-                                      delete newSearches[row.id];
-                                      setUnitSearches(newSearches);
-                                      setShowUnitDropdown(null);
-                                    }}
-                                    onMouseEnter={() => setHoveredUnitOption(opt)}
-                                    onMouseLeave={() => setHoveredUnitOption(null)}
-                                    className={`dropdown-item-option ${
-                                      hoveredUnitOption === opt 
-                                        ? 'dropdown-item-hovered' 
-                                        : row.unit === opt 
-                                        ? 'dropdown-item-selected' 
-                                        : 'dropdown-item-default'
-                                    }`}
-                                  >
-                                    {opt}
-                                  </div>
-                                ))
-                              ) : (
-                                <div className="dropdown-no-matches">
-                                  No matches found
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        row.unit
-                      )}
-                    </td>
-                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      {editingRow === row.id ? (
-                        <input 
-                          type="number" 
-                          value={row.qty} 
-                          onChange={(e) => handleFieldChange(row.id, 'qty', Number(e.target.value))} 
-                          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
-                        />
-                      ) : (
-                        row.qty
-                      )}
-                    </td>
-                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      {editingRow === row.id ? (
-                        <input 
-                          type="number" 
-                          value={row.rate} 
-                          onChange={(e) => handleFieldChange(row.id, 'rate', Number(e.target.value))} 
-                          onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
-                        />
-                      ) : (
-                        `₹ ${row.rate.toLocaleString()}`
-                      )}
-                    </td>
-                    <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      ₹ {row.amount.toLocaleString()}
-                    </td>
-                    <td className={`table-cell-center border-r border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                      <div className="table-actions">
-                        <button onClick={() => handleAddRowAbove((materialPage - 1) * materialPerPage + index)} className="btn-action" title="Add Row">
-                          <Plus size={18} className="text-gray-700" />
-                        </button>
-                        <button onClick={() => handleEdit(index)} className="btn-action" title="Edit">
-                          <Edit2 size={18} className="text-gray-700" />
-                        </button>
-                        <button onClick={() => handleDelete(index)} className="btn-action" title="Delete">
-                          <Trash2 size={18} className="text-red-600" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          <div className="flex justify-end items-center border-l border-r border-b border-[#fecaca] bg-white py-2 px-4">
-            <button 
-              onClick={() => handleAddRowAbove(materialRows.length)} 
-              className="bg-white text-gray-700 border border-gray-300 px-3 py-1.5 rounded text-sm font-medium cursor-pointer flex items-center gap-2 hover:bg-gray-50 transition-colors"
-            >
-              <Plus size={16} />
-              <span>Row</span>
-            </button>
-          </div>
-        </div>
-
-        {materialTotalPages > 1 && (
-          <div className="pagination-container">
-            <button
-              disabled={materialPage === 1}
-              onClick={() => setMaterialPage(prev => prev - 1)}
-              className={`pagination-btn ${materialPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            {Array.from({ length: materialTotalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => setMaterialPage(page)}
-                className={`pagination-page-btn ${materialPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
-              >
-                {page}
-              </button>
-            ))}
-
-            <button
-              disabled={materialPage === materialTotalPages}
-              onClick={() => setMaterialPage(prev => prev + 1)}
-              className={`pagination-btn ${materialPage === materialTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
-
-        <div className="flex justify-end mt-3">
-          <div className="border border-gray-200 rounded-lg py-3 px-5 bg-gray-50 flex gap-3 items-center">
-            <span className="text-sm text-gray-600">
-              Total Amount :
-            </span>
-            <span className="text-sm text-gray-900 font-semibold">
-              ₹ {calculateTotalAmount().toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex justify-end pt-5">
-          <button onClick={handleSubmit} className="btn-search">
-            <span>✓</span>
-            <span>Submit</span>
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'previous' ? 'tab-button-active' : ''}`}
+            onClick={() => setActiveTab('previous')}
+          >
+            Previous Material List
           </button>
         </div>
+
+        {/* Material List Tab Content */}
+        {activeTab === 'material' && (
+          <>
+            <div className="overflow-x-auto mb-1">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-[#fef2f2]">
+                    <th className="table-th border-t border-b border-l border-[#fecaca]">S/No</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Code</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Product</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Unit</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Qty</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Rate</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Amount</th>
+                    <th className="table-th-center border-t border-b border-r border-[#fecaca]">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedMaterialRows.map((row, index) => {
+                    const isLast = index === paginatedMaterialRows.length - 1;
+                    return (
+                      <tr key={row.id} className="bg-white">
+                        <td className={`table-cell border-l border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {row.slNo}.
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <input 
+                              type="text" 
+                              value={row.code} 
+                              onChange={(e) => handleFieldChange(row.id, 'code', e.target.value)} 
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                            />
+                          ) : (
+                            row.code
+                          )}
+                        </td>
+                        <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <div ref={el => productDropdownRefs.current[row.id] = el} className="relative">
+                              <input
+                                type="text"
+                                value={showProductDropdown === row.id && productSearches[row.id] !== undefined ? productSearches[row.id] : row.product}
+                                onChange={(e) => {
+                                  setProductSearches({ ...productSearches, [row.id]: e.target.value });
+                                  setShowProductDropdown(row.id);
+                                }}
+                                onFocus={() => {
+                                  setShowProductDropdown(row.id);
+                                  setProductSearches({ ...productSearches, [row.id]: '' });
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    setShowProductDropdown(null);
+                                    const newSearches = { ...productSearches };
+                                    delete newSearches[row.id];
+                                    setProductSearches(newSearches);
+                                    setTimeout(() => stopEditing(), 0);
+                                  }
+                                }}
+                                placeholder="Type or select..."
+                                className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
+                              />
+                              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                              {showProductDropdown === row.id && (
+                                <div className="dropdown-menu">
+                                  {getFilteredProductOptions(row.id).length > 0 ? (
+                                    getFilteredProductOptions(row.id).map((opt, i) => (
+                                      <div
+                                        key={i}
+                                        onClick={() => {
+                                          handleFieldChange(row.id, 'product', opt);
+                                          const newSearches = { ...productSearches };
+                                          delete newSearches[row.id];
+                                          setProductSearches(newSearches);
+                                          setShowProductDropdown(null);
+                                        }}
+                                        onMouseEnter={() => setHoveredProductOption(opt)}
+                                        onMouseLeave={() => setHoveredProductOption(null)}
+                                        className={`dropdown-item-option ${
+                                          hoveredProductOption === opt 
+                                            ? 'dropdown-item-hovered' 
+                                            : row.product === opt 
+                                            ? 'dropdown-item-selected' 
+                                            : 'dropdown-item-default'
+                                        }`}
+                                      >
+                                        {opt}
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="dropdown-no-matches">
+                                      No matches found
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            row.product
+                          )}
+                        </td>
+                        <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <div ref={el => unitDropdownRefs.current[row.id] = el} className="relative">
+                              <input
+                                type="text"
+                                value={showUnitDropdown === row.id && unitSearches[row.id] !== undefined ? unitSearches[row.id] : row.unit}
+                                onChange={(e) => {
+                                  setUnitSearches({ ...unitSearches, [row.id]: e.target.value });
+                                  setShowUnitDropdown(row.id);
+                                }}
+                                onFocus={() => {
+                                  setShowUnitDropdown(row.id);
+                                  setUnitSearches({ ...unitSearches, [row.id]: '' });
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    setShowUnitDropdown(null);
+                                    const newSearches = { ...unitSearches };
+                                    delete newSearches[row.id];
+                                    setUnitSearches(newSearches);
+                                    setTimeout(() => stopEditing(), 0);
+                                  }
+                                }}
+                                placeholder="Type or select..."
+                                className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
+                              />
+                              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                              {showUnitDropdown === row.id && (
+                                <div className="dropdown-menu">
+                                  {getFilteredUnitOptions(row.id).length > 0 ? (
+                                    getFilteredUnitOptions(row.id).map((opt, i) => (
+                                      <div
+                                        key={i}
+                                        onClick={() => {
+                                          handleFieldChange(row.id, 'unit', opt);
+                                          const newSearches = { ...unitSearches };
+                                          delete newSearches[row.id];
+                                          setUnitSearches(newSearches);
+                                          setShowUnitDropdown(null);
+                                        }}
+                                        onMouseEnter={() => setHoveredUnitOption(opt)}
+                                        onMouseLeave={() => setHoveredUnitOption(null)}
+                                        className={`dropdown-item-option ${
+                                          hoveredUnitOption === opt 
+                                            ? 'dropdown-item-hovered' 
+                                            : row.unit === opt 
+                                            ? 'dropdown-item-selected' 
+                                            : 'dropdown-item-default'
+                                        }`}
+                                      >
+                                        {opt}
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="dropdown-no-matches">
+                                      No matches found
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            row.unit
+                          )}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <input 
+                              type="number" 
+                              value={row.qty} 
+                              onChange={(e) => handleFieldChange(row.id, 'qty', Number(e.target.value))} 
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                            />
+                          ) : (
+                            row.qty
+                          )}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <input 
+                              type="number" 
+                              value={row.rate} 
+                              onChange={(e) => handleFieldChange(row.id, 'rate', Number(e.target.value))} 
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                            />
+                          ) : (
+                            `₹ ${row.rate.toLocaleString()}`
+                          )}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          ₹ {row.amount.toLocaleString()}
+                        </td>
+                        <td className={`table-cell-center border-r border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          <div className="table-actions">
+                            <button onClick={() => handleAddRowAbove((materialPage - 1) * materialPerPage + index)} className="btn-action" title="Add Row">
+                              <Plus size={18} className="add-primary" />
+                            </button>
+                            <button onClick={() => handleEdit(index)} className="btn-action" title="Edit">
+                              <Edit2 size={18}  />
+                            </button>
+                            <button onClick={() => handleDelete(index)} className="btn-action" title="Delete">
+                              <Trash2 size={18} className="text-primary" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              <div className="flex justify-end items-center border-l border-r border-b border-[#fecaca] bg-white py-2 px-4">
+                <button 
+                  onClick={() => handleAddRowAbove(materialRows.length)} 
+                  className="btn-all"
+                >
+                  <Plus size={16} />
+                  <span>Row</span>
+                </button>
+              </div>
+            </div>
+
+            {materialTotalPages > 1 && (
+              <div className="pagination-container">
+                <button
+                  disabled={materialPage === 1}
+                  onClick={() => setMaterialPage(prev => prev - 1)}
+                  className={`pagination-btn ${materialPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                {Array.from({ length: materialTotalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setMaterialPage(page)}
+                    className={`pagination-page-btn ${materialPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={materialPage === materialTotalPages}
+                  onClick={() => setMaterialPage(prev => prev + 1)}
+                  className={`pagination-btn ${materialPage === materialTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+
+            <div className="flex justify-end mt-3">
+              <div className="border border-gray-200 rounded-lg py-3 px-5 bg-gray-50 flex gap-3 items-center">
+                <span className="text-sm text-gray-600">
+                  Total Amount :
+                </span>
+                <span className="text-sm text-gray-900 font-semibold">
+                  ₹ {calculateTotalAmount().toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-5">
+              <button onClick={handleSubmit} className="btn-search">
+                <span>✓</span>
+                <span>Submit</span>
+              </button>
+            </div>
+          </>
+        )}
+
+         {/* Material List Tab Content */}
+        {activeTab === 'previous' && (
+          <>
+            <div className="overflow-x-auto mb-1">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-[#fef2f2]">
+                    <th className="table-th border-t border-b border-l border-[#fecaca]">S/No</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Code</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Product</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Unit</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Qty</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Rate</th>
+                    <th className="table-th border-t border-b border-[#fecaca]">Amount</th>
+                    <th className="table-th-center border-t border-b border-r border-[#fecaca]">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedMaterialRows.map((row, index) => {
+                    const isLast = index === paginatedMaterialRows.length - 1;
+                    return (
+                      <tr key={row.id} className="bg-white">
+                        <td className={`table-cell border-l border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {row.slNo}.
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <input 
+                              type="text" 
+                              value={row.code} 
+                              onChange={(e) => handleFieldChange(row.id, 'code', e.target.value)} 
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                            />
+                          ) : (
+                            row.code
+                          )}
+                        </td>
+                        <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <div ref={el => productDropdownRefs.current[row.id] = el} className="relative">
+                              <input
+                                type="text"
+                                value={showProductDropdown === row.id && productSearches[row.id] !== undefined ? productSearches[row.id] : row.product}
+                                onChange={(e) => {
+                                  setProductSearches({ ...productSearches, [row.id]: e.target.value });
+                                  setShowProductDropdown(row.id);
+                                }}
+                                onFocus={() => {
+                                  setShowProductDropdown(row.id);
+                                  setProductSearches({ ...productSearches, [row.id]: '' });
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    setShowProductDropdown(null);
+                                    const newSearches = { ...productSearches };
+                                    delete newSearches[row.id];
+                                    setProductSearches(newSearches);
+                                    setTimeout(() => stopEditing(), 0);
+                                  }
+                                }}
+                                placeholder="Type or select..."
+                                className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
+                              />
+                              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                              {showProductDropdown === row.id && (
+                                <div className="dropdown-menu">
+                                  {getFilteredProductOptions(row.id).length > 0 ? (
+                                    getFilteredProductOptions(row.id).map((opt, i) => (
+                                      <div
+                                        key={i}
+                                        onClick={() => {
+                                          handleFieldChange(row.id, 'product', opt);
+                                          const newSearches = { ...productSearches };
+                                          delete newSearches[row.id];
+                                          setProductSearches(newSearches);
+                                          setShowProductDropdown(null);
+                                        }}
+                                        onMouseEnter={() => setHoveredProductOption(opt)}
+                                        onMouseLeave={() => setHoveredProductOption(null)}
+                                        className={`dropdown-item-option ${
+                                          hoveredProductOption === opt 
+                                            ? 'dropdown-item-hovered' 
+                                            : row.product === opt 
+                                            ? 'dropdown-item-selected' 
+                                            : 'dropdown-item-default'
+                                        }`}
+                                      >
+                                        {opt}
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="dropdown-no-matches">
+                                      No matches found
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            row.product
+                          )}
+                        </td>
+                        <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <div ref={el => unitDropdownRefs.current[row.id] = el} className="relative">
+                              <input
+                                type="text"
+                                value={showUnitDropdown === row.id && unitSearches[row.id] !== undefined ? unitSearches[row.id] : row.unit}
+                                onChange={(e) => {
+                                  setUnitSearches({ ...unitSearches, [row.id]: e.target.value });
+                                  setShowUnitDropdown(row.id);
+                                }}
+                                onFocus={() => {
+                                  setShowUnitDropdown(row.id);
+                                  setUnitSearches({ ...unitSearches, [row.id]: '' });
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    setShowUnitDropdown(null);
+                                    const newSearches = { ...unitSearches };
+                                    delete newSearches[row.id];
+                                    setUnitSearches(newSearches);
+                                    setTimeout(() => stopEditing(), 0);
+                                  }
+                                }}
+                                placeholder="Type or select..."
+                                className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
+                              />
+                              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                              {showUnitDropdown === row.id && (
+                                <div className="dropdown-menu">
+                                  {getFilteredUnitOptions(row.id).length > 0 ? (
+                                    getFilteredUnitOptions(row.id).map((opt, i) => (
+                                      <div
+                                        key={i}
+                                        onClick={() => {
+                                          handleFieldChange(row.id, 'unit', opt);
+                                          const newSearches = { ...unitSearches };
+                                          delete newSearches[row.id];
+                                          setUnitSearches(newSearches);
+                                          setShowUnitDropdown(null);
+                                        }}
+                                        onMouseEnter={() => setHoveredUnitOption(opt)}
+                                        onMouseLeave={() => setHoveredUnitOption(null)}
+                                        className={`dropdown-item-option ${
+                                          hoveredUnitOption === opt 
+                                            ? 'dropdown-item-hovered' 
+                                            : row.unit === opt 
+                                            ? 'dropdown-item-selected' 
+                                            : 'dropdown-item-default'
+                                        }`}
+                                      >
+                                        {opt}
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="dropdown-no-matches">
+                                      No matches found
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            row.unit
+                          )}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <input 
+                              type="number" 
+                              value={row.qty} 
+                              onChange={(e) => handleFieldChange(row.id, 'qty', Number(e.target.value))} 
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                            />
+                          ) : (
+                            row.qty
+                          )}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {editingRow === row.id ? (
+                            <input 
+                              type="number" 
+                              value={row.rate} 
+                              onChange={(e) => handleFieldChange(row.id, 'rate', Number(e.target.value))} 
+                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                            />
+                          ) : (
+                            `₹ ${row.rate.toLocaleString()}`
+                          )}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          ₹ {row.amount.toLocaleString()}
+                        </td>
+                        <td className={`table-cell-center border-r border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          <div className="table-actions">
+                            <button onClick={() => handleAddRowAbove((materialPage - 1) * materialPerPage + index)} className="btn-action" title="Add Row">
+                              <Plus size={18} className="add-primary" />
+                            </button>
+                            <button onClick={() => handleEdit(index)} className="btn-action" title="Edit">
+                              <Edit2 size={18}  />
+                            </button>
+                            <button onClick={() => handleDelete(index)} className="btn-action" title="Delete">
+                              <Trash2 size={18} className="text-primary" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              <div className="flex justify-end items-center border-l border-r border-b border-[#fecaca] bg-white py-2 px-4">
+                <button 
+                  onClick={() => handleAddRowAbove(materialRows.length)} 
+                  className="btn-all"
+                >
+                  <Plus size={16} />
+                  <span>Row</span>
+                </button>
+              </div>
+            </div>
+
+            {previousTotalPages > 1 && (
+              <div className="pagination-container">
+                <button
+                  disabled={materialPage === 1}
+                  onClick={() => setMaterialPage(prev => prev - 1)}
+                  className={`pagination-btn ${materialPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                {Array.from({ length: materialTotalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setMaterialPage(page)}
+                    className={`pagination-page-btn ${materialPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={materialPage === materialTotalPages}
+                  onClick={() => setMaterialPage(prev => prev + 1)}
+                  className={`pagination-btn ${materialPage === materialTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+
+            <div className="flex justify-end mt-3">
+              <div className="border border-gray-200 rounded-lg py-3 px-5 bg-gray-50 flex gap-3 items-center">
+                <span className="text-sm text-gray-600">
+                  Total Amount :
+                </span>
+                <span className="text-sm text-gray-900 font-semibold">
+                  ₹ {calculateTotalAmount().toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-5">
+              <button onClick={handleSubmit} className="btn-search">
+                <span>✓</span>
+                <span>Submit</span>
+              </button>
+            </div>
+          </>
+        )}
       </div>
       
       <button onClick={() => navigate(-1)} className="btn-back">

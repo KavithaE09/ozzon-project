@@ -394,14 +394,14 @@
   }
   .btn-smallbtn {
     padding: 8px 12px !important;
-    background: #3B82F6 !important;
+    background: #A63128 !important;
     color: white !important;
     border-radius: 4px !important;
     font-size: 14px !important;
     cursor: pointer !important;
   }
   .btn-smallbtn:hover {
-  background: #2563EB !important;
+  background: #d9372b !important;
   }
   .dark .btn-smallbtn {
     background: #3B82F6 !important;
