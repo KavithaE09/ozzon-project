@@ -145,7 +145,7 @@ export default function LeadStatusMaster() {
                           className="btn-action"
                           title="Edit"
                         >
-                          <Edit2 size={18} className="text-[#374151]" />
+                          <Edit2 size={18}  />
                         </button>
                         <button
                           onClick={() => handleDelete(group.id)}

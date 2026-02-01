@@ -346,7 +346,7 @@ export default function ContainerMaster() {
                         ) : (
                           <div className="table-actions">
                             <button onClick={() => handleEdit(index)} className="btn-action">
-                              <Edit2 size={18} style={{ color: '#6B7280' }} />
+                              <Edit2 size={18}  />
                             </button>
                             <button onClick={() => handleDelete(index)} className="btn-action">
                               <Trash2 size={18} style={{ color: '#DC2626' }} />

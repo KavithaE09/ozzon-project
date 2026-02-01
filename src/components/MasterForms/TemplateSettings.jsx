@@ -572,7 +572,7 @@ const stopEditing = () => {
               <div className="bg-gray-100 px-4 py-3 border-b border-gray-400 flex justify-between items-center">
                 <h3 className="text-sm font-semibold text-gray-900 m-0">Terms And Conditions</h3>
                 <button className="p-1 border-none bg-transparent text-gray-600 cursor-pointer">
-                  <Edit2 size={16} />
+                  <Edit2 size={18} />
                 </button>
               </div>
               <div className="p-4 text-xs text-gray-600 leading-relaxed">

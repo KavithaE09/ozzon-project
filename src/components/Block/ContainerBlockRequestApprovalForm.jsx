@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CheckCircle, XCircle, Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-
 const ContainerBlockRequestApprovalForm = () => {
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -54,8 +53,6 @@ const ContainerBlockRequestApprovalForm = () => {
     setDropdownOpen(false);
   };
 
-  const icon = { cursor: 'pointer', color: '#374151' };
-
   const allApprovalData = [
     {
       sNo: 1, piNo: '662', piDate: '04-09-2019', receiptNo: '52', receiptDate: '04-09-2019',
@@ -96,10 +93,8 @@ const ContainerBlockRequestApprovalForm = () => {
     setIsSearched(true);
     
     if (formData.customer.trim() === '') {
-      // Show all data if no customer selected
       setFilteredApprovalData(approvalData);
     } else {
-      // Filter by customer name
       const filtered = approvalData.filter(row => 
         row.customer.toLowerCase() === formData.customer.toLowerCase()
       );
@@ -114,7 +109,6 @@ const ContainerBlockRequestApprovalForm = () => {
     );
     setApprovalData(updatedData);
     
-    // Update filtered data as well
     if (formData.customer.trim() === '') {
       setFilteredApprovalData(updatedData);
     } else {
@@ -131,7 +125,6 @@ const ContainerBlockRequestApprovalForm = () => {
     );
     setApprovalData(updatedData);
     
-    // Update filtered data as well
     if (formData.customer.trim() === '') {
       setFilteredApprovalData(updatedData);
     } else {
@@ -210,396 +203,293 @@ const ContainerBlockRequestApprovalForm = () => {
   };
 
   return (
-    <div style={page}>
-      <div style={card}>
-        <h3 style={title}>Container Block Request Approval</h3>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="main-section">
+          <div className="content-card">
+            <h3 className="page-title">Container Block Request Approval</h3>
 
-        {/* SEARCH */}
-        <div style={rowWrap}>
-          {/* FROM DATE - Editable */}
-          <div style={fieldBox}>
-            <label style={fieldLabel}>From Date</label>
-            <input 
-              type="date" 
-              value={formData.fromdate}
-              onChange={(e) => setFormData({ ...formData, fromdate: e.target.value })}
-              style={fieldInput}
-            />
-          </div>
-
-          {/* TO DATE - Editable */}
-          <div style={fieldBox}>
-            <label style={fieldLabel}>To Date</label>
-            <input 
-              type="date" 
-              value={formData.todate}
-              onChange={(e) => setFormData({ ...formData, todate: e.target.value })}
-              style={fieldInput}
-            />
-          </div>
-
-          {/* CUSTOMER DROPDOWN */}
-          <div
-            ref={dropdownRef}
-            style={{ ...fieldBox, borderRight: '3px solid #22C55E', position: 'relative' }}
-          >
-            <label style={fieldLabel}>Customer Name</label>
-
-            <div style={{ position: 'relative' }}>
-              <input
-                type="text"
-                value={searchTerm}
-                placeholder="Type or select..."
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setDropdownOpen(true);
-                  if (e.target.value === '') {
-                    setFormData({ ...formData, customer: '' });
+            {/* SEARCH */}
+            <div className="filter-grid">
+              {/* FROM DATE */}
+              <div className="filter-grid-red">
+                <label className="filter-label">From Date</label>
+                <input
+                  type="date"
+                  value={formData.fromdate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fromdate: e.target.value })
                   }
-                }}
-                onFocus={() => setDropdownOpen(true)}
-                style={fieldInput}
-              />
-              <ChevronDown
-                size={20}
-                style={{
-                  position: 'absolute',
-                  right: 4,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#000000',
-                  pointerEvents: 'none'
-                }}
-              />
-            </div>
+                  className="filter-input"
+                />
+              </div>
 
-            {dropdownOpen && (
-              <div style={dropdownMenu}>
-                {filteredCustomers.length ? filteredCustomers.map((c, i) => (
-                  <div
-                    key={i}
-                    onClick={() => handleSelectCustomer(c)}
-                    onMouseEnter={() => setHoveredCustomer(c)}
-                    onMouseLeave={() => setHoveredCustomer(null)}
-                    style={{
-                      ...dropdownItem,
-                      color: hoveredCustomer === c ? 'white' : '#374151',
-                      backgroundColor:
-                        hoveredCustomer === c
-                          ? '#A63128'
-                          : formData.customer === c
-                            ? '#FEE2E2'
-                            : 'white'
+              {/* TO DATE */}
+              <div className="filter-grid-red">
+                <label className="filter-label">To Date</label>
+                <input
+                  type="date"
+                  value={formData.todate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, todate: e.target.value })
+                  }
+                  className="filter-input"
+                />
+              </div>
+
+              {/* CUSTOMER DROPDOWN */}
+              <div ref={dropdownRef} className="filter-grid-green">
+                <label className="filter-label">Customer Name</label>
+
+                <div className="dropdown-wrapper">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    placeholder="Type or select..."
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setDropdownOpen(true);
+                      if (e.target.value === '') {
+                        setFormData({ ...formData, customer: '' });
+                      }
                     }}
-                  >
-                    {c}
+                    onFocus={() => setDropdownOpen(true)}
+                    className="dropdown-input"
+                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
+                </div>
+
+                {dropdownOpen && (
+                  <div className="dropdown-menu">
+                    {filteredCustomers.length ? filteredCustomers.map((c, i) => (
+                      <div
+                        key={i}
+                        onClick={() => handleSelectCustomer(c)}
+                        onMouseEnter={() => setHoveredCustomer(c)}
+                        onMouseLeave={() => setHoveredCustomer(null)}
+                        className={`dropdown-item-option ${
+                          hoveredCustomer === c
+                            ? 'dropdown-item-hovered'
+                            : formData.customer === c
+                            ? 'dropdown-item-selected'
+                            : 'dropdown-item-default'
+                        }`}
+                      >
+                        {c}
+                      </div>
+                    )) : (
+                      <div className="dropdown-no-matches">No matches found</div>
+                    )}
                   </div>
-                )) : (
-                  <div style={{ padding: 8, color: '#9CA3AF' }}>No matches found</div>
                 )}
               </div>
+
+              <button onClick={handleSearch} className="btn-search">
+                <Search size={18} /> Search
+              </button>
+            </div>
+
+            {/* APPROVAL TABLE */}
+            {isSearched && (
+              <>
+                <div className="table-container">
+                  <table className="data-table">
+                    <thead className="table-header">
+                      <tr>
+                        {[
+                          'Select', 'S/No', 'PI No', 'PI Date', 'Advance Receipt No',
+                          'Advance Receipt Date', 'Advance Amount', 'Request Date',
+                          'Customer Name', 'Sales Person', 'Status', 'Approval'
+                        ].map(h => (
+                          <th key={h} className="table-th">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {approvalPaginated.length > 0 ? (
+                        approvalPaginated.map((row, i) => (
+                          <tr key={i} className="table-row">
+                            <td className="table-cell">
+                              <input
+                                type="radio"
+                                name="containerSelect"
+                                checked={selectedRow === row.sNo}
+                                onChange={() => setSelectedRow(row.sNo)}
+                                className="accent-primary"
+                              />
+                            </td>
+                            <td className="table-cell">{approvalFirst + i + 1}</td>
+                            <td className="table-cell">{row.piNo}</td>
+                            <td className="table-cell">{row.piDate}</td>
+                            <td className="table-cell">{row.receiptNo}</td>
+                            <td className="table-cell">{row.receiptDate}</td>
+                            <td className="table-cell">{row.amount}</td>
+                            <td className="table-cell">{row.requestDate}</td>
+                            <td className="table-cell">{row.customer}</td>
+                            <td className="table-cell">{row.salesPerson}</td>
+                            <td className="table-cell">
+                              <span className={`font-semibold ${row.status === 'Hold' ? 'text-orange-500' : 'text-green-500'}`}>
+                                {row.status}
+                              </span>
+                            </td>
+                            <td className="table-cell">
+                              {row.approvalStatus === 'approved' ? (
+                                <span className="text-green-600 font-semibold text-sm">
+                                  Approved
+                                </span>
+                              ) : row.approvalStatus === 'rejected' ? (
+                                <span className="text-red-600 font-semibold text-sm">
+                                  Rejected
+                                </span>
+                              ) : (
+                                <div className="flex gap-2">
+                                  <CheckCircle 
+                                    size={16} 
+                                    className="cursor-pointer text-green-600 hover:opacity-70"
+                                    onClick={() => handleApprove(row.sNo)}
+                                  />
+                                  <XCircle 
+                                    size={16} 
+                                    className="cursor-pointer text-red-600 hover:opacity-70"
+                                    onClick={() => handleReject(row.sNo)}
+                                  />
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="12" className="no-data-cell">
+                            No records found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {approvalTotalPages > 1 && (
+                  <div className="pagination-container">
+                    <button
+                      disabled={approvalPage === 1}
+                      onClick={() => setApprovalPage(p => p - 1)}
+                      className={`pagination-btn ${
+                        approvalPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                      }`}
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+
+                    {Array.from({ length: approvalTotalPages }, (_, i) => i + 1).map(p => (
+                      <button
+                        key={p}
+                        onClick={() => setApprovalPage(p)}
+                        className={`pagination-page-btn ${
+                          approvalPage === p ? 'pagination-page-active' : 'pagination-page-inactive'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+
+                    <button
+                      disabled={approvalPage === approvalTotalPages}
+                      onClick={() => setApprovalPage(p => p + 1)}
+                      className={`pagination-btn ${
+                        approvalPage === approvalTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                      }`}
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
-          </div>
 
-          <button onClick={handleSearch} style={searchBtn}>
-            <Search size={18} style={{ marginRight: 6 }} /> Search
-          </button>
-        </div>
+            {/* CONTAINER LIST */}
+            <h4 className="section-title">Container List</h4>
 
-        {/* APPROVAL TABLE */}
-        {isSearched && (
-          <>
-            <div style={approvalWrap}>
-              <table style={table}>
-                <thead>
-                  <tr style={approvalHead}>
+            <div className="table-container">
+              <table className="data-table">
+                <thead className="table-header">
+                  <tr>
                     {[
-                      'Select', 'S/No', 'PI No', 'PI Date', 'Advance Receipt No',
-                      'Advance Receipt Date', 'Advance Amount', 'Request Date',
-                      'Customer Name', 'Sales Person', 'Status', 'Approval'
+                      'S/No', 'Container No', 'Party Name', 'Sz/Type',
+                      'Liner', 'MFG Date', 'In Date', 'Delivery Date', 'Photo', 'Status'
                     ].map(h => (
-                      <th key={h} style={th}>{h}</th>
+                      <th key={h} className="table-th">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {approvalPaginated.length > 0 ? (
-                    approvalPaginated.map((row, i) => (
-                      <tr key={i} style={tr}>
-                        <td style={td}>
-                          <input
-                            type="radio"
-                            name="containerSelect"
-                            checked={selectedRow === row.sNo}
-                            onChange={() => setSelectedRow(row.sNo)}
-                          />
-                        </td>
-                        <td style={td}>{approvalFirst + i + 1}</td>
-                        <td style={td}>{row.piNo}</td>
-                        <td style={td}>{row.piDate}</td>
-                        <td style={td}>{row.receiptNo}</td>
-                        <td style={td}>{row.receiptDate}</td>
-                        <td style={td}>{row.amount}</td>
-                        <td style={td}>{row.requestDate}</td>
-                        <td style={td}>{row.customer}</td>
-                        <td style={td}>{row.salesPerson}</td>
-                        <td style={{ ...td, fontWeight: 600, color: row.status === 'Hold' ? '#f97316' : '#22c55e' }}>
+                  {containerPaginated.map((row, i) => (
+                    <tr key={i} className="table-row">
+                      <td className="table-cell">{row.sNo}</td>
+                      <td className="table-cell">{row.containerNo}</td>
+                      <td className="table-cell">{row.partyName}</td>
+                      <td className="table-cell">{row.szType}</td>
+                      <td className="table-cell">{row.liner}</td>
+                      <td className="table-cell">{row.mfgDate}</td>
+                      <td className="table-cell">{row.inDate}</td>
+                      <td className="table-cell">{row.deliveryDate}</td>
+                      <td className="table-cell">{row.photo}</td>
+                      <td className="table-cell">
+                        <span className={`font-semibold ${row.status === 'Hold' ? 'text-orange-500' : 'text-green-500'}`}>
                           {row.status}
-                        </td>
-                        <td style={td}>
-                          {row.approvalStatus === 'approved' ? (
-                            <span style={{ color: '#16a34a', fontWeight: '600', fontSize: '14px' }}>
-                              Approved
-                            </span>
-                          ) : row.approvalStatus === 'rejected' ? (
-                            <span style={{ color: '#dc2626', fontWeight: '600', fontSize: '14px' }}>
-                              Rejected
-                            </span>
-                          ) : (
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <CheckCircle 
-                                size={16} 
-                                style={{ ...icon, color: '#16a34a' }} 
-                                onClick={() => handleApprove(row.sNo)}
-                              />
-                              <XCircle 
-                                size={16} 
-                                style={{ ...icon, color: '#dc2626' }} 
-                                onClick={() => handleReject(row.sNo)}
-                              />
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="12" style={{ ...td, textAlign: 'center', padding: '32px' }}>
-                        No records found
+                        </span>
                       </td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
 
-            {approvalTotalPages > 1 && (
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 10 }}>
+            {containerTotalPages > 1 && (
+              <div className="pagination-container">
                 <button
-                  disabled={approvalPage === 1}
-                  onClick={() => setApprovalPage(p => p - 1)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    border: '1px solid #d1d5db',
-                    backgroundColor: approvalPage === 1 ? '#e5e7eb' : '#ffffff',
-                    cursor: approvalPage === 1 ? 'not-allowed' : 'pointer'
-                  }}
+                  disabled={containerPage === 1}
+                  onClick={() => setContainerPage(p => p - 1)}
+                  className={`pagination-btn ${
+                    containerPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
                 >
-                  <ChevronLeft />
+                  <ChevronLeft size={16} />
                 </button>
 
-                {Array.from({ length: approvalTotalPages }, (_, i) => i + 1).map(p => (
+                {Array.from({ length: containerTotalPages }, (_, i) => i + 1).map(p => (
                   <button
                     key={p}
-                    onClick={() => setApprovalPage(p)}
-                    style={{
-                      background: approvalPage === p ? '#A63128' : '#fff',
-                      color: approvalPage === p ? '#fff' : '#000',
-                      border: '1px solid #D1D5DB',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
+                    onClick={() => setContainerPage(p)}
+                    className={`pagination-page-btn ${
+                      containerPage === p ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
                   >
                     {p}
                   </button>
                 ))}
 
                 <button
-                  disabled={approvalPage === approvalTotalPages}
-                  onClick={() => setApprovalPage(p => p + 1)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    border: '1px solid #d1d5db',
-                    backgroundColor: approvalPage === approvalTotalPages ? '#e5e7eb' : '#ffffff',
-                    cursor: approvalPage === approvalTotalPages ? 'not-allowed' : 'pointer'
-                  }}
+                  disabled={containerPage === containerTotalPages}
+                  onClick={() => setContainerPage(p => p + 1)}
+                  className={`pagination-btn ${
+                    containerPage === containerTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
                 >
-                  <ChevronRight />
+                  <ChevronRight size={16} />
                 </button>
               </div>
             )}
-          </>
-        )}
 
-        {/* CONTAINER LIST */}
-        <h4 style={subTitle}>Container List</h4>
-
-        <div style={tableWrap}>
-          <table style={table}>
-            <thead style={thead}>
-              <tr>
-                {[
-                  'S/No', 'Container No', 'Party Name', 'Sz/Type',
-                  'Liner', 'MFG Date', 'In Date', 'Delivery Date', 'Photo', 'Status'
-                ].map(h => (
-                  <th key={h} style={th}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {containerPaginated.map((row, i) => (
-                <tr key={i} style={tr}>
-                  <td style={td}>{row.sNo}</td>
-                  <td style={td}>{row.containerNo}</td>
-                  <td style={td}>{row.partyName}</td>
-                  <td style={td}>{row.szType}</td>
-                  <td style={td}>{row.liner}</td>
-                  <td style={td}>{row.mfgDate}</td>
-                  <td style={td}>{row.inDate}</td>
-                  <td style={td}>{row.deliveryDate}</td>
-                  <td style={td}>{row.photo}</td>
-                  <td style={{ ...td, fontWeight: 600, color: row.status === 'Hold' ? '#f97316' : '#22c55e' }}>
-                    {row.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-     </div>
-
-      {containerTotalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 10 }}>
-          <button
-            disabled={containerPage === 1}
-            onClick={() => setContainerPage(p => p - 1)}
-            style={{
-              padding: '6px 12px',
-              borderRadius: '4px',
-              border: '1px solid #d1d5db',
-              backgroundColor: containerPage === 1 ? '#e5e7eb' : '#ffffff',
-              cursor: containerPage === 1 ? 'not-allowed' : 'pointer'
-            }}
-          >
-            <ChevronLeft />
-          </button>
-
-          {Array.from({ length: containerTotalPages }, (_, i) => i + 1).map(p => (
-            <button
-              key={p}
-              onClick={() => setContainerPage(p)}
-              style={{
-                background: containerPage === p ? '#A63128' : '#fff',
-                color: containerPage === p ? '#fff' : '#000',
-                border: '1px solid #D1D5DB',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              {p}
+            <button onClick={handleBack} className="btn-back">
+              <span>←</span>
+              <span>Back</span>
             </button>
-          ))}
-
-          <button
-            disabled={containerPage === containerTotalPages}
-            onClick={() => setContainerPage(p => p + 1)}
-            style={{
-              padding: '6px 12px',
-              borderRadius: '4px',
-              border: '1px solid #d1d5db',
-              backgroundColor: containerPage === containerTotalPages ? '#e5e7eb' : '#ffffff',
-              cursor: containerPage === containerTotalPages ? 'not-allowed' : 'pointer'
-            }}
-          >
-            <ChevronRight />
-          </button>
+          </div>
         </div>
-      )}
-
-      <button
-        onClick={handleBack}
-        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px', fontSize: '13px', fontWeight: '500', color: '#B91C1C', border: '2px solid #B91C1C', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer', marginTop: '12px' }}>
-        <span>←</span>
-        <span>Back</span>
-      </button>
+      </div>
     </div>
   );
 };
-
-/* ===== STYLES ===== */
-
-const page = { background: '#f6eaea', padding: 24 };
-const card = { background: '#fff', padding: 20, borderRadius: 8, marginBottom: '10px' };
-const title = { fontSize: 20, fontWeight: 600 };
-const rowWrap = { display: 'flex', gap: 20, marginTop: 14, flexWrap: 'wrap' };
-
-const fieldBox = {
-  width: 255,
-  height: 59,
-  border: '1px solid #9CA3AF',
-  borderRight: '3px solid #DC2626',
-  borderRadius: 6,
-  padding: '8px 12px',
-  background: '#fff',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center'
-};
-
-const fieldLabel = { fontSize: 16, fontWeight: 600, color: '#374151', marginBottom: 4 };
-const fieldInput = { border: 'none', outline: 'none', fontSize: 14 };
-
-const dropdownMenu = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  right: 0,
-  marginTop: 4,
-  background: '#fff',
-  border: '1px solid #d1d5db',
-  borderRadius: 4,
-  maxHeight: 200,
-  overflowY: 'auto',
-  zIndex: 1000
-};
-
-const dropdownItem = {
-  padding: 8,
-  cursor: 'pointer',
-  fontSize: 14,
-  borderBottom: '1px solid #e5e7eb'
-};
-
-const searchBtn = {
-  background: '#a63128',
-  color: '#fff',
-  border: 'none',
-  height: 50,
-  width: 150,
-  fontSize: 16,
-  borderRadius: '15px',
-  fontWeight: 600,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginTop: 12,
-  marginLeft: 30
-};
-
-const approvalWrap = { marginTop: 20, borderRadius: 8, overflow: 'hidden' };
-const approvalHead = { background: '#fde2e2', fontSize: 14 };
-
-const tableWrap = { border: '1px solid #9CA3AF', borderRadius: 6, marginTop: 10 };
-const table = { width: '100%', borderCollapse: 'collapse', fontSize: 13 };
-const thead = { background: '#fde2e2', fontSize: 16 };
-const th = { padding: 10, textAlign: 'left', whiteSpace: 'nowrap' };
-const tr = { borderBottom: '1px solid #e5e7eb' };
-const td = { padding: 10 };
-const subTitle = { marginTop: 24, fontWeight: 600, fontSize: 20 };
 
 export default ContainerBlockRequestApprovalForm;
