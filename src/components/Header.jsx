@@ -64,14 +64,24 @@ export default function Header({ onMenuClick }) {
   }, []);
 
   return (
-    <header className="bg-white h-[76px] flex justify-between items-center border-b border-[#E5E7EB] shadow-sm">
+    <header 
+      className="h-[76px] flex justify-between items-center border-b shadow-sm"
+      style={{
+        backgroundColor: darkMode ? "#1E293B" : "white",
+        borderColor: darkMode ? "#374151" : "#E5E7EB"
+      }}
+    >
       {/* LEFT SIDE */}
       <div className="flex items-center" style={{ paddingLeft: "24px" }}>
       
-          < Menu
+        <Menu  size={55}
           alt="menu"
           className="w-[18.14px] h-[17.61px] cursor-pointer"
           onClick={onMenuClick}
+          style={{
+            color: darkMode ? "#E5E7EB" : "#374151",
+            filter: darkMode ? "brightness(2)" : "none"
+          }}
         />
 
         <div className="h-10 flex items-center" style={{ marginLeft: "24px" }}>
@@ -92,7 +102,7 @@ export default function Header({ onMenuClick }) {
         <div className="relative" style={{ marginRight: "12px" }}>
           <Bell
             size={35}
-            fill="#374151"
+            fill={darkMode ? "#9CA3AF" : "#374151"}
             stroke="none"
             className="cursor-pointer"
             onClick={() => setOpenNotification(!openNotification)}
@@ -106,10 +116,10 @@ export default function Header({ onMenuClick }) {
                 right: 0,
                 marginTop: "8px",
                 width: "260px",
-                backgroundColor: "white",
-                border: "1px solid #9CA3AF",
+                backgroundColor: darkMode ? "#1E293B" : "white",
+                border: `1px solid ${darkMode ? "#374151" : "#9CA3AF"}`,
                 borderRadius: "6px",
-                boxShadow: "0 4px 6px rgba(0,0,0,0.15)",
+                boxShadow: darkMode ? "0 4px 6px rgba(0,0,0,0.3)" : "0 4px 6px rgba(0,0,0,0.15)",
                 zIndex: 9999
               }}
             >
@@ -123,13 +133,23 @@ export default function Header({ onMenuClick }) {
                   key={index}
                   to={item.path}
                   onClick={() => setOpenNotification(false)}
+                  className="notification-link"
                   style={{
                     display: "block",
                     padding: "10px 12px",
                     fontSize: "14px",
-                    color: "#374151",
+                    color: darkMode ? "#E5E7EB" : "#374151",
                     textDecoration: "none",
-                    borderBottom: index !== 3 ? "1px solid #E5E7EB" : "none"
+                    borderBottom: index !== 3 ? `1px solid ${darkMode ? "#374151" : "#E5E7EB"}` : "none",
+                    transition: "background-color 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
+                    e.currentTarget.style.color = "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
                   }}
                 >
                   {item.label}
@@ -145,26 +165,54 @@ export default function Header({ onMenuClick }) {
           className="cursor-pointer flex items-center justify-center"
           style={{ marginRight: "16px" }}
         >
-          <Settings size={35} className="text-[#374151]" />
+          <Settings 
+            size={35} 
+            style={{
+              color: darkMode ? "#9CA3AF" : "#374151",
+              transition: "color 0.2s"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = darkMode ? "#3B82F6" : "#B73E3E";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = darkMode ? "#9CA3AF" : "#374151";
+            }}
+          />
         </Link>
 
         {/* 👤 USER PROFILE */}
         <div ref={profileRef} className="relative">
           <div
             onClick={() => setOpenProfile(!openProfile)}
-            className="flex items-center gap-3 cursor-pointer bg-white px-4 border border-[#E5E7EB] h-[60px]"
-            style={{ width: "227px", borderRadius: "5px" }}
+            className="flex items-center gap-3 cursor-pointer px-4 border h-[60px]"
+            style={{ 
+              width: "227px", 
+              borderRadius: "5px",
+              backgroundColor: darkMode ? "#1E293B" : "white",
+              borderColor: darkMode ? "#374151" : "#E5E7EB"
+            }}
           >
             <img src={userIcon} alt="user" className="h-10" />
 
             <div className="flex flex-col flex-1">
-              <span className="text-[13px] text-[#6B7280]">User Name</span>
-              <span className="text-[13px] text-[#374151] font-semibold">
+              <span 
+                className="text-[13px]"
+                style={{ color: darkMode ? "#9CA3AF" : "#6B7280" }}
+              >
+                User Name
+              </span>
+              <span 
+                className="text-[13px] font-semibold"
+                style={{ color: darkMode ? "#E5E7EB" : "#374151" }}
+              >
                 ADMIN
               </span>
             </div>
 
-            < ChevronDown className="w-4 h-4" />
+            <ChevronDown 
+              className="w-4 h-4" 
+              style={{ color: darkMode ? "#9CA3AF" : "#374151" }}
+            />
           </div>
 
           {openProfile && (
@@ -174,10 +222,10 @@ export default function Header({ onMenuClick }) {
                 right: 0,
                 top: "110%",
                 width: "230px",
-                backgroundColor: "white",
-                border: "1px solid #9CA3AF",
+                backgroundColor: darkMode ? "#1E293B" : "white",
+                border: `1px solid ${darkMode ? "#374151" : "#9CA3AF"}`,
                 borderRadius: "6px",
-                boxShadow: "0 4px 6px rgba(0,0,0,0.15)",
+                boxShadow: darkMode ? "0 4px 6px rgba(0,0,0,0.3)" : "0 4px 6px rgba(0,0,0,0.15)",
                 zIndex: 9999
               }}
             >
@@ -188,16 +236,39 @@ export default function Header({ onMenuClick }) {
                   display: "block",
                   padding: "10px 12px",
                   fontSize: "14px",
-                  color: "#374151",
-                  borderBottom: "1px solid #E5E7EB",
-                  textDecoration: "none"
+                  color: darkMode ? "#E5E7EB" : "#374151",
+                  borderBottom: `1px solid ${darkMode ? "#374151" : "#E5E7EB"}`,
+                  textDecoration: "none",
+                  transition: "background-color 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
                 }}
               >
                 Profile
               </Link>
 
               <div
-                style={{ padding: "10px 12px", fontSize: "14px", cursor: "pointer" }}
+                style={{ 
+                  padding: "10px 12px", 
+                  fontSize: "14px", 
+                  cursor: "pointer",
+                  color: darkMode ? "#E5E7EB" : "#374151",
+                  transition: "background-color 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
+                }}
               >
                 Logout
               </div>

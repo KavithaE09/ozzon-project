@@ -402,7 +402,7 @@ export default function Sidebar({ open, onNavigate }) {
             paddingLeft: "20px",
             paddingRight: "12px",
             scrollbarWidth: "thin",
-            scrollbarColor: "#FFFFFF40 transparent",
+            scrollbarColor: isDark ? "#374151 transparent" : "#FFFFFF40 transparent",
           }}
         >
           <style>{`
@@ -413,11 +413,11 @@ export default function Sidebar({ open, onNavigate }) {
               background: transparent;
             }
             .sidebar-scroll::-webkit-scrollbar-thumb {
-              background: #FFFFFF40;
+              background: ${isDark ? "#374151" : "#FFFFFF40"};
               border-radius: 3px;
             }
             .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-              background: #FFFFFF60;
+              background: ${isDark ? "#475569" : "#FFFFFF60"};
             }
           `}</style>
 
@@ -674,10 +674,8 @@ export default function Sidebar({ open, onNavigate }) {
 
 function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen , isDark }) {
   const [hover, setHover] = useState(false);
+  
   return (
-    
-    
-
 <button
   onClick={onClick}
   onMouseEnter={() => setHover(true)}
@@ -685,29 +683,31 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen , isDark
   style={{
     backgroundColor: isDark
       ? active
-        ? "#29333E"  
+        ? "#0F172A"       // Dark active - darker background
         : hover
-        ? "#262F38"     
-        : "#212830"     
+        ? "#1E293B"       // Dark hover - Card BG
+        : "#374151"       // Dark normal - Border color as BG
       : active
-      ? "#FFFFFF"      
-      : "#A63028",     
+      ? "#FFFFFF"         // Light active - White
+      : "#A63028",        // Light normal - Red
 
     color: isDark
-      ? "#FFFFFF"
+      ? active
+        ? "#3B82F6"       // Dark active text - Primary Blue
+        : "#E5E7EB"       // Dark normal/hover text - Text Primary
       : active
-      ? "#A63028"
-      : "#FFFFFF",
+      ? "#A63028"         // Light active text - Red
+      : "#FFFFFF",        // Light normal text - White
 
     width: "200px",
     height: "40px",
-    border: "none",
+    border: isDark ? "1px solid #475569" : "none",
     marginBottom: "8px",
     paddingLeft: "16px",
     paddingRight: "12px",
     flexShrink: 0,
     cursor: "pointer",
-    transition: "background-color 0.2s ease",
+    transition: "all 0.2s ease",
   }}
   className="flex items-center justify-between rounded-[12px] font-poppins font-semibold text-[14px]"
 >
@@ -726,7 +726,6 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen , isDark
     />
   )}
 </button>
-
   );
 }
 
@@ -735,19 +734,21 @@ function SubButton({ label, active, onClick, isDark }) {
 
   const backgroundColor = isDark
     ? active
-      ? "#29333E"      // dark selected
+      ? "#0F172A"         // Dark active - Darkest (like light mode white)
       : hover
-      ? "#262F38"      // dark hover
-      : "#212830"      // dark normal
+      ? "#1E293B"         // Dark hover - Card BG
+      : "#334155"         // Dark normal - Lighter slate
     : active
-    ? "#FFFFFF"        // light selected
-    : "#A63028";       // light normal
+    ? "#FFFFFF"           // Light active - White
+    : "#A63028";          // Light normal - Red
 
   const textColor = isDark
-    ? "#FFFFFF"
+    ? active
+      ? "#3B82F6"         // Dark active text - Primary Blue
+      : "#E5E7EB"         // Dark normal/hover text - Text Primary
     : active
-    ? "#A63028"
-    : "#FFFFFF";
+    ? "#A63028"           // Light active text - Red
+    : "#FFFFFF";          // Light normal text - White
 
   return (
     <button
@@ -758,15 +759,14 @@ function SubButton({ label, active, onClick, isDark }) {
         backgroundColor,
         width: "200px",
         height: "40px",
-        border: "none",
+        border: isDark ? "1px solid #475569" : "none",
         color: textColor,
         marginBottom: "8px",
         paddingLeft: "16px",
         paddingRight: "12px",
-        opacity: hover ? 0.95 : 1,
         flexShrink: 0,
         cursor: "pointer",
-        transition: "background-color 0.2s ease",
+        transition: "all 0.2s ease",
       }}
       className="flex items-center rounded-[10px] font-poppins text-[13px]"
     >

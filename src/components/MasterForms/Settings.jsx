@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 export default function Settings() {
   const navigate = useNavigate();
 
@@ -32,24 +33,24 @@ export default function Settings() {
 7. Transit Insurance: Transit insurance can be arranged on request and will be billed separately.`;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <div style={contentWrapper}>
-        <div style={cardStyle}>
+    <div className="flex flex-col h-screen">
+      <div className="flex-1 mb-2.5 bg-[#f5e6e8] p-5 overflow-y-auto">
+        <div className="bg-white rounded-lg p-[18px] mb-2.5">
 
-          <h3 style={{ fontSize: 20, marginBottom: 12 }}>Settings</h3>
+          <h3 className="text-xl mb-3">Settings</h3>
 
           {/* ===== TOP SECTION ===== */}
-          <div style={{ display: 'flex', gap: 20, marginBottom: 20 }}>
+          <div className="flex gap-5 mb-5">
 
             {/* ===== BANK DETAILS ===== */}
-            <div style={{ ...boxStyle, flex: 1.4 }}>
+            <div className="flex-[1.4] border border-gray-200 text-base rounded-md p-3.5">
               <Label>Bank Details</Label>
 
-              <div style={bankTextWrapper}>
+              <div className="grid gap-1.5">
                 {bankDetails.map((item, i) => (
-                  <div key={i} style={bankTextRow}>
-                    <span style={bankTextLabel}>{item.label}</span>
-                    <span style={bankTextColon}>:</span>
+                  <div key={i} className="flex items-center text-sm">
+                    <span className="w-[120px] font-medium">{item.label}</span>
+                    <span className="w-2.5">:</span>
                     <input
                       value={item.value}
                       onChange={(e) => {
@@ -57,7 +58,7 @@ export default function Settings() {
                         updated[i].value = e.target.value;
                         setBankDetails(updated);
                       }}
-                      style={bankInlineInput}
+                      className="border-none outline-none text-sm w-full bg-transparent"
                     />
                   </div>
                 ))}
@@ -65,7 +66,7 @@ export default function Settings() {
             </div>
 
             {/* ===== RIGHT SIDE INPUTS ===== */}
-            <div style={rightGrid}>
+            <div className="flex-1 grid grid-cols-2 gap-4">
               <FloatingInput label="Financial Year" value={financialYear} setValue={setFinancialYear} />
               <FloatingInput label="Quotation Prefix" value={quotationPrefix} setValue={setQuotationPrefix} />
               <FloatingInput label="Proforma Invoice Prefix" value={proformaPrefix} setValue={setProformaPrefix} />
@@ -74,22 +75,24 @@ export default function Settings() {
           </div>
 
           {/* ===== TERMS ===== */}
-          <div style={{ ...boxStyle, marginBottom: 20 }}>
+          <div className="border border-gray-200 text-base rounded-md p-3.5 mb-5">
             <Label>Terms And Conditions</Label>
-            <div style={termsBox}>{terms}</div>
+            <div className="border border-gray-300 rounded-md p-3 text-sm whitespace-pre-line bg-gray-50">
+              {terms}
+            </div>
           </div>
 
           {/* ===== IMAGE UPLOAD + CONTAINER FIELDS ===== */}
-          <div style={boxStyle}>
+          <div className="border border-gray-200 text-base rounded-md p-3.5">
             <Label>Logo Upload</Label>
 
-            <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
+            <div className="flex gap-6 mb-5">
               <UploadField label="Company Logo" />
               <UploadField label="Authorized Sign" />
             </div>
 
-            {/* 🔥 ONLY CHANGE HERE */}
-            <div style={containerRowGrid}>
+            {/* CONTAINER FIELDS */}
+            <div className="grid grid-cols-3 gap-[70px]">
               <FloatingInput label="Container Hold Hours" value={container} setValue={setContainer} />
               <FloatingInput label="Container Block Days for Empty" value={containerblock} setValue={setContainerblock} />
               <FloatingInput label="Container Block Days for Fabric" value={containerfabric} setValue={setContainerfabric} />
@@ -97,30 +100,22 @@ export default function Settings() {
           </div>
 
           {/* ===== SAVE BUTTON ===== */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
-            <button style={saveButton}>Save</button>
+          <div className="flex justify-end mt-5">
+            <button className="bg-[#7f1d1d] text-white border-none py-2.5 px-8 rounded-md cursor-pointer hover:bg-[#991b1b] transition-colors">
+              Save
+            </button>
           </div>
 
         </div>
+
+        {/* BACK BUTTON */}
         <button 
-            onClick={() => navigate(-1)}
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px', 
-              padding: '8px 20px', 
-              fontSize: '13px', 
-              fontWeight: '500', 
-              color: '#B91C1C', 
-              border: '2px solid #B91C1C', 
-              borderRadius: '4px', 
-              backgroundColor: 'white', 
-              cursor: 'pointer' 
-            }}
-          >
-            <span>←</span>
-            <span>Back</span>
-          </button>
+          onClick={() => navigate(-1)}
+          className="btn-back"
+        >
+          <span>←</span>
+          <span>Back</span>
+        </button>
       </div>
     </div>
   );
@@ -129,129 +124,30 @@ export default function Settings() {
 /* ================= COMPONENTS ================= */
 
 const FloatingInput = ({ label, value, setValue }) => (
-  <div style={floatingWrapper}>
-    <span style={floatingLabel}>{label}</span>
+  <div className="w-[255px] h-[59px] border border-gray-300 rounded-md p-2 px-2.5 flex flex-col justify-center">
+    <span className="text-base font-bold text-gray-700 mb-1">
+      {label}
+    </span>
     <input
       value={value}
       onChange={e => setValue(e.target.value)}
-      style={floatingInput}
+      className="border-none outline-none text-sm bg-transparent"
     />
   </div>
 );
 
 const Label = ({ children }) => (
-  <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>
+  <div className="text-xs font-semibold mb-2">
     {children}
   </div>
 );
 
 const UploadField = ({ label }) => (
-  <div style={{ flex: 1 }}>
+  <div className="flex-1">
     <Label>{label}</Label>
-    <input type="file" style={fileInput} />
+    <input 
+      type="file" 
+      className="w-full border border-gray-300 rounded-md p-2"
+    />
   </div>
 );
-
-/* ================= STYLES ================= */
-
-const contentWrapper = {
-  flex: 1,
-  marginBottom:10,
-  background: '#f5e6e8',
-  padding: 20,
-  overflowY: 'auto'
-};
-
-const cardStyle = {
-  background: '#fff',
-  borderRadius: 8,
-  padding: 18,
-  marginBottom:10
-};
-
-const boxStyle = {
-  border: '1px solid #e5e7eb',
-  fontSize:16,
-  borderRadius: 6,
-  padding: 14
-};
-
-/* BANK */
-const bankTextWrapper = { display: 'grid', gap: 6 };
-const bankTextRow = { display: 'flex', alignItems: 'center', fontSize: 14 };
-const bankTextLabel = { width: 120, fontWeight: 500 };
-const bankTextColon = { width: 10 };
-
-const bankInlineInput = {
-  border: 'none',
-  outline: 'none',
-  fontSize: 14,
-  width: '100%',
-  background: 'transparent'
-};
-
-/* RIGHT GRID */
-const rightGrid = {
-  flex: 1,
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: 16
-};
-
-/* 🔥 CONTAINER ROW GRID (NEW) */
-const containerRowGrid = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 255px)',
-  gap: 70
-};
-
-/* FLOATING INPUT */
-const floatingWrapper = {
-  width: 255,
-  height: 59,
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  padding: '8px 10px',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center'
-};
-
-const floatingLabel = {
-  fontSize: 16,
-  fontWeight:'700',
-  color: '#374151',
-
-  marginBottom: 4
-};
-
-const floatingInput = {
-  border: 'none',
-  outline: 'none',
-  fontSize: 14
-};
-
-const termsBox = {
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  padding: 12,
-  fontSize: 14,
-  whiteSpace: 'pre-line',
-  background: '#f9fafb'
-};
-
-const fileInput = {
-  width: '100%',
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  padding: 8
-};
-
-const saveButton = {
-  background: '#7f1d1d',
-  color: '#fff',
-  border: 'none',
-  padding: '10px 32px',
-  borderRadius: 6,
-  cursor: 'pointer'
-};

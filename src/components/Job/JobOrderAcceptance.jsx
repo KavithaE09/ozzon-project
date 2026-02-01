@@ -538,7 +538,7 @@ export default function JobOrderAcceptance() {
                       <div className="table-actions">
                         <Plus 
                           size={18} 
-                          style={{ color: '#000000', cursor: 'pointer' }}
+                          style={{ color: '#0b9715', cursor: 'pointer' }}
                           onClick={() => {
                             handleInsertRow(row.id);
                             setOpenMenuIndex(null);
