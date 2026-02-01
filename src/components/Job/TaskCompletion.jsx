@@ -289,7 +289,7 @@ export default function TaskCompletion() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F3E8E8] p-6">
+    <div style={{ height: '100vh', backgroundColor: '#F3E8E8', padding: '24px', overflowY: 'auto' }}>
       <div className="content-card">
         <h2 className="page-title">Task Completion</h2>
         <h4 className="text-xl font-bold ml-5 mb-6 text-gray-800">Accepted Job List</h4>
@@ -662,7 +662,7 @@ export default function TaskCompletion() {
                       <div className="table-actions relative">
                         <Plus
                           size={18}
-                          className="text-black cursor-pointer"
+                          style={{ color: '#0b9715', cursor: 'pointer' }}
                           onClick={() => {
                             handleInsertRow(row.id);
                             setOpenMenuIndex(null);
@@ -670,7 +670,7 @@ export default function TaskCompletion() {
                         />
                         <Edit2
                           size={18}
-                          className="text-gray-700 cursor-pointer"
+                          className=" cursor-pointer"
                           onClick={() => {
                             handleEdit(index);
                             setOpenMenuIndex(null);
