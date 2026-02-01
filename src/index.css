@@ -274,6 +274,7 @@
     justify-content: flex-end;
     padding-right: 8px;
     margin-right: 116px;
+    gap:12px;
   } 
   .btn-search,
   .btn-all {
@@ -672,6 +673,13 @@ body {
     font-size: 14px;
     border-collapse: collapse;
   }
+  .table-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  position: relative;  
+}
   .table-header {
     background-color: #fde2e2;
   }
@@ -791,7 +799,7 @@ body {
     position: absolute;
     top: -12px;
     right: -12px;
-    width: 30px;
+    width: 30px; 
     height: 30px;
     background-color: #DC2626;
     color: white;

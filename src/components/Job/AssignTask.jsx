@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {  Plus,ChevronDown, Printer, Edit2, Trash2 ,ChevronLeft, ChevronRight} from 'lucide-react';
+import {  Plus,ChevronDown, Printer, Edit2, Trash2 ,ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Menu} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AssignTask() {
   const navigate = useNavigate();
+  const [hoveredOption, setHoveredOption] = useState(null);
   
   const getTodayDate = () => {
     const today = new Date();
@@ -115,6 +116,31 @@ export default function AssignTask() {
   const [discount, setDiscount] = useState(10000);
   const [gstPercentage, setGstPercentage] = useState(18);
   const [showSubmitMessage, setShowSubmitMessage] = useState(false);
+
+  // Close dropdowns when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdownMenus = document.querySelectorAll('.dropdown-wrapper');
+      let clickedInside = false;
+      
+      dropdownMenus.forEach((menu) => {
+        if (menu.contains(event.target)) {
+          clickedInside = true;
+        }
+      });
+      
+      if (!clickedInside) {
+        setShowSpecDropdown(null);
+        setShowlabourDropdown(null);
+        setShowAddSpecDropdown(false);
+        setShowAddlabourDropdown(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   
   const handleAddButtonClick = () => {
     setShowAddForm(true);
@@ -140,15 +166,18 @@ export default function AssignTask() {
       remark: newRowData.remark
     };
 
+    let newRows;
     if (insertAfterRowId) {
       const index = rows.findIndex(r => r.id === insertAfterRowId);
-      const newRows = [...rows];
-      newRows.splice(index + 1, 0, row);
-      setRows(newRows);
+      newRows = [...rows];
+      newRows.splice(index, 0, row); // Insert BEFORE the clicked row
     } else {
-      setRows([...rows, row]);
+      newRows = [...rows, row];
     }
-
+    
+    // Recalculate serial numbers
+    newRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
+    setRows(newRows);
     setShowAddForm(false);
     setInsertAfterRowId(null);
     setNewRowData({
@@ -167,6 +196,7 @@ export default function AssignTask() {
   const stopEditing = () => {
     setEditingRow(null);
     setShowSpecDropdown(null);
+    setShowlabourDropdown(null);
   };
 
   const handleDropdownKeyDown = (e) => {
@@ -186,7 +216,34 @@ export default function AssignTask() {
   };
 
   const handleDelete = (index) => {
-    setRows(prevRows => prevRows.filter((_, i) => i !== index));
+    const newRows = rows.filter((_, i) => i !== index);
+    // Recalculate serial numbers
+    const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
+    setRows(updatedRows);
+    setOpenMenuIndex(null);
+  };
+
+  const handleMoveUp = (index) => {
+    if (index === 0) return; // Cannot move up if it's the first row
+    
+    const newRows = [...rows];
+    // Swap with previous row
+    [newRows[index - 1], newRows[index]] = [newRows[index], newRows[index - 1]];
+    // Recalculate serial numbers
+    const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
+    setRows(updatedRows);
+    setOpenMenuIndex(null);
+  };
+
+  const handleMoveDown = (index) => {
+    if (index === rows.length - 1) return; // Cannot move down if it's the last row
+    
+    const newRows = [...rows];
+    // Swap with next row
+    [newRows[index], newRows[index + 1]] = [newRows[index + 1], newRows[index]];
+    // Recalculate serial numbers
+    const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
+    setRows(updatedRows);
     setOpenMenuIndex(null);
   };
 
@@ -588,7 +645,15 @@ export default function AssignTask() {
                                         setShowSpecDropdown(null);
                                         stopEditing();
                                       }}
-                                      className={`dropdown-item-option ${row.description === option ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                                      onMouseEnter={() => setHoveredOption(option)}
+                                      onMouseLeave={() => setHoveredOption(null)}
+                                      className={`dropdown-item-option ${
+                                        hoveredOption === option 
+                                          ? 'dropdown-item-hovered' 
+                                          : row.description === option 
+                                          ? 'dropdown-item-selected' 
+                                          : 'dropdown-item-default'
+                                      }`}
                                     >
                                       {option}
                                     </div>
@@ -699,7 +764,15 @@ export default function AssignTask() {
                                         setShowlabourDropdown(null);
                                         stopEditing();
                                       }}
-                                      className={`dropdown-item-option ${row.assignLabour === option ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                                      onMouseEnter={() => setHoveredOption(option)}
+                                      onMouseLeave={() => setHoveredOption(null)}
+                                      className={`dropdown-item-option ${
+                                        hoveredOption === option 
+                                          ? 'dropdown-item-hovered' 
+                                          : row.assignLabour === option 
+                                          ? 'dropdown-item-selected' 
+                                          : 'dropdown-item-default'
+                                      }`}
                                     >
                                       {option}
                                     </div>
@@ -746,89 +819,97 @@ export default function AssignTask() {
 
                         {/* Actions */}
                         <td className="table-cell-center">
-                          <div className="table-actions">
-                            <Plus
-                              size={18}
-                              className="add-primary"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => {
-                                handleInsertRow(row.id);
-                                setOpenMenuIndex(null);
-                              }}
-                            />
-                            <Edit2
-                              size={18}
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => {
-                                handleEdit(index);
-                                setOpenMenuIndex(null);
-                              }}
-                            />
-                            <Trash2
-                              size={18}
-                              className="text-primary"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => {
-                                handleDelete(index);
-                                setOpenMenuIndex(null);
-                              }}
-                            />
+                          <div className="table-actions relative">
+                            <button onClick={() => toggleMenu(index)} className="btn-action">
+                              <Menu size={18} />
+                            </button>
+
+                            {openMenuIndex === index && (
+                              <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-md flex gap-2 p-2 z-10">
+                                <ArrowUp 
+                                  size={18} 
+                                  className={`${index === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-blue-600 cursor-pointer hover:text-blue-800'}`}
+                                  onClick={() => {
+                                    if (index !== 0) {
+                                      handleMoveUp(index);
+                                    }
+                                  }}
+                                  title={index === 0 ? 'Already at top' : 'Move up'}
+                                />
+                                <ArrowDown 
+                                  size={18} 
+                                  className={`${
+                                    index === rows.length - 1
+                                      ? 'text-gray-300 cursor-not-allowed' 
+                                      : 'text-blue-600 cursor-pointer hover:text-blue-800'
+                                  }`}
+                                  onClick={() => {
+                                    if (index !== rows.length - 1) {
+                                      handleMoveDown(index);
+                                    }
+                                  }}
+                                  title={index === rows.length - 1 ? 'Already at bottom' : 'Move down'}
+                                />
+                                <Plus
+                                  size={18}
+                                  className="add-primary cursor-pointer"
+                                  onClick={() => {
+                                    handleInsertRow(row.id);
+                                    setOpenMenuIndex(null);
+                                  }}
+                                  title="Insert row above"
+                                />
+                                <Edit2
+                                  size={18}
+                                  className="cursor-pointer hover:text-gray-700"
+                                  onClick={() => {
+                                    handleEdit(index);
+                                    setOpenMenuIndex(null);
+                                  }}
+                                  title="Edit row"
+                                />
+                                <Trash2
+                                  size={18}
+                                  className="text-primary cursor-pointer hover:text-red-700"
+                                  onClick={() => {
+                                    handleDelete(index);
+                                    setOpenMenuIndex(null);
+                                  }}
+                                  title="Delete row"
+                                />
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                </div>
-              <Pagination currentPage={rowPage} totalPages={rowTotalPages} setCurrentPage={setRowPage} />
-              
-          {/* Back Button */}
-          <div className="filter-grid" >
-
-            <div className="btn-container">
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
-          </div>
-          <div></div>
-          <div></div>
-              {/* Submit Button */}
-              <div className="btn-container">
-                <button onClick={handleAcceptJob} className="btn-search">
-                  <span>✓</span>
-                  Assign Task
-                </button>
-                </div>
-              </div>
-              </div>
-
-              {showAddForm && (
+                {showAddForm && (
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(10, 1fr)',
-                    gap: '12px',
+                    gridTemplateColumns: 'repeat(6, 1fr)',
+                    gap: '5px',
                     alignItems: 'flex-end',
                     paddingBottom: '8px',
                     marginBottom: '20px'
                   }}
                 >
-                  {/* Sl No */}
-                  <div className="filter-grid-red">
-                    <label className="filter-label" style={{ fontSize: '12px' }}>Sl No</label>
-                    <input
-                      type="text"
-                      placeholder="Input"
-                      value={newRowData.slNo}
-                      onChange={(e) => setNewRowData({ ...newRowData, slNo: e.target.value })}
-                      className="filter-input"
-                    />
+                  {/* Sl No - Auto-calculated */}
+                  <div className="filter-grid-blue">
+                    <label className="filter-label">Sl No</label>
+                    <div className="filter-input" style={{fontWeight: 'bold', color: '#2f22c3'}}>
+                      {insertAfterRowId 
+                        ? rows.findIndex(r => r.id === insertAfterRowId) + 1
+                        : rows.length + 1
+                      }
+                    </div>
                   </div>
 
                   {/* Description */}
                   <div className="filter-grid-red" style={{ gridColumn: 'span 2', position: 'relative' }}>
-                    <label className="filter-label" style={{ fontSize: '12px' }}>Description</label>
+                    <label className="filter-label">Description</label>
                     <div className="dropdown-wrapper">
                       <div
                         onClick={() => setShowAddSpecDropdown(!showAddSpecDropdown)}
@@ -855,7 +936,15 @@ export default function AssignTask() {
                                 setNewRowData({ ...newRowData, description: spec });
                                 setShowAddSpecDropdown(false);
                               }}
-                              className={`dropdown-item-option ${newRowData.description === spec ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                              onMouseEnter={() => setHoveredOption(spec)}
+                              onMouseLeave={() => setHoveredOption(null)}
+                              className={`dropdown-item-option ${
+                                hoveredOption === spec 
+                                  ? 'dropdown-item-hovered' 
+                                  : newRowData.description === spec 
+                                  ? 'dropdown-item-selected' 
+                                  : 'dropdown-item-default'
+                              }`}
                             >
                               {spec}
                             </div>
@@ -942,7 +1031,15 @@ export default function AssignTask() {
                                 setNewRowData({ ...newRowData, assignLabour: labour });
                                 setShowAddlabourDropdown(false);
                               }}
-                              className={`dropdown-item-option ${newRowData.assignLabour === labour ? 'dropdown-item-selected' : 'dropdown-item-default'}`}
+                              onMouseEnter={() => setHoveredOption(labour)}
+                              onMouseLeave={() => setHoveredOption(null)}
+                              className={`dropdown-item-option ${
+                                hoveredOption === labour 
+                                  ? 'dropdown-item-hovered' 
+                                  : newRowData.assignLabour === labour 
+                                  ? 'dropdown-item-selected' 
+                                  : 'dropdown-item-default'
+                              }`}
                             >
                               {labour}
                             </div>
@@ -976,13 +1073,36 @@ export default function AssignTask() {
                   </div>
 
                   {/* Save Button */}
-                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                    <button onClick={handleSaveNewRow} className="btn-smallbtn" style={{ width: '100%', padding: '8px 14px' }}>
+                  <div classNmae="btn-container">
+                    <button onClick={handleSaveNewRow} className="btn-all" >
                       Save
                     </button>
                   </div>
                 </div>
               )}
+                </div>
+              <Pagination currentPage={rowPage} totalPages={rowTotalPages} setCurrentPage={setRowPage} />
+              
+          {/* Back Button */}
+          <div className="filter-grid" >
+
+            <div className="btn-container">
+          <button onClick={() => navigate(-1)} className="btn-back">
+            <span>←</span>
+            <span>Back</span>
+          </button>
+          </div>
+          <div></div>
+          <div></div>
+              {/* Submit Button */}
+              <div className="btn-container">
+                <button onClick={handleAcceptJob} className="btn-search">
+                  <span>✓</span>
+                  Assign Task
+                </button>
+                </div>
+              </div>
+              </div>
             </div>
           </div>
         </div>
