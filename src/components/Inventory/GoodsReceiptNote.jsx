@@ -63,7 +63,7 @@ export default function GoodsReceiptNotes() {
 
             {/* PO LIST */}
             <div className="master-table-container mb-4">
-              <div className="table-container">
+              
                 <table className="data-table">
                   <thead className="table-header">
                     <tr>
@@ -109,13 +109,13 @@ export default function GoodsReceiptNotes() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              
             </div>
 
             {/* MATERIAL LIST */}
             <h2 className="section-title">Material List</h2>
-            <div className="master-table-container">
-              <div className="table-container">
+          
+           <div className="master-table-container mb-4">
                 <table className="data-table">
                   <thead className="table-header">
                     <tr>
@@ -207,7 +207,7 @@ export default function GoodsReceiptNotes() {
                     ))}
                   </tbody>
                 </table>
-
+</div>
                 {/* ADD ROW */}
                 <div className="flex justify-end mt-2.5">
                   <button 
@@ -217,8 +217,7 @@ export default function GoodsReceiptNotes() {
                     + Row
                   </button>
                 </div>
-              </div>
-            </div>
+             
 
             {/* SUBMIT BUTTON */}
             <div className="flex justify-end mt-6">

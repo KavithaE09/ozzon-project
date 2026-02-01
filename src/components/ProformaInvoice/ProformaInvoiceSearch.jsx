@@ -235,7 +235,7 @@ export default function ProformaInvoiceSearch() {
                                 className="btn-action"
                                 title="Print"
                               >
-                                <Printer size={18} className="text-[#374151]" />
+                                <Printer size={18}className="print-primary"/>
                               </button>
                               <button
                                 onClick={() => navigate("/layout/proformainvoice/add")}
@@ -249,7 +249,7 @@ export default function ProformaInvoiceSearch() {
                                 className="btn-action"
                                 title="Delete"
                               >
-                                <Trash2 size={18} className="text-[#dc2626]" />
+                                <Trash2 size={18} className="text-primary" />
                               </button>
                               <button
                                 onClick={() => navigate("/layout/proformainvoice/advance")}
