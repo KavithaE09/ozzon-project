@@ -16,9 +16,6 @@ export default function LeadSearch() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  // Check dark mode
-  const isDark = document.documentElement.classList.contains("dark");
-
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const paginatedData = filteredData.slice(indexOfFirstRow, indexOfLastRow);
@@ -118,7 +115,7 @@ export default function LeadSearch() {
     <div className="page-container">
       <div className="content-wrapper">
         <div className="main-section">
-          <div className="content-card">
+          <div className="content-card bg-white dark:bg-[#353C44]">
 
             <h2 className="page-title">Lead</h2>
 
@@ -126,30 +123,30 @@ export default function LeadSearch() {
             <div className="filter-section">
               <div className="filter-grid">
                 {/* From Date */}
-                <div className="filter-grid-red dark:bg-[#1E293B] dark:border-[#374151]">
-                  <label className="filter-label dark:text-[#E5E7EB]">From Date</label>
+                <div className="filter-grid-red">
+                  <label className="filter-label">From Date</label>
                   <input
                     type="date"
                     value={formData.formdate}
                     onChange={(e) => setFormData({ ...formData, formdate: e.target.value })}
-                    className="filter-input dark:bg-[#1E293B] dark:text-[#E5E7EB] dark:[color-scheme:dark]"
+                    className="filter-input"
                   />
                  </div>
 
                 {/* To Date */}
-                <div className="filter-grid-red dark:bg-[#1E293B] dark:border-[#374151]">
-                  <label className="filter-label dark:text-[#E5E7EB]">To Date</label>
+                <div className="filter-grid-red">
+                  <label className="filter-label">To Date</label>
                   <input
                     type="date"
                     value={formData.todate}
                     onChange={(e) => setFormData({ ...formData, todate: e.target.value })}
-                    className="filter-input dark:bg-[#1E293B] dark:text-[#E5E7EB] dark:[color-scheme:dark]"
+                    className="filter-input"
                   />
                  </div>
 
                 {/* Customer Name Dropdown */}
-                <div ref={dropdownRef} className="filter-grid-green dark:bg-[#1E293B] dark:border-[#374151]">
-                  <label className="filter-label dark:text-[#E5E7EB]">Customer Name</label>
+                <div ref={dropdownRef} className="filter-grid-green">
+                  <label className="filter-label">Customer Name</label>
                   <div className="dropdown-wrapper">
                     <input
                       type="text"
@@ -157,16 +154,12 @@ export default function LeadSearch() {
                       onChange={handleInputChange}
                       onFocus={() => setIsDropdownOpen(true)}
                       placeholder="Type or select..."
-                      className="dropdown-input dark:bg-[#1E293B] dark:text-[#E5E7EB]"
+                      className="dropdown-input"
                     />
-                    <ChevronDown 
-                      size={20} 
-                      className="dropdown-icon"
-                      style={{ color: isDark ? "#9CA3AF" : "black" }}
-                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                   </div>
                   {isDropdownOpen && (
-                        <div className="dropdown-menu dark:bg-[#1E293B] dark:border-[#374151]">
+                        <div className="dropdown-menu">
                         {filteredOptions.length > 0 ? (
                          filteredOptions.map((option, index) => (
                         <div
@@ -178,12 +171,9 @@ export default function LeadSearch() {
                            hoveredOption === option 
                                ? 'dropdown-item-hovered' 
                                : customerName === option 
-                               ? 'dropdown-item-selected dark:bg-[#1E3A5F]' 
-                               : 'dropdown-item-default dark:text-[#E5E7EB] dark:bg-[#1E293B]'
+                               ? 'dropdown-item-selected' 
+                               : 'dropdown-item-default'
                            }`}
-                           style={{
-                             borderBottom: `1px solid ${isDark ? "#374151" : "#E5E7EB"}`
-                           }}
                            >
                            {option}
                         </div>
@@ -214,31 +204,31 @@ export default function LeadSearch() {
 
             {/* Results Table */}
             {isSearched && (
-              <div className="table-container dark:border-[#374151]">
+              <div className="table-container">
                 <table className="data-table">
                   <thead>
-                    <tr className="table-header dark:bg-[#1E293B]">
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">SI No</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Lead No</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Lead Date</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Customer Name</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Sales Person</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Total Cost</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Hold Request</th>
-                      <th className="table-th dark:text-[#E5E7EB] dark:border-[#374151]">Quotation</th>
-                      <th className="table-th-center dark:text-[#E5E7EB] dark:border-[#374151]">Actions</th>
+                    <tr className="table-header">
+                      <th className="table-th">SI No</th>
+                      <th className="table-th">Lead No</th>
+                      <th className="table-th">Lead Date</th>
+                      <th className="table-th">Customer Name</th>
+                      <th className="table-th">Sales Person</th>
+                      <th className="table-th">Total Cost</th>
+                      <th className="table-th">Hold Request</th>
+                      <th className="table-th">Quotation</th>
+                      <th className="table-th-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredData.length > 0 ? (
                       paginatedData.map((row, index) => (
-                        <tr key={index} className="table-row dark:border-[#374151] dark:hover:bg-[#0F172A]">
-                          <td className="table-cell dark:text-[#E5E7EB]">{indexOfFirstRow + index + 1}</td>
-                          <td className="table-cell dark:text-[#E5E7EB]">{row.leadNo}</td>
-                          <td className="table-cell dark:text-[#E5E7EB]">{row.leadDate}</td>
-                          <td className="table-cell dark:text-[#E5E7EB]">{row.customerName}</td>
-                          <td className="table-cell dark:text-[#E5E7EB]">{row.salesPerson}</td>
-                          <td className="table-cell dark:text-[#E5E7EB]">{row.totalCost}</td>
+                        <tr key={index} className="table-row">
+                          <td className="table-cell">{indexOfFirstRow + index + 1}</td>
+                          <td className="table-cell">{row.leadNo}</td>
+                          <td className="table-cell">{row.leadDate}</td>
+                          <td className="table-cell">{row.customerName}</td>
+                          <td className="table-cell">{row.salesPerson}</td>
+                          <td className="table-cell">{row.totalCost}</td>
                           <td className="table-cell">
                             <button
                               onClick={() => navigate("/layout/lead/hold")}
@@ -255,25 +245,25 @@ export default function LeadSearch() {
                               Quotation
                             </button>
                           </td>
-                          <td className="table-cell-center dark:text-[#E5E7EB]">
+                          <td className="table-cell-center">
                             <div className="table-actions">
                               <button
                                 onClick={(e) => handlePrint(index, e)}
-                                className="btn-action dark:hover:bg-[#374151]"
+                                className="btn-action"
                                 title="Print"
                               >
-                                <Printer size={18} className="print-primary"/>
+                                <Printer size={18}className="print-primary"/>
                               </button>
                             <button
                                 onClick={() => navigate("/layout/lead/lead")}
-                                className="btn-action dark:hover:bg-[#374151]"
+                                className="btn-action"
                                 title="Edit"
                               >
-                                 <Edit2 size={18} style={{ color: isDark ? "#9CA3AF" : "#374151" }} />
+                                 <Edit2 size={18} />
                               </button>
                               <button
                                 onClick={(e) => handleDelete(index, e)}
-                                className="btn-action dark:hover:bg-[#374151]"
+                                className="btn-action"
                                 title="Delete"
                               >
                                  <Trash2 size={18} className="text-primary" />
@@ -284,7 +274,7 @@ export default function LeadSearch() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="9" className="no-data-cell dark:text-[#9CA3AF]">
+                        <td colSpan="9" className="no-data-cell">
                           No records found for the selected filters
                         </td>
                       </tr>
@@ -301,10 +291,8 @@ export default function LeadSearch() {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => prev - 1)}
-                  className={`pagination-btn dark:border-[#374151] ${
-                    currentPage === 1 
-                      ? 'pagination-btn-disabled dark:bg-[#1E293B] dark:text-[#9CA3AF]' 
-                      : 'pagination-btn-active dark:bg-[#1E293B] dark:text-[#E5E7EB] dark:hover:bg-[#0F172A]'
+                  className={`pagination-btn ${
+                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
                   }`}
                 >
                   <ChevronLeft size={18} />
@@ -314,10 +302,8 @@ export default function LeadSearch() {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`pagination-page-btn dark:border-[#374151] ${
-                      currentPage === page 
-                        ? 'pagination-page-active' 
-                        : 'pagination-page-inactive dark:bg-[#1E293B] dark:text-[#E5E7EB] dark:hover:bg-[#0F172A]'
+                    className={`pagination-page-btn ${
+                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
                     }`}
                   >
                     {page}
@@ -327,10 +313,8 @@ export default function LeadSearch() {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => prev + 1)}
-                  className={`pagination-btn dark:border-[#374151] ${
-                    currentPage === totalPages 
-                      ? 'pagination-btn-disabled dark:bg-[#1E293B] dark:text-[#9CA3AF]' 
-                      : 'pagination-btn-active dark:bg-[#1E293B] dark:text-[#E5E7EB] dark:hover:bg-[#0F172A]'
+                  className={`pagination-btn ${
+                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
                   }`}
                 >
                   <ChevronRight size={18} />
