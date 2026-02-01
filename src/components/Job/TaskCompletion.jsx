@@ -437,7 +437,7 @@ export default function TaskCompletion() {
                               className="btn-action"
                               title="Print"
                             >
-                              <Printer size={18} className="text-gray-700" />
+                              <Printer size={18}className="print-primary"/>
                             </button>
                             <button
                               onClick={(e) => handleEditJobOrder(index, e)}

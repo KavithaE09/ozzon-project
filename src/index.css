@@ -566,7 +566,12 @@
   .dropdown-item-option:last-child {
     border-bottom: none;
   }
+ 
   .dropdown-item-hovered {
+    color: white;
+    background-color: #a63128;
+  }
+   .dark .dropdown-item-hovered {
     color: white;
     background-color: #3B82F6;
   }
@@ -1045,13 +1050,22 @@ body {
   .dark .pagination-page-btn {
     border: 1px solid #374151;
   }
+
   .pagination-page-active {
+    background-color: #a63128;
+    color: white;
+  }
+  .dark .pagination-page-active {
     background-color: #3B82F6;
     color: white;
   }
   .pagination-page-active:hover {
+    background-color: #a63028;
+  }
+  .dark .pagination-page-active:hover {
     background-color: #2563EB;
   }
+
   .pagination-page-inactive {
     background-color: white;
     color: black;

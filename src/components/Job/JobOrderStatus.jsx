@@ -630,7 +630,7 @@ export default function JobOrderStatus() {
                           className="btn-action"
                           title="Insert Row"
                         >
-                          <Plus size={18} className="text-black" />
+                          <Plus size={18}   style={{ color: '#0b9715', cursor: 'pointer' }} />
                         </button>
                         
                         <button
