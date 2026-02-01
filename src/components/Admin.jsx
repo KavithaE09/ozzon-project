@@ -24,6 +24,7 @@ export default function Admin() {
   return (
     <div
       style={{
+        backgroundColor: '#FFFFFF',
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
@@ -92,7 +93,7 @@ export default function Admin() {
           style={{
             width: '400px',
             height: '420px',
-            backgroundColor: '#FF0000FF0000',
+            backgroundColor: '#FFFFFF',
             borderRadius: '18px',
             padding: '48px',
             border: '1px solid #FF0000',
@@ -144,7 +145,7 @@ export default function Admin() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="User Name"
               style={{
-                width: '355px',
+                width: '320px',
                 padding: '12px 16px',
                 borderRadius: '10px',
                 border: '1px solid #FF0000',
@@ -175,7 +176,7 @@ export default function Admin() {
                 placeholder='*********'
                 onChange={(e) => setPassword(e.target.value)}
                 style={{
-                  width: '355px',
+                  width: '320px',
                   padding: '12px 16px',
                   borderRadius: '10px',
                   border: '1px solid #FF0000',
@@ -243,6 +244,7 @@ export default function Admin() {
           type="button"
             onClick={handleSubmit}
             style={{
+              marginTop: '20px',
               width: '100%',
               padding: '14px',
               backgroundColor: '#A63028',
