@@ -63,6 +63,7 @@ export default function StockIssueReturn() {
 
   const jobReviewTotalPages = Math.ceil(filteredJobReviewData.length / jobReviewPerPage);
 
+  // Current Material Rows
   const [materialRows, setMaterialRows] = React.useState([
     { id: 1, slNo: 1, code: '101', product: 'TCKU 1524662', unit: 'Number', qty: 2, rate: 1000, amount: 2000 },
     { id: 2, slNo: 2, code: 'Code', product: 'Product', unit: 'Unit', qty: 2, rate: 10000, amount: 100000 },
@@ -81,6 +82,25 @@ export default function StockIssueReturn() {
 
   const materialTotalPages = Math.ceil(materialRows.length / materialPerPage);
 
+  // Previous Material Rows (Read-only)
+  const [previousMaterialRows] = React.useState([
+    { id: 1, slNo: 1, code: '101', product: 'TCKU 1524662', unit: 'Number', qty: 2, rate: 1000, amount: 2000 },
+    { id: 2, slNo: 2, code: 'Code', product: 'Product', unit: 'Unit', qty: 2, rate: 10000, amount: 100000 },
+    { id: 3, slNo: 3, code: '102', product: 'Product A', unit: 'Piece', qty: 5, rate: 500, amount: 2500 },
+    { id: 4, slNo: 4, code: '103', product: 'Product B', unit: 'Box', qty: 10, rate: 200, amount: 2000 }
+  ]);
+
+  const [previousMaterialPage, setPreviousMaterialPage] = React.useState(1);
+  const previousMaterialPerPage = 2;
+
+  const paginatedPreviousMaterialRows = React.useMemo(() => {
+    const start = (previousMaterialPage - 1) * previousMaterialPerPage;
+    const end = start + previousMaterialPerPage;
+    return previousMaterialRows.slice(start, end);
+  }, [previousMaterialRows, previousMaterialPage]);
+
+  const previousMaterialTotalPages = Math.ceil(previousMaterialRows.length / previousMaterialPerPage);
+
   const [editingRow, setEditingRow] = React.useState(null);
   const [showProductDropdown, setShowProductDropdown] = React.useState(null);
   const [showUnitDropdown, setShowUnitDropdown] = React.useState(null);
@@ -93,26 +113,7 @@ export default function StockIssueReturn() {
   // Refs for dropdown containers
   const productDropdownRefs = useRef({});
   const unitDropdownRefs = useRef({});
-
-  // Previous data (sample)
-  const previousData = [
-    { slNo: 1, issueNo: 'ISS001', issueDate: '15-01-25', receiver: 'Sofi & Co', customer: 'Roneesh', totalAmount: 106500 },
-    { slNo: 2, issueNo: 'ISS002', issueDate: '16-01-25', receiver: 'ABC Corp', customer: 'Kumar', totalAmount: 50000 },
-    { slNo: 3, issueNo: 'ISS003', issueDate: '17-01-25', receiver: 'XYZ Ltd', customer: 'Raja', totalAmount: 75000 },
-    { slNo: 4, issueNo: 'ISS004', issueDate: '18-01-25', receiver: 'Sofi & Co', customer: 'Raneesh', totalAmount: 120000 }
-  ];
-
-  const [previousPage, setPreviousPage] = React.useState(1);
-  const previousPerPage = 3;
-
-  const paginatedPreviousData = React.useMemo(() => {
-    const start = (previousPage - 1) * previousPerPage;
-    const end = start + previousPerPage;
-    return previousData.slice(start, end);
-  }, [previousPage]);
-
-  const previousTotalPages = Math.ceil(previousData.length / previousPerPage);
-
+ 
   const filteredGiverOptions = giverOptions.filter(opt => 
     opt.toLowerCase().includes(giverSearch.toLowerCase())
   );
@@ -215,6 +216,10 @@ export default function StockIssueReturn() {
     return materialRows.reduce((sum, row) => sum + (row.amount || 0), 0);
   };
 
+  const calculatePreviousTotalAmount = () => {
+    return previousMaterialRows.reduce((sum, row) => sum + (row.amount || 0), 0);
+  };
+
   const handleSubmit = () => {
     stopEditing();
     alert('Form submitted successfully!');
@@ -262,9 +267,18 @@ export default function StockIssueReturn() {
     }
   }, [materialTotalPages, materialPage]);
 
+  React.useEffect(() => {
+    if (previousMaterialPage > previousMaterialTotalPages && previousMaterialTotalPages > 0) {
+      setPreviousMaterialPage(previousMaterialTotalPages);
+    }
+  }, [previousMaterialTotalPages, previousMaterialPage]);
+
   return (
     <>
-      <div className="content-card" style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto' }}>
+      <div className="page-container">
+      <div className="content-wrapper">
+      <div className="main-section">
+      <div className="content-card">
         <h2 className="page-title">
           Stock Issue Return
         </h2>
@@ -839,7 +853,7 @@ export default function StockIssueReturn() {
           </>
         )}
 
-         {/* Material List Tab Content */}
+        {/* Previous Material List Tab Content */}
         {activeTab === 'previous' && (
           <>
             <div className="overflow-x-auto mb-1">
@@ -852,244 +866,66 @@ export default function StockIssueReturn() {
                     <th className="table-th border-t border-b border-[#fecaca]">Unit</th>
                     <th className="table-th border-t border-b border-[#fecaca]">Qty</th>
                     <th className="table-th border-t border-b border-[#fecaca]">Rate</th>
-                    <th className="table-th border-t border-b border-[#fecaca]">Amount</th>
-                    <th className="table-th-center border-t border-b border-r border-[#fecaca]">Actions</th>
+                    <th className="table-th border-t border-b border-r border-[#fecaca]">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedMaterialRows.map((row, index) => {
-                    const isLast = index === paginatedMaterialRows.length - 1;
+                  {paginatedPreviousMaterialRows.map((row, index) => {
+                    const isLast = index === paginatedPreviousMaterialRows.length - 1;
                     return (
                       <tr key={row.id} className="bg-white">
                         <td className={`table-cell border-l border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                           {row.slNo}.
                         </td>
                         <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                          {editingRow === row.id ? (
-                            <input 
-                              type="text" 
-                              value={row.code} 
-                              onChange={(e) => handleFieldChange(row.id, 'code', e.target.value)} 
-                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
-                            />
-                          ) : (
-                            row.code
-                          )}
-                        </td>
-                        <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                          {editingRow === row.id ? (
-                            <div ref={el => productDropdownRefs.current[row.id] = el} className="relative">
-                              <input
-                                type="text"
-                                value={showProductDropdown === row.id && productSearches[row.id] !== undefined ? productSearches[row.id] : row.product}
-                                onChange={(e) => {
-                                  setProductSearches({ ...productSearches, [row.id]: e.target.value });
-                                  setShowProductDropdown(row.id);
-                                }}
-                                onFocus={() => {
-                                  setShowProductDropdown(row.id);
-                                  setProductSearches({ ...productSearches, [row.id]: '' });
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    setShowProductDropdown(null);
-                                    const newSearches = { ...productSearches };
-                                    delete newSearches[row.id];
-                                    setProductSearches(newSearches);
-                                    setTimeout(() => stopEditing(), 0);
-                                  }
-                                }}
-                                placeholder="Type or select..."
-                                className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
-                              />
-                              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-                              {showProductDropdown === row.id && (
-                                <div className="dropdown-menu">
-                                  {getFilteredProductOptions(row.id).length > 0 ? (
-                                    getFilteredProductOptions(row.id).map((opt, i) => (
-                                      <div
-                                        key={i}
-                                        onClick={() => {
-                                          handleFieldChange(row.id, 'product', opt);
-                                          const newSearches = { ...productSearches };
-                                          delete newSearches[row.id];
-                                          setProductSearches(newSearches);
-                                          setShowProductDropdown(null);
-                                        }}
-                                        onMouseEnter={() => setHoveredProductOption(opt)}
-                                        onMouseLeave={() => setHoveredProductOption(null)}
-                                        className={`dropdown-item-option ${
-                                          hoveredProductOption === opt 
-                                            ? 'dropdown-item-hovered' 
-                                            : row.product === opt 
-                                            ? 'dropdown-item-selected' 
-                                            : 'dropdown-item-default'
-                                        }`}
-                                      >
-                                        {opt}
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <div className="dropdown-no-matches">
-                                      No matches found
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            row.product
-                          )}
-                        </td>
-                        <td className={`table-cell relative ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                          {editingRow === row.id ? (
-                            <div ref={el => unitDropdownRefs.current[row.id] = el} className="relative">
-                              <input
-                                type="text"
-                                value={showUnitDropdown === row.id && unitSearches[row.id] !== undefined ? unitSearches[row.id] : row.unit}
-                                onChange={(e) => {
-                                  setUnitSearches({ ...unitSearches, [row.id]: e.target.value });
-                                  setShowUnitDropdown(row.id);
-                                }}
-                                onFocus={() => {
-                                  setShowUnitDropdown(row.id);
-                                  setUnitSearches({ ...unitSearches, [row.id]: '' });
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    setShowUnitDropdown(null);
-                                    const newSearches = { ...unitSearches };
-                                    delete newSearches[row.id];
-                                    setUnitSearches(newSearches);
-                                    setTimeout(() => stopEditing(), 0);
-                                  }
-                                }}
-                                placeholder="Type or select..."
-                                className="w-full py-1.5 px-2 border border-gray-300 rounded text-sm cursor-text"
-                              />
-                              <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-                              {showUnitDropdown === row.id && (
-                                <div className="dropdown-menu">
-                                  {getFilteredUnitOptions(row.id).length > 0 ? (
-                                    getFilteredUnitOptions(row.id).map((opt, i) => (
-                                      <div
-                                        key={i}
-                                        onClick={() => {
-                                          handleFieldChange(row.id, 'unit', opt);
-                                          const newSearches = { ...unitSearches };
-                                          delete newSearches[row.id];
-                                          setUnitSearches(newSearches);
-                                          setShowUnitDropdown(null);
-                                        }}
-                                        onMouseEnter={() => setHoveredUnitOption(opt)}
-                                        onMouseLeave={() => setHoveredUnitOption(null)}
-                                        className={`dropdown-item-option ${
-                                          hoveredUnitOption === opt 
-                                            ? 'dropdown-item-hovered' 
-                                            : row.unit === opt 
-                                            ? 'dropdown-item-selected' 
-                                            : 'dropdown-item-default'
-                                        }`}
-                                      >
-                                        {opt}
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <div className="dropdown-no-matches">
-                                      No matches found
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            row.unit
-                          )}
+                          {row.code}
                         </td>
                         <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                          {editingRow === row.id ? (
-                            <input 
-                              type="number" 
-                              value={row.qty} 
-                              onChange={(e) => handleFieldChange(row.id, 'qty', Number(e.target.value))} 
-                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
-                            />
-                          ) : (
-                            row.qty
-                          )}
+                          {row.product}
                         </td>
                         <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                          {editingRow === row.id ? (
-                            <input 
-                              type="number" 
-                              value={row.rate} 
-                              onChange={(e) => handleFieldChange(row.id, 'rate', Number(e.target.value))} 
-                              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
-                            />
-                          ) : (
-                            `₹ ${row.rate.toLocaleString()}`
-                          )}
+                          {row.unit}
                         </td>
                         <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          {row.qty}
+                        </td>
+                        <td className={`table-cell ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
+                          ₹ {row.rate.toLocaleString()}
+                        </td>
+                        <td className={`table-cell border-r border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
                           ₹ {row.amount.toLocaleString()}
-                        </td>
-                        <td className={`table-cell-center border-r border-[#fecaca] ${isLast ? 'border-b border-[#fecaca]' : ''}`}>
-                          <div className="table-actions">
-                            <button onClick={() => handleAddRowAbove((materialPage - 1) * materialPerPage + index)} className="btn-action" title="Add Row">
-                              <Plus size={18} className="add-primary" />
-                            </button>
-                            <button onClick={() => handleEdit(index)} className="btn-action" title="Edit">
-                              <Edit2 size={18}  />
-                            </button>
-                            <button onClick={() => handleDelete(index)} className="btn-action" title="Delete">
-                              <Trash2 size={18} className="text-primary" />
-                            </button>
-                          </div>
                         </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-
-              <div className="flex justify-end items-center border-l border-r border-b border-[#fecaca] bg-white py-2 px-4">
-                <button 
-                  onClick={() => handleAddRowAbove(materialRows.length)} 
-                  className="btn-all"
-                >
-                  <Plus size={16} />
-                  <span>Row</span>
-                </button>
-              </div>
             </div>
 
-            {previousTotalPages > 1 && (
+            {previousMaterialTotalPages > 1 && (
               <div className="pagination-container">
                 <button
-                  disabled={materialPage === 1}
-                  onClick={() => setMaterialPage(prev => prev - 1)}
-                  className={`pagination-btn ${materialPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+                  disabled={previousMaterialPage === 1}
+                  onClick={() => setPreviousMaterialPage(prev => prev - 1)}
+                  className={`pagination-btn ${previousMaterialPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
                 >
                   <ChevronLeft size={16} />
                 </button>
 
-                {Array.from({ length: materialTotalPages }, (_, i) => i + 1).map(page => (
+                {Array.from({ length: previousMaterialTotalPages }, (_, i) => i + 1).map(page => (
                   <button
                     key={page}
-                    onClick={() => setMaterialPage(page)}
-                    className={`pagination-page-btn ${materialPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
+                    onClick={() => setPreviousMaterialPage(page)}
+                    className={`pagination-page-btn ${previousMaterialPage === page ? 'pagination-page-active' : 'pagination-page-inactive'}`}
                   >
                     {page}
                   </button>
                 ))}
 
                 <button
-                  disabled={materialPage === materialTotalPages}
-                  onClick={() => setMaterialPage(prev => prev + 1)}
-                  className={`pagination-btn ${materialPage === materialTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
+                  disabled={previousMaterialPage === previousMaterialTotalPages}
+                  onClick={() => setPreviousMaterialPage(prev => prev + 1)}
+                  className={`pagination-btn ${previousMaterialPage === previousMaterialTotalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'}`}
                 >
                   <ChevronRight size={16} />
                 </button>
@@ -1102,18 +938,11 @@ export default function StockIssueReturn() {
                   Total Amount :
                 </span>
                 <span className="text-sm text-gray-900 font-semibold">
-                  ₹ {calculateTotalAmount().toLocaleString()}
+                  ₹ {calculatePreviousTotalAmount().toLocaleString()}
                 </span>
               </div>
             </div>
-
-            <div className="flex justify-end pt-5">
-              <button onClick={handleSubmit} className="btn-search">
-                <span>✓</span>
-                <span>Submit</span>
-              </button>
-            </div>
-          </>
+          </> 
         )}
       </div>
       
@@ -1121,6 +950,9 @@ export default function StockIssueReturn() {
         <span>←</span>
         <span>Back</span>
       </button>
+    </div>
+    </div>
+    </div>
     </>
   );
 }
