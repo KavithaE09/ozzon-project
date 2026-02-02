@@ -16,393 +16,250 @@ export default function Sidebar({ open, onNavigate }) {
   const [inventoryOpen, setInventoryOpen] = useState(false);
 
   useEffect(() => {
-    const path = location.pathname.toLowerCase();
+  const path = location.pathname.toLowerCase();
 
+  // Reset all முதல்ல
+  setFormsOpen(false);
+  setSalesOpen(false);
+  setAccountsOpen(false);
+  setPurchaseOpen(false);
+  setInventoryOpen(false);
+  setApprovalOpen(false);
+  setJobOpen(false);
+  setLeadOpen(false);
 
-    // Reset all
-    setFormsOpen(false);
-    setSalesOpen(false);
-    setAccountsOpen(false);
-    setPurchaseOpen(false);
-    setInventoryOpen(false);
-    setApprovalOpen(false);
-    setJobOpen(false);
+  // Dashboard
+  if (path === "/layout" || path === "/layout/") {
+    setActive("Dashboard");
+  }
+  
+  // Approval routes (முதல்ல check பண்ணனும் - sales-க்கு முன்னாடி)
+  else if (path.includes("/quotationapproval")) {
+    setActive("QuotationApproval");
+    setApprovalOpen(true);
+  } 
+  else if (path.includes("/proformainvoiceapproval")) {
+    setActive("ProformaInvoiceApproval");
+    setApprovalOpen(true);
+  } 
+  else if (path.includes("/containerholdrequestapproval")) {
+    setActive("ContainerHoldRequestApprovalForm");
+    setApprovalOpen(true);
+  } 
+  else if (path.includes("/containerblockrequestapproval")) {
+    setActive("ContainerBlockApproval");
+    setApprovalOpen(true);
+  } 
+  else if (path.includes("/joborderacceptance")) {
+    setActive("JobOrderAcceptance");
+    setApprovalOpen(true);
+  }
+  
+  // Purchase routes
+  else if (path.includes("/containermaster")) {
+    setActive("ContainerMaster");
+    setPurchaseOpen(true);
+  } 
+  else if (path.includes("/purchasemaster")) {
+    setActive("PurchaseMaster");
+    setPurchaseOpen(true);
+  } 
+  else if (path.includes("/containerpurchase")) {
+    setActive("ContainerPurchase");
+    setPurchaseOpen(true);
+  } 
+  else if (path.includes("/containerstatus")) {
+    setActive("ContainerStatus");
+    setPurchaseOpen(true);
+  }
 
-    //purchase routes
-    if (path.includes("/containermaster")) {
-      setActive("ContainerMaster");
-      setAccountsOpen(false);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(true);
-    } else if (path.includes("/purchasemaster")) {
-      setActive("PurchaseMaster");
-      setAccountsOpen(false);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(true);
-    } else if (path.includes("/containerpurchase")) {
-      setActive("ContainerPurchase");
-      setAccountsOpen(false);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(true);
-    } else if (path.includes("/containerstatus")) {
-      setActive("ContainerStatus");
-      setAccountsOpen(false);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(true);
-    }
+  // Inventory routes 
+  else if (path.includes("/purchasereturn") && path.includes("search")) {
+    setActive("PurchaseReturnSearch");
+    setInventoryOpen(true);
+  }
+  else if (path.includes("/purchasereturn")) {
+    setActive("PurchaseReturn");
+    setInventoryOpen(true);
+  }
+  else if (path.includes("/purchaseorder")) {
+    setActive("PurchaseOrder");
+    setInventoryOpen(true);
+  } 
+  else if (path.includes("/purchasesearch")) {
+    setActive("PurchaseSearch");
+    setInventoryOpen(true);
+  } 
+  else if (path.includes("/goodsreceiptnote")) {
+    setActive("GoodsReceiptNote");
+    setInventoryOpen(true);
+  } 
+  else if (path.includes("/purchase")) {
+    setActive("Purchase");
+    setInventoryOpen(true);
+  } 
+  else if (path.includes("/stockissuereturn")) {
+    setActive("StockIssueReturn");
+    setInventoryOpen(true);
+  } 
+  else if (path.includes("/stockissue")) {
+    setActive("StockIssue");
+    setInventoryOpen(true);
+  }
+  else if (path.includes("/salessearch")) {
+    setActive("SalesSearch");
+    setInventoryOpen(true);
+  } 
+  else if (path.includes("/salesreturnsearch")) {
+    setActive("SalesReturnSearch");
+    setInventoryOpen(true);
+  }
 
+  // Master Forms routes
+  else if (path.includes("/usermaster")) {
+    setActive("UserMaster");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/userrolesettings")) {
+    setActive("UserRoleSettings");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/departmentmaster")) {
+    setActive("DepartmentMaster");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/templategroup")) {
+    setActive("TemplateGroup");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/templatespecification")) {
+    setActive("TemplateSpecification");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/materialgroup")) {
+    setActive("MaterialGroup");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/materiallist")) {
+    setActive("MaterialList");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/leadstatusmaster")) {
+    setActive("LeadStatusMaster");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/unitmaster")) {
+    setActive("UnitMaster");
+    setFormsOpen(true);
+  }
+  else if (path.includes("/assignlabour")) {
+    setActive("AssignLabour");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/leadsourcemaster")) {
+    setActive("LeadSourceMaster");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/templatesettings")) {
+    setActive("TemplateSettings");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/rolemaster")) {
+    setActive("RoleMaster");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/grade")) {
+    setActive("Grade");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/groupunder")) {
+    setActive("GroupUnder");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/group")) {
+    setActive("Group");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/settings")) {
+    setActive("Settings");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/sizetype")) {
+    setActive("SizeType");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/supervisor")) {
+    setActive("Supervisor");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/yard")) {
+    setActive("Yard");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/leadowner")) {
+    setActive("LeadOwner");
+    setFormsOpen(true);
+  } 
+  else if (path.includes("/receiver")) {
+    setActive("Receiver");
+    setFormsOpen(true);
+  }
 
-    // inventory routes
-    if (path.includes("/purchaseorder")) {
-      setActive("PurchaseOrder");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/purchasesearch")) {
-      setActive("PurchaseSearch");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/goodsreceiptnote")) {
-      setActive("GoodsReceiptNote");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/purchasereturn") && path.includes("search")) {
-      setActive("PurchaseReturnSearch");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/purchasereturn")) {
-      setActive("PurchaseReturn");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/purchase")) {
-      setActive("Purchase");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/stockissuereturn")) {
-      setActive("StockIssueReturn");
-      setInventoryOpen(true);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/stockissue")) {
-      setActive("StockIssue");
-      setInventoryOpen(true);
-      setAccountsOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    }
+  // Sales routes (approval routes க்கு பிறகு)
+  else if (path.includes("/lead")) {
+    setActive("Lead");
+    setSalesOpen(true);
+  }
+  else if (path.includes("/followup")) {
+    setActive("FollowUp");
+    setSalesOpen(true);
+  }
+  else if (path.includes("/quotation")) {
+    setActive("Quotation");
+    setSalesOpen(true);
+  }
+  else if (path.includes("/proformainvoice")) {
+    setActive("ProformaInvoice");
+    setSalesOpen(true);
+  }
+  else if (path.includes("/containerstatusupdateform")) {
+    setActive("ContainerStatusUpdateForm");
+    setSalesOpen(true);
+  }
 
+  // Account routes
+  else if (path.includes("/ledgermastergroupform")) {
+    setActive("LedgerMasterGroupForm");
+    setAccountsOpen(true);
+  }
+  else if (path.includes("/accounts/ledgermasterform")) {
+    setActive("LedgerMasterForm");
+    setAccountsOpen(true);
+  }
+  else if (path.includes("/advancereceipt")) {
+    setActive("AdvanceReceipt");
+    setAccountsOpen(true);
+  }
 
+  // Production routes
+  else if (path.includes("/assignjob")) {
+    setActive("AssignJob");
+    setJobOpen(true);
+  } 
+  else if (path.includes("/assigntask")) {
+    setActive("AssignTask");
+    setJobOpen(true);
+  } 
+  else if (path.includes("/taskcompletion")) {
+    setActive("TaskCompletion");
+    setJobOpen(true);
+  } 
+  else if (path.includes("/joborderstatus")) {
+    setActive("JobOrderStatus");
+    setJobOpen(true);
+  }
 
-    // Master Forms routes
-    if (path.includes("/usermaster")) {
-      setActive("UserMaster");
-      setFormsOpen(true);
-    } else if (path.includes("/userrolesettings")) {
-      setActive("UserRoleSettings");
-      setFormsOpen(true);
-    } else if (path.includes("/departmentmaster")) {
-      setActive("DepartmentMaster");
-      setFormsOpen(true);
-    } else if (path.includes("/templategroup")) {
-      setActive("TemplateGroup");
-      setFormsOpen(true);
-    } else if (path.includes("/templatespecification")) {
-      setActive("TemplateSpecification");
-      setFormsOpen(true);
-    } else if (path.includes("/materialgroup")) {
-      setActive("MaterialGroup");
-      setFormsOpen(true);
-    } else if (path.includes("/materiallist")) {
-      setActive("MaterialList");
-      setFormsOpen(true);
-    } else if (path.includes("/leadstatusmaster")) {
-      setActive("LeadStatusMaster");
-      setFormsOpen(true);
-    } else if (path.includes("/unitmaster")) {
-      setActive("UnitMaster");
-      setFormsOpen(true);
-    }
-    else if (path.includes("/assignlabour")) {
-      setActive("AssignLabour");
-      setFormsOpen(true);
-    } else if (path.includes("/leadsourcemaster")) {
-      setActive("LeadSourceMaster");
-      setFormsOpen(true);
-    } else if (path.includes("/templatesettings")) {
-      setActive("TemplateSettings");
-      setFormsOpen(true);
-    } else if (path.includes("/rolemaster")) {
-      setActive("RoleMaster");
-      setFormsOpen(true);
-    } else if (path.includes("/grade")) {
-      setActive("Grade");
-      setFormsOpen(true);
-    } else if (path.includes("/groupunder")) {
-      setActive("GroupUnder");
-      setFormsOpen(true);
-    } else if (path.includes("/group")) {
-      setActive("Group");
-      setFormsOpen(true);
-    } else if (path.includes("/settings")) {
-      setActive("Settings");
-      setFormsOpen(true);
-    } else if (path.includes("/sizetype")) {
-      setActive("SizeType");
-      setFormsOpen(true);
-    } else if (path.includes("/supervisor")) {
-      setActive("Supervisor");
-      setFormsOpen(true);
-    } else if (path.includes("/yard")) {
-      setActive("Yard");
-      setFormsOpen(true);
-    } else if (path.includes("/leadowner")) {
-      setActive("LeadOwner");
-      setFormsOpen(true);
-    } else if (path.includes("/receiver")) {
-      setActive("Receiver");
-      setFormsOpen(true);
-    } else if (path.includes("/ledgermastergroupform")) {
-      setActive("LedgerMasterGroupForm");
-      setAccountsOpen(true);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    }
-
-    //sales routes
-    else if (path.includes("/lead")) {
-      setActive("Lead");
-      setAccountsOpen(false);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(true);
-      setPurchaseOpen(false);
-    }
-    else if (path.includes("/followup")) {
-      setActive("FollowUp");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(true);
-      setPurchaseOpen(false);
-      setApprovalOpen(false);
-      setJobOpen(false);
-    }
-    else if (path.includes("/quotation")) {
-      setActive("Quotation");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(true);
-      setPurchaseOpen(false);
-      setApprovalOpen(false);
-      setJobOpen(false);
-    }
-    else if (path.includes("/proformainvoice")) {
-      setActive("ProformaInvoice");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(true);
-      setPurchaseOpen(false);
-      setApprovalOpen(false);
-      setJobOpen(false);
-    }
-    else if (path.includes("/containerstatusupdateform")) {
-      setActive("ContainerStatusUpdateForm");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(true);
-      setPurchaseOpen(false);
-      setApprovalOpen(false);
-      setJobOpen(false);
-    }
-
-
-    // Account routes
-    else if (path.includes("/advancereceipt")) {
-      setActive("AdvanceReceipt");
-      setAccountsOpen(true);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    } else if (path.includes("/accounts/ledgermasterform")) {
-      setActive("LedgerMasterForm");
-      setAccountsOpen(true);
-      setFormsOpen(false);
-      setInventoryOpen(false);
-      setLeadOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-    }
-
-
-    // inventory routes
-    else if (path.includes("/purchaseorder")) {
-      setActive("PurchaseOrder");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/purchasesearch")) {
-      setActive("PurchaseSearch");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/salessearch")) {
-      setActive("SalesSearch");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/salesreturnsearch")) {
-      setActive("SalesReturnSearch");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/purchasereturn") && path.includes("search")) {
-      setActive("PurchaseReturnSearch");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/purchasereturn")) {
-      setActive("PurchaseReturn");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/purchase")) {
-      setActive("Purchase");
-      setInventoryOpen(true);
-      setSalesOpen(false);
-      setAccountsOpen(false);
-    } else if (path.includes("/stockissuereturn")) {
-      setActive("StockIssueReturn");
-      setInventoryOpen(true);
-      setAccountsOpen(false);
-    } else if (path.includes("/stockissue")) {
-      setActive("StockIssue");
-      setInventoryOpen(true);
-      setAccountsOpen(false);
-    }
-
-    //production routes
-    else if (path.includes("/assignjob")) {
-      setActive("AssignJob");
-      setJobOpen(true);
-    } else if (path.includes("/assigntask")) {
-      setActive("AssignTask");
-      setJobOpen(true);
-    } else if (path.includes("/taskcompletion")) {
-      setActive("TaskCompletion");
-      setJobOpen(true);
-    } else if (path.includes("/joborderstatus")) {
-      setActive("JobOrderStatus");
-      setJobOpen(true);
-    }
-
-    // Approval routes
-    else if (path.includes("/quotationapproval")) {
-      setActive("QuotationApproval");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(true);
-      setJobOpen(false);
-    } else if (path.includes("/proformainvoiceapproval")) {
-      setActive("ProformaInvoiceApproval");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(true);
-      setJobOpen(false);
-    } else if (path.includes("/containerholdrequestapproval")) {
-      setActive("ContainerHoldRequestApprovalForm");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(true);
-      setJobOpen(false);
-    } else if (path.includes("/containerblockrequestapproval")) {
-      setActive("ContainerBlockApproval");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(true);
-      setJobOpen(false);
-    } else if (path.includes("/joborderacceptance")) {
-      setActive("JobOrderAcceptance");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(true);
-      setJobOpen(false);
-    }
-
-
-
-    // Dashboard
-    else if (path === "/layout" || path === "/layout/") {
-      setActive("Dashboard");
-      setLeadOpen(false);
-      setFormsOpen(false);
-      setSalesOpen(false);
-      setPurchaseOpen(false);
-      setApprovalOpen(false);
-      setJobOpen(false);
-      setInventoryOpen(false);
-    }
-  }, [location.pathname]);
+}, [location.pathname]);
 
   const handleClick = (itemName, navigateKey) => {
     setActive(itemName);
