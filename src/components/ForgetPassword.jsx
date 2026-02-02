@@ -15,127 +15,46 @@ export default function ForgetPassword() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1400px',
-          display: 'flex',
-          gap: '80px',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {/* LEFT SECTION (UNCHANGED) */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-          }}
-        >
+    <div className="min-h-screen flex items-center justify-center p-10 bg-white">
+      <div className="w-full max-w-[1400px] flex gap-20 items-center justify-center">
+        
+        {/* LEFT SECTION */}
+        <div className="flex flex-col items-center text-center">
           <img
             src={ozzonlogo}
             alt="logo"
-            style={{
-              width: '240px',
-              marginBottom: '16px',
-              objectFit: 'contain',
-            }}
+            className="w-[240px] mb-4 object-contain"
           />
 
-          <div
-            style={{
-              fontFamily: 'Nunito Sans',
-              fontWeight: '600',
-              fontSize: '28px',
-              marginBottom: '10px',
-              color: '#000',
-            }}
-          >
+          <div className="font-nunito font-semibold text-[28px] mb-2.5 text-black">
             Ozzon Management
           </div>
 
-          <div
-            style={{
-              fontFamily: 'Inter',
-              fontSize: '16px',
-              color: '#000',
-              opacity: 0.75,
-              maxWidth: '420px',
-              lineHeight: '28px',
-            }}
-          ></div>
+          <div className="font-inter text-base text-black opacity-75 max-w-[420px] leading-7">
+          </div>
 
-          <div style={{ marginTop: '40px' }}>
+          <div className="mt-10">
             <img
               src={loginhouse}
               alt="Container House"
-              style={{
-                width: '380px',
-                objectFit: 'contain',
-              }}
+              className="w-[380px] object-contain"
             />
           </div>
         </div>
 
         {/* RIGHT SECTION – FORGET PASSWORD */}
-        <div
-          style={{
-            width: '380px',
-            height: '400px',
-            backgroundColor: '#ffffff',
-            borderRadius: '16px',
-            padding: '36px',
-            border: '1px solid #F87171',
-            marginLeft: '-10px',
-            marginBottom: '30px',
-          }}
-        >
-          <h2
-            style={{
-              textAlign: 'center',
-              fontSize: '28px',
-              marginTop: '0px',
-              fontWeight: '700',
-              fontFamily: 'Nunito Sans',
-            }}
-          >
+        <div className="w-[380px] h-[400px] bg-white rounded-2xl p-9 border border-red-400 -ml-2.5 mb-[30px]">
+          <h2 className="text-center text-[28px] mt-0 font-bold font-nunito">
             Forget Password
           </h2>
 
-          <p
-            style={{
-              textAlign: 'center',
-              fontSize: '15px',
-              fontFamily: 'Nunito Sans',
-              opacity: 0.75,
-              marginBottom: '28px',
-            }}
-          >
+          <p className="text-center text-[15px] font-nunito opacity-75 mb-7">
             Please enter your number to continue
           </p>
 
           {/* PHONE NUMBER */}
-          <div style={{ marginBottom: '28px' }}>
-            <label
-              style={{
-                fontSize: '15px',
-                fontWeight: '600',
-                fontFamily: 'Nunito Sans',
-                marginBottom: '8px',
-                display: 'block',
-              }}
-            >
+          <div className="mb-7">
+            <label className="text-[15px] font-semibold font-nunito mb-2 block">
               Email or Number
             </label>
             <input
@@ -143,50 +62,20 @@ export default function ForgetPassword() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="9187000000"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '10px',
-                border: '1px solid #F87171',
-                backgroundColor: '#F7F9FC',
-                fontSize: '15px',
-                outline: 'none',
-              }}
+              className="w-full py-3 px-4 rounded-[10px] border border-red-400 bg-[#F7F9FC] text-[15px] outline-none"
             />
           </div>
 
           {/* SEND OTP */}
           <button
             onClick={handleSendOtp}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#A63028',
-              color: '#fff',
-              fontSize: '16px',
-              fontWeight: '600',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              marginBottom: '18px',
-            }}
+            className="w-full py-3 bg-primary text-white text-base font-semibold border-none rounded-xl cursor-pointer mb-[18px] hover:bg-[#8a2820] transition-colors"
           >
             Send OTP
           </button>
 
           {/* BACK TO LOGIN */}
-          <button
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#A63028',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              width: '100%',
-              textAlign: 'center',
-            }}
-          >
+          <button className="bg-transparent border-none text-primary text-sm font-semibold cursor-pointer w-full text-center hover:underline">
             Back to Login
           </button>
         </div>

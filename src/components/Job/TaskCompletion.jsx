@@ -444,7 +444,7 @@ export default function TaskCompletion() {
                               className="btn-action"
                               title="Edit"
                             >
-                              <Edit2 size={18} className="text-gray-700" />
+                              <Edit2 size={18}  />
                             </button>
                             <button
                               onClick={(e) => handleDeleteJobOrder(index, e)}

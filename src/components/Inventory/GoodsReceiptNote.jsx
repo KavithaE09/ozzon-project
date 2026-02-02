@@ -96,7 +96,8 @@ export default function GoodsReceiptNotes() {
                               className="cursor-pointer print-primary hover:text-[#3730a3]"
                             />
                             <Edit2 
-                              size={18} 
+                              size={18}
+                              className="cursor-pointer" 
                               
                             />
                             <Trash2 
@@ -188,12 +189,13 @@ export default function GoodsReceiptNotes() {
                         <td className="table-cell">
                           <div className="table-actions">
                             <Plus 
-                              size={18} 
-                             className="add-primary"
+                              size={22} 
+                             className="add-primary cursor-pointer"
                               onClick={addRow} 
                             />
                             <Edit2 
                               size={18} 
+                              className="cursor-pointer "
                               
                             />
                             <Trash2

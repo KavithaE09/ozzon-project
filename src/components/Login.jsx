@@ -14,134 +14,47 @@ export default function Login() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #FFFFFF 60%, #FAF3F2 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1400px',
-          display: 'flex',
-          gap: '80px',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+    <div className="min-h-screen bg-gradient-to-br from-white via-white to-[#FAF3F2] flex items-center justify-center p-10">
+      <div className="w-full max-w-[1400px] flex gap-20 items-center justify-center">
+        
         {/* LEFT SECTION */}
-        <div
-          style={{
-            
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-          }}
-        >
+        <div className="flex flex-col items-center text-center">
           <img
             src={ozzonlogo}
             alt="logo"
-            style={{
-              width: '240px',
-              height: 'auto',
-              marginBottom: '16px',
-              objectFit: 'contain',
-            }}
+            className="w-[240px] h-auto mb-4 object-contain"
           />
 
-          <div
-            style={{
-              fontFamily: 'Nunito Sans',
-              fontWeight: '600',
-              fontSize: '28px',
-              marginBottom: '10px',
-              color: '#000',
-            }}
-          >
+          <div className="font-nunito font-semibold text-[28px] mb-2.5 text-black">
             Ozzon Management
           </div>
 
-          <div
-            style={{
-              fontFamily: 'Inter',
-              fontSize: '18px',
-              color: '#000',
-              opacity: 0.75,
-              maxWidth: '420px',
-              lineHeight: '28px',
-            }}
-          >
+          <div className="font-inter text-lg text-black opacity-75 max-w-[420px] leading-7">
             Sign in to streamline your container bookings.
           </div>
 
-          <div style={{ marginTop: '40px' }}>
+          <div className="mt-10">
             <img
               src={loginhouse}
               alt="Container House"
-              style={{
-                width: '380px',
-                height: 'auto',
-                objectFit: 'contain',
-              }}
+              className="w-[380px] h-auto object-contain"
             />
           </div>
         </div>
 
         {/* RIGHT SECTION - LOGIN BOX */}
-        <div
-          style={{
-            width: '400px',
-            height: '420px',
-            backgroundColor: '#FF0000FF0000',
-            borderRadius: '18px',
-            padding: '48px',
-            border: '1px solid #FF0000',
-            marginLeft: '-10px',
-            marginBottom: '30px'
-          }}
-        >
-          <h2
-            style={{
-              textAlign: 'center',
-              fontSize: '30px',
-              marginTop: '-9px',
-              fontWeight: '700',
-              fontFamily: 'Nunito Sans'
-  
-            }}
-          >
+        <div className="w-[400px] h-[420px] bg-white rounded-[18px] p-12 border border-red-600 -ml-2.5 mb-[30px]">
+          <h2 className="text-center text-[30px] -mt-2 font-bold font-nunito">
             Login to Account
           </h2>
 
-          <p
-            style={{
-              textAlign: 'center',
-              fontSize: '16px',
-              fontFamily: 'Nunito Sans',
-              opacity: 0.75,
-              marginBottom: '32px',
-            }}
-          >
+          <p className="text-center text-base font-nunito opacity-75 mb-8">
             Please enter your number and password to continue
           </p>
 
-          {/* EMAIL */}
-          <div style={{ marginBottom: '22px' }}>
-            <label
-              style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                fontFamily: 'Nunito Sans',
-                marginBottom: '8px',
-                display: 'block',
-              }}
-            >
+          {/* EMAIL OR NUMBER */}
+          <div className="mb-[22px]">
+            <label className="text-base font-semibold font-nunito mb-2 block">
               Email or Number
             </label>
             <input
@@ -149,59 +62,27 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="9876543210"
-              style={{
-                width: '355px',
-                padding: '12px 16px',
-                borderRadius: '10px',
-                border: '1px solid #FF0000',
-                backgroundColor: '#F7F9FC',
-                fontSize: '16px',
-                outline: 'none',
-              }}
+              className="w-[355px] py-3 px-4 rounded-[10px] border border-red-600 bg-[#F7F9FC] text-base outline-none"
             />
           </div>
 
           {/* PASSWORD */}
-          <div style={{ marginBottom: '20px' }}>
-            <label
-              style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                fontFamily: 'Nunito Sans',
-                marginBottom: '8px',
-                display: 'block',
-              }}
-            >
+          <div className="mb-5">
+            <label className="text-base font-semibold font-nunito mb-2 block">
               Password
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  width: '355px',
-                  padding: '12px 16px',
-                  borderRadius: '10px',
-                  border: '1px solid #FF0000',
-                  backgroundColor: '#F7F9FC',
-                  fontSize: '16px',
-                  outline: 'none',
-                }}
+                placeholder="********"
+                className="w-[355px] py-3 px-4 rounded-[10px] border border-red-600 bg-[#F7F9FC] text-base outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#777',
-                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-600"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -209,36 +90,20 @@ export default function Login() {
           </div>
 
           {/* REMEMBER + FORGOT */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '28px',
-            }}
-          >
-            <label style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="flex justify-between items-center mb-7">
+            <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={rememberPassword}
                 onChange={(e) => setRememberPassword(e.target.checked)}
-                style={{ marginRight: '8px', accentColor: '#A63028' }}
+                className="mr-2 accent-primary"
               />
-              <span style={{ fontSize: '15px', opacity: 0.7 }}>
+              <span className="text-[15px] opacity-70">
                 Remember Password
               </span>
             </label>
 
-            <button
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#A63028',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-              }}
-            >
+            <button className="bg-transparent border-none text-primary text-[15px] font-semibold cursor-pointer hover:underline">
               Forget Password?
             </button>
           </div>
@@ -246,41 +111,15 @@ export default function Login() {
           {/* SIGN IN */}
           <button
             onClick={handleSubmit}
-            style={{
-              width: '100%',
-              padding: '14px',
-              backgroundColor: '#A63028',
-              color: '#fff',
-              fontSize: '18px',
-              fontWeight: '600',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              marginBottom: '22px',
-            }}
+            className="w-full py-[14px] bg-primary text-white text-lg font-semibold border-none rounded-xl cursor-pointer mb-[22px] hover:bg-[#8a2820] transition-colors"
           >
             Sign In
           </button>
 
           {/* REGISTER */}
-          <p
-            style={{
-              textAlign: 'center',
-              fontSize: '16px',
-              fontFamily: 'Nunito Sans',
-            }}
-          >
-            <span style={{ opacity: 0.7 }}>Don't have an account?</span>{' '}
-            <button
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#A63028',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontSize: '16px',
-              }}
-            >
+          <p className="text-center text-base font-nunito">
+            <span className="opacity-70">Don't have an account?</span>{' '}
+            <button className="bg-transparent border-none text-primary font-semibold cursor-pointer text-base hover:underline">
               Register
             </button>
           </p>

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, Plus, Pencil, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, Edit2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Purchase() {
+export default function PurchaseReturn() {
   const navigate = useNavigate();
   const [editingRow, setEditingRow] = useState(null);
   const purchaseTypeDropdownRef = useRef(null);
@@ -10,8 +10,14 @@ export default function Purchase() {
   const cashAccountDropdownRef = useRef(null);
   const purchaseAccountDropdownRef = useRef(null);
 
+  const addRowAbove = (index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 0, { code: "", product: "", unit: "", qty: 0, rate: 0, disc: 0 });
+    setRows(newRows);
+  };
+
   const [form, setForm] = useState({
-    purchaseDate: "24-01-2026",
+    purchaseDate: "2025-05-20",
     purchaseType: "",
     supplier: "",
     cashAccount: "",
@@ -24,12 +30,6 @@ export default function Purchase() {
     purchaseBal: "₹ 1,00,000",
     gstin: "33ABCDE1234F2Z5",
   });
-
-  const addRowAbove = (index) => {
-    const newRows = [...rows];
-    newRows.splice(index, 0, { code: "", product: "", unit: "", qty: 0, rate: 0, disc: 0 });
-    setRows(newRows);
-  };
 
   const [rows, setRows] = useState([
     {
@@ -60,19 +60,22 @@ export default function Purchase() {
     igst28: "",
   });
 
-  // Dropdown states
+  // Dropdown states for Purchase Type
   const [purchaseTypeSearch, setPurchaseTypeSearch] = useState('');
   const [isPurchaseTypeOpen, setIsPurchaseTypeOpen] = useState(false);
   const [hoveredPurchaseType, setHoveredPurchaseType] = useState(null);
 
+  // Dropdown states for Supplier
   const [supplierSearch, setSupplierSearch] = useState('');
   const [isSupplierOpen, setIsSupplierOpen] = useState(false);
   const [hoveredSupplier, setHoveredSupplier] = useState(null);
 
+  // Dropdown states for Cash Account
   const [cashAccountSearch, setCashAccountSearch] = useState('');
   const [isCashAccountOpen, setIsCashAccountOpen] = useState(false);
   const [hoveredCashAccount, setHoveredCashAccount] = useState(null);
 
+  // Dropdown states for Purchase Account
   const [purchaseAccountSearch, setPurchaseAccountSearch] = useState('');
   const [isPurchaseAccountOpen, setIsPurchaseAccountOpen] = useState(false);
   const [hoveredPurchaseAccount, setHoveredPurchaseAccount] = useState(null);
@@ -97,7 +100,7 @@ export default function Purchase() {
     opt.toLowerCase().includes(purchaseAccountSearch.toLowerCase())
   );
 
-  // Handlers
+  // Handlers for Purchase Type
   const handlePurchaseTypeInput = (e) => {
     setPurchaseTypeSearch(e.target.value);
     setIsPurchaseTypeOpen(true);
@@ -109,6 +112,7 @@ export default function Purchase() {
     setIsPurchaseTypeOpen(false);
   };
 
+  // Handlers for Supplier
   const handleSupplierInput = (e) => {
     setSupplierSearch(e.target.value);
     setIsSupplierOpen(true);
@@ -120,6 +124,7 @@ export default function Purchase() {
     setIsSupplierOpen(false);
   };
 
+  // Handlers for Cash Account
   const handleCashAccountInput = (e) => {
     setCashAccountSearch(e.target.value);
     setIsCashAccountOpen(true);
@@ -131,6 +136,7 @@ export default function Purchase() {
     setIsCashAccountOpen(false);
   };
 
+  // Handlers for Purchase Account
   const handlePurchaseAccountInput = (e) => {
     setPurchaseAccountSearch(e.target.value);
     setIsPurchaseAccountOpen(true);
@@ -161,6 +167,7 @@ export default function Purchase() {
     ]);
   };
 
+  // Click outside handler
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (purchaseTypeDropdownRef.current && !purchaseTypeDropdownRef.current.contains(e.target)) {
@@ -225,23 +232,23 @@ export default function Purchase() {
   return (
     <div className="page-container">
       <div className="content-wrapper">
-        <div className="main-section">
+        <main className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Purchase</h2>
+            <h1 className="page-title">Purchase Return</h1>
 
             <div className="flex gap-5 mt-6">
               <div className="flex-1">
                 <div className="flex gap-5">
                   <FloatingInput
-                    label="Purchase Date"
+                    label="Purchase Return Date"
                     type="date"
                     value={form.purchaseDate}
                     onChange={handleChange("purchaseDate")}
                   />
 
                   {/* Purchase Type Dropdown */}
-                  <div ref={purchaseTypeDropdownRef} className="filter-grid-red dropdown-wrapper w-[255px]" style={{ zIndex: isPurchaseTypeOpen ? 1001 : 1 }}>
-                    <label className="filter-label text-sm mb-1.5">Purchase Type</label>
+                  <div ref={purchaseTypeDropdownRef} className="dropdown-wrapper">
+                    <label className="filter-label">Purchase Return Type</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -249,9 +256,10 @@ export default function Purchase() {
                         onChange={handlePurchaseTypeInput}
                         onFocus={() => setIsPurchaseTypeOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input filter-input cursor-text pr-[30px]"
+                        className="dropdown-input"
+                        style={{ border: '1px solid #9CA3AF' }}
                       />
-                      <ChevronDown size={16} className="dropdown-icon" />
+                      <ChevronDown size={20} className="dropdown-icon" />
                     </div>
                     {isPurchaseTypeOpen && (
                       <div className="dropdown-menu">
@@ -263,11 +271,11 @@ export default function Purchase() {
                               onMouseEnter={() => setHoveredPurchaseType(option)}
                               onMouseLeave={() => setHoveredPurchaseType(null)}
                               className={`dropdown-item-option ${
-                                hoveredPurchaseType === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : form.purchaseType === option 
-                                    ? 'dropdown-item-selected' 
-                                    : 'dropdown-item-default'
+                                hoveredPurchaseType === option
+                                  ? 'dropdown-item-hovered'
+                                  : form.purchaseType === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
                               }`}
                             >
                               {option}
@@ -281,8 +289,8 @@ export default function Purchase() {
                   </div>
 
                   {/* Supplier Dropdown */}
-                  <div ref={supplierDropdownRef} className="filter-grid-red dropdown-wrapper w-[255px]" style={{ zIndex: isSupplierOpen ? 1001 : 1 }}>
-                    <label className="filter-label text-sm mb-1.5">Supplier</label>
+                  <div ref={supplierDropdownRef} className="dropdown-wrapper">
+                    <label className="filter-label">Supplier</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -290,7 +298,8 @@ export default function Purchase() {
                         onChange={handleSupplierInput}
                         onFocus={() => setIsSupplierOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input filter-input cursor-text pr-[30px]"
+                        className="dropdown-input"
+                        style={{ border: '1px solid #9CA3AF' }}
                       />
                       <ChevronDown size={20} className="dropdown-icon" />
                     </div>
@@ -304,11 +313,11 @@ export default function Purchase() {
                               onMouseEnter={() => setHoveredSupplier(option)}
                               onMouseLeave={() => setHoveredSupplier(null)}
                               className={`dropdown-item-option ${
-                                hoveredSupplier === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : form.supplier === option 
-                                    ? 'dropdown-item-selected' 
-                                    : 'dropdown-item-default'
+                                hoveredSupplier === option
+                                  ? 'dropdown-item-hovered'
+                                  : form.supplier === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
                               }`}
                             >
                               {option}
@@ -324,8 +333,8 @@ export default function Purchase() {
 
                 <div className="flex gap-5 mt-5">
                   {/* Cash Account Dropdown */}
-                  <div ref={cashAccountDropdownRef} className="filter-grid-red dropdown-wrapper w-[255px]" style={{ zIndex: isCashAccountOpen ? 1001 : 1 }}>
-                    <label className="filter-label text-sm mb-1.5">Cash Account</label>
+                  <div ref={cashAccountDropdownRef} className="dropdown-wrapper">
+                    <label className="filter-label">Cash Account</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -333,9 +342,10 @@ export default function Purchase() {
                         onChange={handleCashAccountInput}
                         onFocus={() => setIsCashAccountOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input filter-input cursor-text pr-[30px]"
+                        className="dropdown-input"
+                        style={{ border: '1px solid #9CA3AF' }}
                       />
-                      <ChevronDown size={16} className="dropdown-icon" />
+                      <ChevronDown size={20} className="dropdown-icon" />
                     </div>
                     {isCashAccountOpen && (
                       <div className="dropdown-menu">
@@ -347,11 +357,11 @@ export default function Purchase() {
                               onMouseEnter={() => setHoveredCashAccount(option)}
                               onMouseLeave={() => setHoveredCashAccount(null)}
                               className={`dropdown-item-option ${
-                                hoveredCashAccount === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : form.cashAccount === option 
-                                    ? 'dropdown-item-selected' 
-                                    : 'dropdown-item-default'
+                                hoveredCashAccount === option
+                                  ? 'dropdown-item-hovered'
+                                  : form.cashAccount === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
                               }`}
                             >
                               {option}
@@ -365,8 +375,8 @@ export default function Purchase() {
                   </div>
 
                   {/* Purchase Account Dropdown */}
-                  <div ref={purchaseAccountDropdownRef} className="filter-grid-red dropdown-wrapper w-[255px]" style={{ zIndex: isPurchaseAccountOpen ? 1001 : 1 }}>
-                    <label className="filter-label text-sm mb-1.5">Purchase Account</label>
+                  <div ref={purchaseAccountDropdownRef} className="dropdown-wrapper">
+                    <label className="filter-label">Purchase Account</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -374,9 +384,10 @@ export default function Purchase() {
                         onChange={handlePurchaseAccountInput}
                         onFocus={() => setIsPurchaseAccountOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input filter-input cursor-text pr-[30px]"
+                        className="dropdown-input"
+                        style={{ border: '1px solid #9CA3AF' }}
                       />
-                      <ChevronDown size={16} className="dropdown-icon" />
+                      <ChevronDown size={20} className="dropdown-icon" />
                     </div>
                     {isPurchaseAccountOpen && (
                       <div className="dropdown-menu">
@@ -388,11 +399,11 @@ export default function Purchase() {
                               onMouseEnter={() => setHoveredPurchaseAccount(option)}
                               onMouseLeave={() => setHoveredPurchaseAccount(null)}
                               className={`dropdown-item-option ${
-                                hoveredPurchaseAccount === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : form.purchaseAccount === option 
-                                    ? 'dropdown-item-selected' 
-                                    : 'dropdown-item-default'
+                                hoveredPurchaseAccount === option
+                                  ? 'dropdown-item-hovered'
+                                  : form.purchaseAccount === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
                               }`}
                             >
                               {option}
@@ -414,10 +425,10 @@ export default function Purchase() {
               </div>
 
               <div className="w-[284px] border border-gray-400 rounded-lg p-3.5 bg-white flex flex-col gap-3">
-                <InfoRow label="Purchase Voucher No" value={form.voucherNo} />
-                <InfoRow label="Supplier Cur. Balance" value={form.supplierBal} />
-                <InfoRow label="Purchase A/c Cur. Balance" value={form.purchaseBal} />
-                <InfoRow label="GSTIN" value={form.gstin} />
+                <InfoRow label="Purchase Return Voucher No :" value={form.voucherNo} />
+                <InfoRow label="Supplier Cur. Balance :" value={form.supplierBal} />
+                <InfoRow label="Purchase A/c Cur. Balance :" value={form.purchaseBal} />
+                <InfoRow label="GSTIN :" value={form.gstin} />
               </div>
             </div>
 
@@ -429,7 +440,7 @@ export default function Purchase() {
                 width={975}
                 multiline
               />
-              <label className="ml-5 flex items-center text-base">
+              <label className="ml-5 flex items-center text-base cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.includingTax}
@@ -440,12 +451,12 @@ export default function Purchase() {
               </label>
             </div>
 
-            <h3 className="section-title mt-8">Purchase List</h3>
+            <h2 className="section-title mt-8">Purchase Return List</h2>
 
-            <div className="table-container">
-              <table className="data-table">
-                <thead className="table-header">
-                  <tr>
+            <div className="overflow-x-auto mt-3">
+              <table className="w-full border-collapse mb-2.5">
+                <thead>
+                  <tr className="bg-[#fde2e2]">
                     {[
                       "S.No",
                       "Code",
@@ -464,7 +475,7 @@ export default function Purchase() {
                       "Total Amount",
                       "Actions",
                     ].map((h) => (
-                      <th key={h} className="table-th">
+                      <th key={h} className="border border-gray-400 p-2 text-sm text-left whitespace-nowrap">
                         {h}
                       </th>
                     ))}
@@ -490,80 +501,85 @@ export default function Purchase() {
                     const total = taxable + cgstAmt + sgstAmt;
 
                     return (
-                      <tr key={i} className="table-row">
-                        <td className="table-cell">{i + 1}</td>
-                        <td className="table-cell">
+                      <tr
+                        key={i}
+                        className={editingRow === i ? "bg-white" : "bg-transparent"}
+                      >
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">{i + 1}</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <input
                             value={row.code}
                             onChange={(e) => updateRow(i, "code", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
                           />
                         </td>
-                        <td className="table-cell">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <input
                             value={row.product}
                             onChange={(e) => updateRow(i, "product", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
                           />
                         </td>
-                        <td className="table-cell">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <input
                             value={row.unit}
                             onChange={(e) => updateRow(i, "unit", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
                           />
                         </td>
-                        <td className="table-cell">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <input
                             type="number"
                             value={row.qty}
                             onChange={(e) => updateRow(i, "qty", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
                           />
                         </td>
-                        <td className="table-cell">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <input
                             type="number"
                             value={row.rate}
                             onChange={(e) => updateRow(i, "rate", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
                           />
                         </td>
-                        <td className="table-cell">₹ {amount.toLocaleString()}</td>
-                        <td className="table-cell">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {amount.toLocaleString()}</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <input
                             type="number"
                             value={row.disc}
                             onChange={(e) => updateRow(i, "disc", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
                           />
                         </td>
-                        <td className="table-cell">₹ {discAmount.toLocaleString()}</td>
-                        <td className="table-cell">₹ {taxable.toLocaleString()}</td>
-                        <td className="table-cell">{cgstPer}%</td>
-                        <td className="table-cell">₹ {cgstAmt.toLocaleString()}</td>
-                        <td className="table-cell">{sgstPer}%</td>
-                        <td className="table-cell">₹ {sgstAmt.toLocaleString()}</td>
-                        <td className="table-cell font-semibold">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {discAmount.toLocaleString()}</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {taxable.toLocaleString()}</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">{cgstPer}%</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {cgstAmt.toLocaleString()}</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">{sgstPer}%</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {sgstAmt.toLocaleString()}</td>
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap font-semibold">
                           ₹ {total.toLocaleString()}
                         </td>
-                        <td className="table-cell-center">
-                          <div className="table-actions">
+                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+                          <div className="flex items-center gap-1">
+                            {/* ADD */}
                             <Plus
-                              size={16}
-                              className="cursor-pointer text-black"
-                              onClick={() => addRowAbove(i)}
+                              size={20}
+                              className="add-primary cursor-pointer"
+                              onClick={addRowAbove}
                             />
 
-                            <Pencil
+                            <Edit2
                               size={16}
-                              className="cursor-pointer text-black"
+                              className="cursor-pointer "
                               onClick={() => setEditingRow(i)}
                             />
 
+                            {/* DELETE */}
                             <Trash2
                               size={16}
-                              className="cursor-pointer text-red-600"
+                              className="cursor-pointer text-[#DC2626] hover:text-[#B91C1C]"
                               onClick={() => {
                                 const updated = rows.filter((_, index) => index !== i);
                                 setRows(updated);
@@ -577,13 +593,15 @@ export default function Purchase() {
                 </tbody>
               </table>
 
-             
-            </div>
-             <div className="flex justify-end">
-                <button onClick={addRow} className="btn-search">
-                  <Plus size={18} /> Row
+              <div className="flex justify-end">
+                <button
+                  onClick={addRow}
+                  className="flex items-center gap-2 px-5 py-2.5 border-none rounded-md bg-[#A63128] text-white text-sm font-medium cursor-pointer hover:bg-[#8B2821]"
+                >
+                  <Plus size={16} /> Row
                 </button>
               </div>
+            </div>
 
             <div className="flex gap-6 mt-8 items-start">
               <div className="flex-1">
@@ -595,7 +613,6 @@ export default function Purchase() {
                       setCharges({ ...charges, weighing: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="Freight Charges"
                     value={charges.freight}
@@ -603,7 +620,6 @@ export default function Purchase() {
                       setCharges({ ...charges, freight: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="Other Charges"
                     value={charges.other}
@@ -611,7 +627,6 @@ export default function Purchase() {
                       setCharges({ ...charges, other: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="CGST 2.5%"
                     value={charges.cgst2_5}
@@ -619,7 +634,6 @@ export default function Purchase() {
                       setCharges({ ...charges, cgst2_5: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="SGST 2.5%"
                     value={charges.sgst2_5}
@@ -627,7 +641,6 @@ export default function Purchase() {
                       setCharges({ ...charges, sgst2_5: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="IGST 5%"
                     value={charges.igst5}
@@ -635,7 +648,6 @@ export default function Purchase() {
                       setCharges({ ...charges, igst5: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="CGST 6%"
                     value={charges.cgst6}
@@ -643,7 +655,6 @@ export default function Purchase() {
                       setCharges({ ...charges, cgst6: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="SGST 6%"
                     value={charges.sgst6}
@@ -651,7 +662,6 @@ export default function Purchase() {
                       setCharges({ ...charges, sgst6: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="IGST 12%"
                     value={charges.igst12}
@@ -659,7 +669,6 @@ export default function Purchase() {
                       setCharges({ ...charges, igst12: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="CGST 9%"
                     value={charges.cgst9}
@@ -667,7 +676,6 @@ export default function Purchase() {
                       setCharges({ ...charges, cgst9: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="SGST 9%"
                     value={charges.sgst9}
@@ -675,7 +683,6 @@ export default function Purchase() {
                       setCharges({ ...charges, sgst9: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="IGST 18%"
                     value={charges.igst18}
@@ -683,7 +690,6 @@ export default function Purchase() {
                       setCharges({ ...charges, igst18: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="CGST 14%"
                     value={charges.cgst14}
@@ -691,7 +697,6 @@ export default function Purchase() {
                       setCharges({ ...charges, cgst14: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="SGST 14%"
                     value={charges.sgst14}
@@ -699,7 +704,6 @@ export default function Purchase() {
                       setCharges({ ...charges, sgst14: e.target.value })
                     }
                   />
-
                   <ChargeBox
                     label="IGST 28%"
                     value={charges.igst28}
@@ -715,36 +719,29 @@ export default function Purchase() {
                   label="Total Amount"
                   value={`₹ ${purchaseTotals.totalAmount.toLocaleString()}`}
                 />
-
                 <TotalRow
                   label="Total Discount"
                   value={`₹ ${purchaseTotals.totalDiscount.toLocaleString()}`}
                 />
-
                 <TotalRow
                   label="Taxable Value Total"
                   value={`₹ ${purchaseTotals.taxableValue.toLocaleString()}`}
                 />
-
                 <TotalRow
                   label="CGST Total"
                   value={`₹ ${purchaseTotals.cgstTotal.toLocaleString()}`}
                 />
-
                 <TotalRow
                   label="SGST Total"
                   value={`₹ ${purchaseTotals.sgstTotal.toLocaleString()}`}
                 />
-
                 <TotalRow
                   label="Other Charges Total"
                   value={`₹ ${chargesTotal.toLocaleString()}`}
                 />
-
                 <TotalRow
                   label="Net Amount"
                   value={`₹ ${netAmount.toLocaleString()}`}
-                  bold
                 />
               </div>
             </div>
@@ -754,14 +751,15 @@ export default function Purchase() {
                 <span>✓</span>Submit
               </button>
             </div>
-         
+          </div>
 
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
+          <button
+            onClick={() => navigate(-1)}
+            className="btn-back"
+          >
+            ← Back
           </button>
-           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
@@ -772,48 +770,47 @@ const FloatingInput = ({
   value,
   onChange,
   width = 255,
-  multiline = false
+  multiline = false,
+  type = "text"
 }) => (
-  <div className="filter-grid-red" style={{ width, boxSizing: "border-box" }}>
-    <label className="filter-label text-sm mb-1.5">
-      {label}
-    </label>
-
+  <div
+    className="filter-grid-red relative"
+    style={{ width: `${width}px` }}
+  >
+    <label className="filter-label">{label}</label>
     {multiline ? (
       <textarea
         value={value}
         onChange={onChange}
         rows={3}
-        className="multiline-field pt-[22px] h-[60px] overflow-y-auto"
+        className="multiline-field"
       />
     ) : (
       <input
-        type="text"
+        type={type}
         value={value}
         onChange={onChange}
-        className="filter-input pt-[22px] text-sm"
+        className="filter-input"
       />
     )}
   </div>
 );
 
 const InfoRow = ({ label, value }) => (
-  <div className="flex text-[13px]">
-    <div className="w-[170px] text-gray-600">{label}</div>
+  <div className="flex text-sm">
+    <div className="w-[170px] text-gray-500">{label}</div>
     <div className="font-medium">{value}</div>
   </div>
 );
 
 const ChargeBox = ({ label, value, onChange }) => (
-  <div className="filter-grid-red w-[255px]">
-    <label className="filter-label text-sm mb-1.5">
-      {label}
-    </label>
+  <div className="filter-grid-red relative w-[255px]">
+    <label className="filter-label">{label}</label>
     <input
       type="number"
       value={value}
       onChange={onChange}
-      className="filter-input pt-[22px]"
+      className="filter-input"
     />
   </div>
 );
@@ -821,6 +818,6 @@ const ChargeBox = ({ label, value, onChange }) => (
 const TotalRow = ({ label, value, bold }) => (
   <div className="flex justify-between">
     <div>{label}</div>
-    <div className={bold ? 'font-semibold' : 'font-medium'}>{value}</div>
+    <div className={bold ? "font-semibold" : "font-medium"}>{value}</div>
   </div>
 );
