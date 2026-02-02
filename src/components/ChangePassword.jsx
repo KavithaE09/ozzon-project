@@ -23,43 +23,55 @@ export default function ChangePassword() {
   };
 
   return (
-    <div style={page}>
-      <div style={wrapper}>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-full max-w-[1200px] flex items-center justify-center gap-[120px] p-5 flex-wrap">
 
-        {/* LEFT */}
-        <div style={leftSection}>
-          <img src={ozzonlogo} alt="logo" style={logo} />
+        {/* LEFT SECTION */}
+        <div className="w-[420px] text-center">
+          <img 
+            src={ozzonlogo} 
+            alt="logo" 
+            className="w-[240px] mb-2.5 mx-auto"
+          />
 
-          <h2 style={brand}>Ozzon Management</h2>
+          <h2 className="text-[28px] font-semibold mb-10 font-nunito">
+            Ozzon Management
+          </h2>
 
           <img
             src={loginhouse}
             alt="container"
-            style={image}
+            className="w-[380px] max-w-full mx-auto"
           />
         </div>
 
-        {/* RIGHT */}
-        <div style={card}>
-          <h2 style={title}>Change Password</h2>
+        {/* RIGHT SECTION - CHANGE PASSWORD CARD */}
+        <div className="w-[420px] bg-white border border-red-600 rounded-[18px] p-[45px]">
+          <h2 className="text-center text-[30px] font-bold mb-2 font-nunito">
+            Change Password
+          </h2>
 
-          <p style={subtitle}>
+          <p className="text-center text-[15px] opacity-75 mb-[30px] font-nunito">
             Please enter your new password to continue
           </p>
 
           {/* NEW PASSWORD */}
-          <div style={field}>
-            <label style={label}>New Password</label>
-            <div style={{ position: 'relative' }}>
+          <div className="mb-[22px]">
+            <label className="text-base font-semibold mb-2 block font-nunito">
+              New Password
+            </label>
+            <div className="relative">
               <input
                 type={showNew ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                style={input}
+                placeholder="Enter new password"
+                className="w-full py-3 px-4 rounded-[10px] border border-red-600 bg-[#F7F9FC] text-base outline-none"
               />
               <button
+                type="button"
                 onClick={() => setShowNew(!showNew)}
-                style={eyeBtn}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-600"
               >
                 {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -67,36 +79,44 @@ export default function ChangePassword() {
           </div>
 
           {/* CONFIRM PASSWORD */}
-          <div style={field}>
-            <label style={label}>Confirm Password</label>
-            <div style={{ position: 'relative' }}>
+          <div className="mb-[22px]">
+            <label className="text-base font-semibold mb-2 block font-nunito">
+              Confirm Password
+            </label>
+            <div className="relative">
               <input
                 type={showConfirm ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                style={input}
+                placeholder="Confirm new password"
+                className="w-full py-3 px-4 rounded-[10px] border border-red-600 bg-[#F7F9FC] text-base outline-none"
               />
               <button
+                type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                style={eyeBtn}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-600"
               >
                 {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          {/* REMEMBER */}
-          <label style={rememberRow}>
+          {/* REMEMBER PASSWORD */}
+          <label className="flex items-center gap-2 text-sm opacity-75 mb-[30px] cursor-pointer">
             <input
               type="checkbox"
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
-              style={{ accentColor: '#A63028' }}
+              className="accent-primary"
             />
             Remember Password
           </label>
 
-          <button onClick={handleSubmit} style={btn}>
+          {/* CHANGE PASSWORD BUTTON */}
+          <button 
+            onClick={handleSubmit} 
+            className="w-full py-[14px] bg-primary text-white text-lg font-semibold border-none rounded-xl cursor-pointer hover:bg-[#8a2820] transition-colors"
+          >
             Change Password
           </button>
         </div>
@@ -104,119 +124,3 @@ export default function ChangePassword() {
     </div>
   );
 }
-
-/* ===== STYLES ===== */
-
-const page = {
-  minHeight: '100vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const wrapper = {
-  width: '100%',
-  maxWidth: '1200px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '120px',
-  padding: '20px',
-  flexWrap: 'wrap',
-};
-
-const leftSection = {
-  width: '420px',
-  textAlign: 'center',
-};
-
-const logo = {
-  width: '240px',
-  marginBottom: '10px',
-};
-
-const brand = {
-  fontSize: '28px',
-  fontWeight: 600,
-  marginBottom: '40px',
-};
-
-const image = {
-  width: '380px',
-  maxWidth: '100%',
-};
-
-const card = {
-  width: '420px',
-  backgroundColor: '#FF0000FF0000',
-  border: '1px solid #FF0000',
-  borderRadius: '18px',
-  padding: '45px',
-};
-
-const title = {
-  textAlign: 'center',
-  fontSize: '30px',
-  fontWeight: 700,
-  marginBottom: '8px',
-};
-
-const subtitle = {
-  textAlign: 'center',
-  fontSize: '15px',
-  opacity: 0.75,
-  marginBottom: '30px',
-};
-
-const field = {
-  marginBottom: '22px',
-};
-
-const label = {
-  fontSize: '16px',
-  fontWeight: 600,
-  marginBottom: '8px',
-  display: 'block',
-};
-
-const input = {
-  width: '100%',
-  padding: '12px 16px',
-  borderRadius: '10px',
-  border: '1px solid #FF0000',
-  backgroundColor: '#F7F9FC',
-  fontSize: '16px',
-  outline: 'none',
-};
-
-const eyeBtn = {
-  position: 'absolute',
-  right: '12px',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  color: '#777',
-};
-
-const rememberRow = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  fontSize: '14px',
-  opacity: 0.75,
-  marginBottom: '30px',
-};
-
-const btn = {
-  width: '100%',
-  padding: '14px',
-  backgroundColor: '#A63028',
-  color: '#fff',
-  fontSize: '18px',
-  fontWeight: 600,
-  border: 'none',
-  borderRadius: '12px',
-  cursor: 'pointer',
-};

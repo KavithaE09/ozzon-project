@@ -151,12 +151,13 @@ export default function PurchaseOrder() {
                         <td className="table-cell">
                           <div className="flex gap-2">
                             <Plus 
-                              size={18} 
-                             className="add-primary"
+                              size={20} 
+                             className="add-primary cursor-pointer"
                               onClick={addRow} 
                             />
                             <Edit2 
                               size={18} 
+                              className="cursor-pointer "
                               
                             />
                             <Trash2

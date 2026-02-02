@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, Plus, Pencil, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, Edit2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PurchaseReturn() {
@@ -561,14 +561,14 @@ export default function PurchaseReturn() {
                           <div className="flex items-center gap-1">
                             {/* ADD */}
                             <Plus
-                              size={16}
-                              className="cursor-pointer text-black hover:text-[#A63128]"
+                              size={20}
+                              className="add-primary cursor-pointer"
                               onClick={addRowAbove}
                             />
 
-                            <Pencil
+                            <Edit2
                               size={16}
-                              className="cursor-pointer text-black hover:text-[#A63128]"
+                              className="cursor-pointer "
                               onClick={() => setEditingRow(i)}
                             />
 

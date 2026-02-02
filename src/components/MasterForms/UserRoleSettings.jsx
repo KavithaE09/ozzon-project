@@ -300,7 +300,7 @@ export default function UserRoleSettings() {
                                   onClick={() => handleEdit(role)}
                                   className="btn-action"
                                 >
-                                  <Edit2 size={18} className="text-gray-600" />
+                                  <Edit2 size={18}  />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(role)}
