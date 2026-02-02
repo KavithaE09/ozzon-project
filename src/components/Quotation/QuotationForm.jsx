@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, ChevronDown, Edit2, Trash2, Plus, Check, X, ArrowUp, ArrowDown,Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function ProformaInvoiceForm() {
+export default function QuotationForm() {
   const navigate = useNavigate();
   const [hoveredOption, setHoveredOption] = useState(null);
   
