@@ -177,17 +177,6 @@ export default function ContainerStatusUpdateForm() {
                   />
                 </div>
 
-                {/* Search Button */}
-                <div className="btn-container">
-                  <button onClick={handleSearch} className="btn-all">
-                    <Search size={18} /> Search
-                  </button>
-                </div>
-              </div>
-              <div></div>
-
-              {/* Third Row */}
-              <div className="filter-grid" style={{ marginTop: '16px' }}>
                 {/* Status Update Date */}
                 <div className="filter-grid-red">
                   <label className="filter-label">Status Update Date</label>
@@ -199,8 +188,18 @@ export default function ContainerStatusUpdateForm() {
                   />
                 </div>
 
-                {/* Remark - Spans 3 columns */}
-                <div className="filter-grid-red" style={{ gridColumn: 'span 3' }}>
+                {/* Search Button */}
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
+                </div>
+              </div>
+
+              {/* Third Row */}
+              <div className="filter-grid" style={{ marginTop: '16px' }}>
+                {/* Remark - Spans 4 columns */}
+                <div className="filter-grid-red" style={{ gridColumn: 'span 4' }}>
                   <label className="filter-label">Remark</label>
                   <textarea
                     value={formData.remark}
