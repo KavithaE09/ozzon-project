@@ -728,6 +728,7 @@ body {
 /* RIGHT CARD */
 .login-card {
   width: 420px;
+  height: 500px;
   padding: 45px;
   border: 1px solid red;
   border-radius: 18px;
