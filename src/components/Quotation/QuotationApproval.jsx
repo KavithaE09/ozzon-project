@@ -208,9 +208,11 @@ export default function QuotationApproval() {
                 )}
               </div>
 
-              <button onClick={handleSearch} className="btn-search ">
-                <Search size={18} /> Search
-              </button>
+              <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                  <Search size={18} /> Search
+                </button>
+              </div>
             </div>
 
             {/* TABLE */}

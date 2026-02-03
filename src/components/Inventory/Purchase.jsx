@@ -1,46 +1,33 @@
+import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, Plus, Edit2, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
 
-export default function PurchaseReturn() {
+export default function Purchase() {
   const navigate = useNavigate();
   const [editingRow, setEditingRow] = useState(null);
-  const purchaseTypeDropdownRef = useRef(null);
-  const supplierDropdownRef = useRef(null);
-  const cashAccountDropdownRef = useRef(null);
-  const purchaseAccountDropdownRef = useRef(null);
 
-  const addRowAbove = (index) => {
-    const newRows = [...rows];
-    newRows.splice(index, 0, { code: "", product: "", unit: "", qty: 0, rate: 0, disc: 0 });
-    setRows(newRows);
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const [form, setForm] = useState({
-    purchaseDate: "2025-05-20",
-    purchaseType: "",
-    supplier: "",
+    salesDate: getTodayDate(),
+    salesType: "",
+    customer: "",
     cashAccount: "",
-    purchaseAccount: "",
+    salesAccount: "",
     billNo: "88447755127436",
     remarks: "kavitha",
     includingTax: false,
     voucherNo: "1234",
-    supplierBal: "₹ 1,00,000",
-    purchaseBal: "₹ 1,00,000",
+    customerBal: "₹ 1,00,000",
+    salesBal: "₹ 1,00,000",
     gstin: "33ABCDE1234F2Z5",
-  });
-
-  const [rows, setRows] = useState([
-    {
-      code: "101",
-      product: "TCKU 1524662",
-      unit: "Number",
-      qty: 2,
-      rate: 1000,
-      disc: 10,
-    },
-  ]);
+  }); 
 
   const [charges, setCharges] = useState({
     weighing: "",
@@ -60,97 +47,80 @@ export default function PurchaseReturn() {
     igst28: "",
   });
 
-  // Dropdown states for Purchase Type
-  const [purchaseTypeSearch, setPurchaseTypeSearch] = useState('');
-  const [isPurchaseTypeOpen, setIsPurchaseTypeOpen] = useState(false);
-  const [hoveredPurchaseType, setHoveredPurchaseType] = useState(null);
+  // Dropdown states
+  const [salesTypeSearch, setSalesTypeSearch] = useState('');
+  const [isSalesTypeOpen, setIsSalesTypeOpen] = useState(false);
+  const [hoveredSalesType, setHoveredSalesType] = useState(null);
+  const salesTypeRef = useRef(null);
 
-  // Dropdown states for Supplier
-  const [supplierSearch, setSupplierSearch] = useState('');
-  const [isSupplierOpen, setIsSupplierOpen] = useState(false);
-  const [hoveredSupplier, setHoveredSupplier] = useState(null);
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [isCustomerOpen, setIsCustomerOpen] = useState(false);
+  const [hoveredCustomer, setHoveredCustomer] = useState(null);
+  const customerRef = useRef(null);
 
-  // Dropdown states for Cash Account
   const [cashAccountSearch, setCashAccountSearch] = useState('');
   const [isCashAccountOpen, setIsCashAccountOpen] = useState(false);
   const [hoveredCashAccount, setHoveredCashAccount] = useState(null);
+  const cashAccountRef = useRef(null);
 
-  // Dropdown states for Purchase Account
-  const [purchaseAccountSearch, setPurchaseAccountSearch] = useState('');
-  const [isPurchaseAccountOpen, setIsPurchaseAccountOpen] = useState(false);
-  const [hoveredPurchaseAccount, setHoveredPurchaseAccount] = useState(null);
+  const [salesAccountSearch, setSalesAccountSearch] = useState('');
+  const [isSalesAccountOpen, setIsSalesAccountOpen] = useState(false);
+  const [hoveredSalesAccount, setHoveredSalesAccount] = useState(null);
+  const salesAccountRef = useRef(null);
 
   // Options
-  const purchaseTypeOptions = ["Credit / Cash Purchase", "Credit", "Cash"];
-  const supplierOptions = ["Safi & Co", "Global Traders", "Logic-Tech Solutions"];
+  const salesTypeOptions = ["Credit / Cash Purchase", "Credit", "Cash"];
+  const customerOptions = ["Safi & Co", "Global Traders"];
   const cashAccountOptions = ["Cash", "Bank"];
-  const purchaseAccountOptions = ["Material Purchase Account", "Equipment Purchase Account"];
+  const salesAccountOptions = ["Material Sales Account", "Material Purchase Account"];
 
   // Filtered options
-  const filteredPurchaseTypes = purchaseTypeOptions.filter(opt =>
-    opt.toLowerCase().includes(purchaseTypeSearch.toLowerCase())
+  const filteredSalesTypes = salesTypeOptions.filter(opt =>
+    opt.toLowerCase().includes(salesTypeSearch.toLowerCase())
   );
-  const filteredSuppliers = supplierOptions.filter(opt =>
-    opt.toLowerCase().includes(supplierSearch.toLowerCase())
+  const filteredCustomers = customerOptions.filter(opt =>
+    opt.toLowerCase().includes(customerSearch.toLowerCase())
   );
   const filteredCashAccounts = cashAccountOptions.filter(opt =>
     opt.toLowerCase().includes(cashAccountSearch.toLowerCase())
   );
-  const filteredPurchaseAccounts = purchaseAccountOptions.filter(opt =>
-    opt.toLowerCase().includes(purchaseAccountSearch.toLowerCase())
+  const filteredSalesAccounts = salesAccountOptions.filter(opt =>
+    opt.toLowerCase().includes(salesAccountSearch.toLowerCase())
   );
 
-  // Handlers for Purchase Type
-  const handlePurchaseTypeInput = (e) => {
-    setPurchaseTypeSearch(e.target.value);
-    setIsPurchaseTypeOpen(true);
-  };
+  const [rows, setRows] = useState([
+    {
+      code: "101",
+      product: "TCKU 1524662",
+      unit: "Number",
+      qty: 2,
+      rate: 1000,
+      disc: 10,
+    },
+  ]);
 
-  const handlePurchaseTypeSelect = (option) => {
-    setForm({ ...form, purchaseType: option });
-    setPurchaseTypeSearch(option);
-    setIsPurchaseTypeOpen(false);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (salesTypeRef.current && !salesTypeRef.current.contains(event.target)) {
+        setIsSalesTypeOpen(false);
+      }
+      if (customerRef.current && !customerRef.current.contains(event.target)) {
+        setIsCustomerOpen(false);
+      }
+      if (cashAccountRef.current && !cashAccountRef.current.contains(event.target)) {
+        setIsCashAccountOpen(false);
+      }
+      if (salesAccountRef.current && !salesAccountRef.current.contains(event.target)) {
+        setIsSalesAccountOpen(false);
+      }
+    };
 
-  // Handlers for Supplier
-  const handleSupplierInput = (e) => {
-    setSupplierSearch(e.target.value);
-    setIsSupplierOpen(true);
-  };
-
-  const handleSupplierSelect = (option) => {
-    setForm({ ...form, supplier: option });
-    setSupplierSearch(option);
-    setIsSupplierOpen(false);
-  };
-
-  // Handlers for Cash Account
-  const handleCashAccountInput = (e) => {
-    setCashAccountSearch(e.target.value);
-    setIsCashAccountOpen(true);
-  };
-
-  const handleCashAccountSelect = (option) => {
-    setForm({ ...form, cashAccount: option });
-    setCashAccountSearch(option);
-    setIsCashAccountOpen(false);
-  };
-
-  // Handlers for Purchase Account
-  const handlePurchaseAccountInput = (e) => {
-    setPurchaseAccountSearch(e.target.value);
-    setIsPurchaseAccountOpen(true);
-  };
-
-  const handlePurchaseAccountSelect = (option) => {
-    setForm({ ...form, purchaseAccount: option });
-    setPurchaseAccountSearch(option);
-    setIsPurchaseAccountOpen(false);
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleChange = (key) => (e) => {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setForm({ ...form, [key]: value });
   };
 
@@ -167,28 +137,29 @@ export default function PurchaseReturn() {
     ]);
   };
 
-  // Click outside handler
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (purchaseTypeDropdownRef.current && !purchaseTypeDropdownRef.current.contains(e.target)) {
-        setIsPurchaseTypeOpen(false);
-      }
-      if (supplierDropdownRef.current && !supplierDropdownRef.current.contains(e.target)) {
-        setIsSupplierOpen(false);
-      }
-      if (cashAccountDropdownRef.current && !cashAccountDropdownRef.current.contains(e.target)) {
-        setIsCashAccountOpen(false);
-      }
-      if (purchaseAccountDropdownRef.current && !purchaseAccountDropdownRef.current.contains(e.target)) {
-        setIsPurchaseAccountOpen(false);
-      }
-    };
+  const addRowAbove = (index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 0, { code: "", product: "", unit: "", qty: 0, rate: 0, disc: 0 });
+    setRows(newRows);
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleMoveUp = (index) => {
+    if (index === 0) return; // Cannot move up if it's the first row
+    const newRows = [...rows];
+    // Swap with previous row
+    [newRows[index - 1], newRows[index]] = [newRows[index], newRows[index - 1]];
+    setRows(newRows);
+  };
 
-  const purchaseTotals = rows.reduce(
+  const handleMoveDown = (index) => {
+    if (index === rows.length - 1) return; // Cannot move down if it's the last row
+    const newRows = [...rows];
+    // Swap with next row
+    [newRows[index], newRows[index + 1]] = [newRows[index + 1], newRows[index]];
+    setRows(newRows);
+  };
+
+  const salesTotals = rows.reduce(
     (acc, row) => {
       const qty = Number(row.qty) || 0;
       const rate = Number(row.rate) || 0;
@@ -224,200 +195,101 @@ export default function PurchaseReturn() {
   );
 
   const netAmount =
-    purchaseTotals.taxableValue +
-    purchaseTotals.cgstTotal +
-    purchaseTotals.sgstTotal +
+    salesTotals.taxableValue +
+    salesTotals.cgstTotal +
+    salesTotals.sgstTotal +
     chargesTotal;
 
   return (
     <div className="page-container">
       <div className="content-wrapper">
-        <main className="main-section">
+        <div className="main-section">
           <div className="content-card">
-            <h1 className="page-title">Purchase Return</h1>
+            <h2 className="page-title">Purchase</h2>
 
             <div className="flex gap-5 mt-6">
               <div className="flex-1">
                 <div className="flex gap-5">
                   <FloatingInput
-                    label="Purchase Return Date"
+                    label="Purchase Date"
                     type="date"
-                    value={form.purchaseDate}
-                    onChange={handleChange("purchaseDate")}
+                    value={form.salesDate}
+                    onChange={handleChange("salesDate")}
                   />
 
-                  {/* Purchase Type Dropdown */}
-                  <div ref={purchaseTypeDropdownRef} className="filter-grid-red dropdown-wrapper">
-                    <label className="filter-label">Purchase Return Type</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={purchaseTypeSearch}
-                        onChange={handlePurchaseTypeInput}
-                        onFocus={() => setIsPurchaseTypeOpen(true)}
-                        placeholder="Type or select..."
-                        className="filter-input dropdown-input"
-                       
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
-                    {isPurchaseTypeOpen && (
-                      <div className="dropdown-menu">
-                        {filteredPurchaseTypes.length > 0 ? (
-                          filteredPurchaseTypes.map((option, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handlePurchaseTypeSelect(option)}
-                              onMouseEnter={() => setHoveredPurchaseType(option)}
-                              onMouseLeave={() => setHoveredPurchaseType(null)}
-                              className={`dropdown-item-option ${
-                                hoveredPurchaseType === option
-                                  ? 'dropdown-item-hovered'
-                                  : form.purchaseType === option
-                                  ? 'dropdown-item-selected'
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="dropdown-no-matches">No matches found</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <FloatingDropdown
+                    label="Purchase Type"
+                    value={salesTypeSearch}
+                    setValue={setSalesTypeSearch}
+                    isOpen={isSalesTypeOpen}
+                    setIsOpen={setIsSalesTypeOpen}
+                    hovered={hoveredSalesType}
+                    setHovered={setHoveredSalesType}
+                    options={filteredSalesTypes}
+                    dropdownRef={salesTypeRef}
+                    onSelect={(option) => {
+                      setForm({ ...form, salesType: option });
+                      setSalesTypeSearch(option);
+                      setIsSalesTypeOpen(false);
+                    }}
+                  />
 
-                  {/* Supplier Dropdown */}
-                  <div ref={supplierDropdownRef} className="filter-grid-red dropdown-wrapper">
-                    <label className="filter-label">Supplier</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={supplierSearch}
-                        onChange={handleSupplierInput}
-                        onFocus={() => setIsSupplierOpen(true)}
-                        placeholder="Type or select..."
-                        className="filter-input dropdown-input"
-                        
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
-                    {isSupplierOpen && (
-                      <div className="dropdown-menu">
-                        {filteredSuppliers.length > 0 ? (
-                          filteredSuppliers.map((option, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handleSupplierSelect(option)}
-                              onMouseEnter={() => setHoveredSupplier(option)}
-                              onMouseLeave={() => setHoveredSupplier(null)}
-                              className={`dropdown-item-option ${
-                                hoveredSupplier === option
-                                  ? 'dropdown-item-hovered'
-                                  : form.supplier === option
-                                  ? 'dropdown-item-selected'
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="dropdown-no-matches">No matches found</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <FloatingDropdown
+                    label="Customer"
+                    value={customerSearch}
+                    setValue={setCustomerSearch}
+                    isOpen={isCustomerOpen}
+                    setIsOpen={setIsCustomerOpen}
+                    hovered={hoveredCustomer}
+                    setHovered={setHoveredCustomer}
+                    options={filteredCustomers}
+                    dropdownRef={customerRef}
+                    onSelect={(option) => {
+                      setForm({ ...form, customer: option });
+                      setCustomerSearch(option);
+                      setIsCustomerOpen(false);
+                    }}
+                  />
                 </div>
 
                 <div className="flex gap-5 mt-5">
-                  {/* Cash Account Dropdown */}
-                  <div ref={cashAccountDropdownRef} className="filter-grid-red dropdown-wrapper">
-                    <label className="filter-label">Cash Account</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={cashAccountSearch}
-                        onChange={handleCashAccountInput}
-                        onFocus={() => setIsCashAccountOpen(true)}
-                        placeholder="Type or select..."
-                        className="filter-input dropdown-input"
-                       
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
-                    {isCashAccountOpen && (
-                      <div className="dropdown-menu">
-                        {filteredCashAccounts.length > 0 ? (
-                          filteredCashAccounts.map((option, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handleCashAccountSelect(option)}
-                              onMouseEnter={() => setHoveredCashAccount(option)}
-                              onMouseLeave={() => setHoveredCashAccount(null)}
-                              className={`dropdown-item-option ${
-                                hoveredCashAccount === option
-                                  ? 'dropdown-item-hovered'
-                                  : form.cashAccount === option
-                                  ? 'dropdown-item-selected'
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="dropdown-no-matches">No matches found</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <FloatingDropdown
+                    label="Cash Account"
+                    value={cashAccountSearch}
+                    setValue={setCashAccountSearch}
+                    isOpen={isCashAccountOpen}
+                    setIsOpen={setIsCashAccountOpen}
+                    hovered={hoveredCashAccount}
+                    setHovered={setHoveredCashAccount}
+                    options={filteredCashAccounts}
+                    dropdownRef={cashAccountRef}
+                    onSelect={(option) => {
+                      setForm({ ...form, cashAccount: option });
+                      setCashAccountSearch(option);
+                      setIsCashAccountOpen(false);
+                    }}
+                  />
 
-                  {/* Purchase Account Dropdown */}
-                  <div ref={purchaseAccountDropdownRef} className="filter-grid-red dropdown-wrapper">
-                    <label className="filter-label">Purchase Account</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={purchaseAccountSearch}
-                        onChange={handlePurchaseAccountInput}
-                        onFocus={() => setIsPurchaseAccountOpen(true)}
-                        placeholder="Type or select..."
-                        className="filter-input dropdown-input"
-                       
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
-                    {isPurchaseAccountOpen && (
-                      <div className="dropdown-menu">
-                        {filteredPurchaseAccounts.length > 0 ? (
-                          filteredPurchaseAccounts.map((option, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handlePurchaseAccountSelect(option)}
-                              onMouseEnter={() => setHoveredPurchaseAccount(option)}
-                              onMouseLeave={() => setHoveredPurchaseAccount(null)}
-                              className={`dropdown-item-option ${
-                                hoveredPurchaseAccount === option
-                                  ? 'dropdown-item-hovered'
-                                  : form.purchaseAccount === option
-                                  ? 'dropdown-item-selected'
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="dropdown-no-matches">No matches found</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <FloatingDropdown
+                    label="Purchase Account"
+                    value={salesAccountSearch}
+                    setValue={setSalesAccountSearch}
+                    isOpen={isSalesAccountOpen}
+                    setIsOpen={setIsSalesAccountOpen}
+                    hovered={hoveredSalesAccount}
+                    setHovered={setHoveredSalesAccount}
+                    options={filteredSalesAccounts}
+                    dropdownRef={salesAccountRef}
+                    onSelect={(option) => {
+                      setForm({ ...form, salesAccount: option });
+                      setSalesAccountSearch(option);
+                      setIsSalesAccountOpen(false);
+                    }}
+                  />
 
                   <FloatingInput
                     label="Bill No"
+                    type="number"
                     value={form.billNo}
                     onChange={handleChange("billNo")}
                   />
@@ -425,9 +297,9 @@ export default function PurchaseReturn() {
               </div>
 
               <div className="w-[284px] border border-gray-400 rounded-lg p-3.5 bg-white flex flex-col gap-3">
-                <InfoRow label="Purchase Return Voucher No :" value={form.voucherNo} />
-                <InfoRow label="Supplier Cur. Balance :" value={form.supplierBal} />
-                <InfoRow label="Purchase A/c Cur. Balance :" value={form.purchaseBal} />
+                <InfoRow label="Purchase Voucher No : " value={form.voucherNo} />
+                <InfoRow label="Customer Cur. Balance : " value={form.customerBal} />
+                <InfoRow label="Purchase A/c Cur. Balance : " value={form.salesBal} />
                 <InfoRow label="GSTIN :" value={form.gstin} />
               </div>
             </div>
@@ -440,7 +312,7 @@ export default function PurchaseReturn() {
                 width={975}
                 multiline
               />
-              <label className="ml-5 flex items-center text-base cursor-pointer">
+              <label className="ml-5 flex items-center text-base">
                 <input
                   type="checkbox"
                   checked={form.includingTax}
@@ -451,12 +323,12 @@ export default function PurchaseReturn() {
               </label>
             </div>
 
-            <h2 className="section-title mt-8">Purchase Return List</h2>
+            <h3 className="section-title mt-8">Purchase List</h3>
 
-            <div className="overflow-x-auto mt-3">
-              <table className="w-full border-collapse mb-2.5">
-                <thead>
-                  <tr className="bg-[#fde2e2]">
+            <div className="table-container">
+              <table className="data-table">
+                <thead className="table-header">
+                  <tr>
                     {[
                       "S.No",
                       "Code",
@@ -473,9 +345,9 @@ export default function PurchaseReturn() {
                       "SGST %",
                       "SGST Amount",
                       "Total Amount",
-                      "Actions",
+                      "Action",
                     ].map((h) => (
-                      <th key={h} className="border border-gray-400 p-2 text-sm text-left whitespace-nowrap">
+                      <th key={h} className="table-th">
                         {h}
                       </th>
                     ))}
@@ -501,85 +373,114 @@ export default function PurchaseReturn() {
                     const total = taxable + cgstAmt + sgstAmt;
 
                     return (
-                      <tr
-                        key={i}
-                        className={editingRow === i ? "bg-white" : "bg-transparent"}
-                      >
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">{i + 1}</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+                      <tr key={i} className="table-row">
+                        <td className="table-cell">{i + 1}</td>
+
+                        <td className="table-cell">
                           <input
                             value={row.code}
                             onChange={(e) => updateRow(i, "code", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
+                            className="w-full min-w-[100px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+
+                        <td className="table-cell">
                           <input
                             value={row.product}
                             onChange={(e) => updateRow(i, "product", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
+                            className="w-full min-w-[180px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+
+                        <td className="table-cell">
                           <input
                             value={row.unit}
                             onChange={(e) => updateRow(i, "unit", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
+                            className="w-full min-w-[100px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+
+                        <td className="table-cell">
                           <input
                             type="number"
                             value={row.qty}
                             onChange={(e) => updateRow(i, "qty", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
+                            className="w-full min-w-[80px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+
+                        <td className="table-cell">
                           <input
                             type="number"
                             value={row.rate}
                             onChange={(e) => updateRow(i, "rate", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
+                            className="w-full min-w-[100px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {amount.toLocaleString()}</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
+
+                        <td className="table-cell min-w-[120px]">₹ {amount.toLocaleString()}</td>
+
+                        <td className="table-cell">
                           <input
                             type="number"
                             value={row.disc}
                             onChange={(e) => updateRow(i, "disc", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-sm"
+                            className="w-full min-w-[70px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {discAmount.toLocaleString()}</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {taxable.toLocaleString()}</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">{cgstPer}%</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {cgstAmt.toLocaleString()}</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">{sgstPer}%</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">₹ {sgstAmt.toLocaleString()}</td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap font-semibold">
+
+                        <td className="table-cell min-w-[120px]">₹ {discAmount.toLocaleString()}</td>
+                        <td className="table-cell min-w-[120px]">₹ {taxable.toLocaleString()}</td>
+
+                        <td className="table-cell min-w-[80px]">{cgstPer}%</td>
+                        <td className="table-cell min-w-[120px]">₹ {cgstAmt.toLocaleString()}</td>
+
+                        <td className="table-cell min-w-[80px]">{sgstPer}%</td>
+                        <td className="table-cell min-w-[120px]">₹ {sgstAmt.toLocaleString()}</td>
+
+                        <td className="table-cell font-semibold min-w-[130px]">
                           ₹ {total.toLocaleString()}
                         </td>
-                        <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
-                          <div className="flex items-center gap-1">
-                            {/* ADD */}
-                            <Plus
-                              size={20}
-                              className="add-primary cursor-pointer"
-                              onClick={addRowAbove}
+
+                        <td className="table-cell-center">
+                          <div className="table-actions">
+                            <ArrowUp
+                              size={16}
+                              className={`${i === 0 ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer text-black-600 hover:text-blue-800'}`}
+                              onClick={() => {
+                                if (i !== 0) {
+                                  handleMoveUp(i);
+                                }
+                              }}
+                              title={i === 0 ? 'Already at top' : 'Move up'}
                             />
 
-                            <Edit2
+                            <ArrowDown
                               size={16}
-                              className="cursor-pointer "
+                              className={`${i === rows.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer text-black-600 hover:text-blue-800'}`}
+                              onClick={() => {
+                                if (i !== rows.length - 1) {
+                                  handleMoveDown(i);
+                                }
+                              }}
+                              title={i === rows.length - 1 ? 'Already at bottom' : 'Move down'}
+                            />
+
+                            <Plus
+                              size={16}
+                              className="add-primary"
+                              onClick={() => addRowAbove(i)}
+                            />
+
+                            <Pencil
+                              size={16}
+                              className="cursor-pointer text-black"
                               onClick={() => setEditingRow(i)}
                             />
 
-                            {/* DELETE */}
                             <Trash2
                               size={16}
-                              className="cursor-pointer text-[#DC2626] hover:text-[#B91C1C]"
+                              className="cursor-pointer text-red-600"
                               onClick={() => {
                                 const updated = rows.filter((_, index) => index !== i);
                                 setRows(updated);
@@ -593,15 +494,13 @@ export default function PurchaseReturn() {
                 </tbody>
               </table>
 
-              <div className="flex justify-end">
-                <button
-                  onClick={addRow}
-                  className="flex items-center gap-2 px-5 py-2.5 border-none rounded-md bg-[#A63128] text-white text-sm font-medium cursor-pointer hover:bg-[#8B2821]"
-                >
-                  <Plus size={16} /> Row
+              
+            </div>
+            <div className="flex justify-end">
+                <button onClick={addRow} className="btn-search">
+                  <Plus size={18} /> Row
                 </button>
               </div>
-            </div>
 
             <div className="flex gap-6 mt-8 items-start">
               <div className="flex-1">
@@ -613,6 +512,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, weighing: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="Freight Charges"
                     value={charges.freight}
@@ -620,6 +520,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, freight: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="Other Charges"
                     value={charges.other}
@@ -627,6 +528,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, other: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="CGST 2.5%"
                     value={charges.cgst2_5}
@@ -634,6 +536,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, cgst2_5: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="SGST 2.5%"
                     value={charges.sgst2_5}
@@ -641,6 +544,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, sgst2_5: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="IGST 5%"
                     value={charges.igst5}
@@ -648,6 +552,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, igst5: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="CGST 6%"
                     value={charges.cgst6}
@@ -655,6 +560,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, cgst6: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="SGST 6%"
                     value={charges.sgst6}
@@ -662,6 +568,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, sgst6: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="IGST 12%"
                     value={charges.igst12}
@@ -669,6 +576,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, igst12: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="CGST 9%"
                     value={charges.cgst9}
@@ -676,6 +584,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, cgst9: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="SGST 9%"
                     value={charges.sgst9}
@@ -683,6 +592,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, sgst9: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="IGST 18%"
                     value={charges.igst18}
@@ -690,6 +600,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, igst18: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="CGST 14%"
                     value={charges.cgst14}
@@ -697,6 +608,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, cgst14: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="SGST 14%"
                     value={charges.sgst14}
@@ -704,6 +616,7 @@ export default function PurchaseReturn() {
                       setCharges({ ...charges, sgst14: e.target.value })
                     }
                   />
+
                   <ChargeBox
                     label="IGST 28%"
                     value={charges.igst28}
@@ -717,31 +630,38 @@ export default function PurchaseReturn() {
               <div className="w-[300px] border border-gray-400 rounded-lg p-4 bg-white flex flex-col gap-2.5 text-base">
                 <TotalRow
                   label="Total Amount"
-                  value={`₹ ${purchaseTotals.totalAmount.toLocaleString()}`}
+                  value={`₹ ${salesTotals.totalAmount.toLocaleString()}`}
                 />
+
                 <TotalRow
                   label="Total Discount"
-                  value={`₹ ${purchaseTotals.totalDiscount.toLocaleString()}`}
+                  value={`₹ ${salesTotals.totalDiscount.toLocaleString()}`}
                 />
+
                 <TotalRow
                   label="Taxable Value Total"
-                  value={`₹ ${purchaseTotals.taxableValue.toLocaleString()}`}
+                  value={`₹ ${salesTotals.taxableValue.toLocaleString()}`}
                 />
+
                 <TotalRow
                   label="CGST Total"
-                  value={`₹ ${purchaseTotals.cgstTotal.toLocaleString()}`}
+                  value={`₹ ${salesTotals.cgstTotal.toLocaleString()}`}
                 />
+
                 <TotalRow
                   label="SGST Total"
-                  value={`₹ ${purchaseTotals.sgstTotal.toLocaleString()}`}
+                  value={`₹ ${salesTotals.sgstTotal.toLocaleString()}`}
                 />
+
                 <TotalRow
                   label="Other Charges Total"
                   value={`₹ ${chargesTotal.toLocaleString()}`}
                 />
+
                 <TotalRow
                   label="Net Amount"
                   value={`₹ ${netAmount.toLocaleString()}`}
+                  bold
                 />
               </div>
             </div>
@@ -751,15 +671,14 @@ export default function PurchaseReturn() {
                 <span>✓</span>Submit
               </button>
             </div>
-          </div>
+          
 
-          <button
-            onClick={() => navigate(-1)}
-            className="btn-back"
-          >
-            ← Back
+          <button onClick={() => navigate(-1)} className="btn-back">
+            <span>←</span>
+            <span>Back</span>
           </button>
-        </main>
+        </div>
+        </div>
       </div>
     </div>
   );
@@ -770,47 +689,107 @@ const FloatingInput = ({
   value,
   onChange,
   width = 255,
-  multiline = false,
-  type = "text"
+  type = "date",
+  multiline = false
 }) => (
-  <div
-    className="filter-grid-red relative"
-    style={{ width: `${width}px` }}
-  >
-    <label className="filter-label">{label}</label>
+  <div className="filter-grid-red" style={{ width, boxSizing: "border-box" }}>
+    <label className="filter-label text-sm mb-1.5">
+      {label}
+    </label>
+
     {multiline ? (
       <textarea
         value={value}
         onChange={onChange}
         rows={3}
-        className="multiline-field"
+        className="multiline-field pt-[22px] h-[60px] overflow-y-auto"
       />
     ) : (
       <input
         type={type}
         value={value}
         onChange={onChange}
-        className="filter-input"
+        className="filter-input pt-[22px] text-sm"
       />
     )}
   </div>
 );
 
+const FloatingDropdown = ({
+  label,
+  value,
+  setValue,
+  isOpen,
+  setIsOpen,
+  hovered,
+  setHovered,
+  options,
+  dropdownRef,
+  onSelect,
+  width = 255,
+}) => (
+  <div ref={dropdownRef} className="filter-grid-red dropdown-wrapper" style={{ width, zIndex: isOpen ? 1001 : 1 }}>
+    <label className="filter-label text-sm mb-1.5">
+      {label}
+    </label>
+    <div className="relative">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        placeholder="Type or select..."
+        className="dropdown-input filter-input cursor-text pr-[30px]"
+      />
+      <ChevronDown
+        size={16}
+        className="dropdown-icon"
+      />
+    </div>
+    {isOpen && (
+      <div className="dropdown-menu">
+        {options.length > 0 ? (
+          options.map((option, index) => (
+            <div
+              key={index}
+              onClick={() => onSelect(option)}
+              onMouseEnter={() => setHovered(option)}
+              onMouseLeave={() => setHovered(null)}
+              className={`dropdown-item-option ${hovered === option ? 'dropdown-item-hovered' : 'dropdown-item-default'}`}
+            >
+              {option}
+            </div>
+          ))
+        ) : (
+          <div className="dropdown-no-matches">
+            No matches found
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+);
+
 const InfoRow = ({ label, value }) => (
-  <div className="flex text-sm">
-    <div className="w-[170px] text-gray-500">{label}</div>
+  <div className="flex text-[13px]">
+    <div className="w-[170px] text-gray-600">{label}</div>
     <div className="font-medium">{value}</div>
   </div>
 );
 
 const ChargeBox = ({ label, value, onChange }) => (
-  <div className="filter-grid-red relative w-[255px]">
-    <label className="filter-label">{label}</label>
+  <div className="filter-grid-red w-[255px]">
+    <label className="filter-label text-sm mb-1.5">
+      {label}
+    </label>
     <input
       type="number"
       value={value}
       onChange={onChange}
-      className="filter-input"
+      className="filter-input pt-[22px]"
     />
   </div>
 );
@@ -818,6 +797,6 @@ const ChargeBox = ({ label, value, onChange }) => (
 const TotalRow = ({ label, value, bold }) => (
   <div className="flex justify-between">
     <div>{label}</div>
-    <div className={bold ? "font-semibold" : "font-medium"}>{value}</div>
+    <div className={bold ? 'font-semibold' : 'font-medium'}>{value}</div>
   </div>
 );

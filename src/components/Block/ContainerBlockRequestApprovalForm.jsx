@@ -284,9 +284,11 @@ const ContainerBlockRequestApprovalForm = () => {
                 )}
               </div>
 
-              <button onClick={handleSearch} className="btn-search">
+              <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
                 <Search size={18} /> Search
               </button>
+              </div>
             </div>
 
             {/* APPROVAL TABLE */}

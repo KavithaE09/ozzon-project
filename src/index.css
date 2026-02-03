@@ -1281,9 +1281,12 @@
 /* ─────────────────────────────────────────── */
 .footer-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
 }
+
 .btn-back {
   display: flex !important;
   align-items: center !important;
@@ -1297,7 +1300,6 @@
   background: white !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
-  margin-bottom: 10px !important;
 }
 .btn-back:hover {
   background: #fef2f2 !important;
@@ -1452,7 +1454,7 @@
     margin-bottom: 20px;
   }
 
-  /* ── Buttons container - CHANGED TO flex-end (right aligned) ── */
+  /* ── Buttons container ── */
   .btn-container {
     margin-right: 0 !important;
     padding-right: 0 !important;
@@ -1465,6 +1467,25 @@
     width: 140px !important;
     height: 44px !important;
     font-size: 13px !important;
+  }
+
+  /* ── Footer - FIXED: buttons side by side on mobile ── */
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap; /* Don't wrap on mobile */
+  }
+  
+  .btn-back {
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+
+  .btn-all {
+    flex-shrink: 0; /* Prevent shrinking */
   }
 
   /* ── Table: allow horizontal scroll, compact cells ── */
@@ -1581,13 +1602,6 @@
   .pagination-page-btn {
     padding: 5px 10px;
     font-size: 13px;
-  }
-
-  /* ── Footer ── */
-  .footer-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
   }
 
   /* ── Small buttons ── */
