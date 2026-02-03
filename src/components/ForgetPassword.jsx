@@ -54,7 +54,7 @@ export default function ForgetPassword() {
           </div>
         </div>
 
-        {/* RIGHT SECTION – FORGET PASSWORD */}
+        
         <div className="w-[380px] h-[400px] bg-white rounded-2xl p-9 border border-red-400 -ml-2.5 mb-[30px]">
           <h2 className="text-center text-[28px] mt-0 font-bold font-nunito">
             Forget Password
