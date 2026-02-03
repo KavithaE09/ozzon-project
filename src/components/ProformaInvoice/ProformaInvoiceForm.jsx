@@ -22,7 +22,9 @@ export default function ProformaInvoiceForm() {
     quotationdate: getTodayDate(),
     customerName: '',
     address: '',
-    templateName: 'Template Office Container'
+    templateName: 'Template Office Container',
+    images: [],    
+    imagePreviews: [] 
   });
 
   const customerOptions = ['Admin', 'Customer A', 'Customer B', 'Customer C', 'Customer D'];
@@ -713,7 +715,19 @@ export default function ProformaInvoiceForm() {
       </tr>
     );
   };
+  const [selectedImage, setSelectedImage] = useState(null);
 
+const removeImage = (index) => {
+  if (formData.imagePreviews?.[index]) {
+    URL.revokeObjectURL(formData.imagePreviews[index]);
+  }
+
+  setFormData(prev => ({
+    ...prev,
+    images: prev.images.filter((_, i) => i !== index),
+    imagePreviews: prev.imagePreviews.filter((_, i) => i !== index)
+  }));
+};
   return (
     <div className="page-container">
       {showSubmitMessage && (
@@ -771,6 +785,7 @@ export default function ProformaInvoiceForm() {
                   onChange={(e) => setFormData({...formData, quotationdate: e.target.value})}
                 />
               </div>
+              
             </div>
 
             {/* Customer Dropdown */}
@@ -813,6 +828,16 @@ export default function ProformaInvoiceForm() {
                   </div>
                 )}
               </div>
+               {/* Template Name */}
+            <div className="grid grid-cols-2 gap-4 mb-0.5">
+              <div className="filter-grid-red" style={{ gridColumn: 'span 3' }}>
+                <label className="filter-label">Template Name</label>
+                <div className="dropdown-input">
+                  <span>{formData.templateName}</span>
+                  <ChevronDown size={16} className="dropdown-icon"/>
+                </div>
+              </div>
+            </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-0.5">
@@ -825,18 +850,82 @@ export default function ProformaInvoiceForm() {
                   rows="1" 
                 />
               </div>
-            </div>
+              {/* Upload Photos */}
+<div className="filter-grid-red">
+  <label className="filter-label">Upload Photos</label>
 
-            {/* Template Name */}
-            <div className="grid grid-cols-2 gap-4 mb-0.5">
-              <div className="filter-grid-red">
-                <label className="filter-label">Template Name</label>
-                <div className="dropdown-input">
-                  <span>{formData.templateName}</span>
-                  <ChevronDown size={16} className="dropdown-icon"/>
-                </div>
-              </div>
+  <input
+    type="file"
+    accept="image/*"
+    multiple
+    onChange={(e) => {
+      const files = Array.from(e.target.files || []);
+      const newPreviews = files.map(file =>
+        URL.createObjectURL(file)
+      );
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...files],
+        imagePreviews: [...prev.imagePreviews, ...newPreviews]
+      }));
+
+      e.target.value = null;
+    }}
+    className="file-input"
+  />
+
+  {formData.imagePreviews && formData.imagePreviews.length > 0 && (
+    <div className="image-preview-container">
+      {formData.imagePreviews.map((img, index) => (
+        <div key={index} className="image-preview-wrapper">
+          <img
+            src={img}
+            alt={`preview-${index}`}
+            onClick={() => setSelectedImage(img)}
+            className="image-preview"
+          />
+          <button
+            type="button"
+            onClick={() => removeImage(index)}
+            className="image-remove-btn"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+{/* Image Modal */}
+{selectedImage && (
+  <div
+    onClick={() => setSelectedImage(null)}
+    className="image-modal-overlay"
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="image-modal-content"
+    >
+      <img
+        src={selectedImage}
+        alt="view"
+        className="image-modal-img"
+      />
+      <button
+        type="button"
+        onClick={() => setSelectedImage(null)}
+        className="image-modal-close"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
+
             </div>
+            
             
             {/* First Table */}
             <div className="table-container">

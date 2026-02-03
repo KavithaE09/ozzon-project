@@ -176,6 +176,7 @@ export default function ContainerPurchase() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
 
   return (
     <div className="page-container">

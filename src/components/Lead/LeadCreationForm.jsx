@@ -374,7 +374,7 @@ const jobReviewList = [
 
             <h2 className="page-title">Lead</h2>
             
-            <div className="filter-grid">
+            <div className="filter-grid" >
               {/* Lead Owner Dropdown */}
               <div ref={leadOwnerDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Owner</label>
