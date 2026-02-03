@@ -250,6 +250,9 @@
   background-color: #1E293B;
   color: #E5E7EB;
 }
+.multiline-field::placeholder {
+  color: #9CA3AF;
+}
 .filter-grid-red {
   background-color: white;
   padding: 10px;
