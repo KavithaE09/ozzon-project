@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, ChevronDown, Edit2, Trash2, Plus, Check, X, ArrowUp, ArrowDown,Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Printer, FileSpreadsheet } from 'lucide-react';
 
 export default function QuotationForm() {
   const navigate = useNavigate();
@@ -1301,11 +1302,10 @@ export default function QuotationForm() {
             </div>
             
             {/* Action Buttons */}
-            <div className="filter-grid mb-4">
-              <button onClick={handleSubmit} className="btn-smallbtn">Submit</button>
-              <button onClick={handlePrint} className="btn-smallbtn">Print</button>
-              <button onClick={handleDownloadPDF} className="btn-smallbtn">PDF</button>
-              <button onClick={handleDownloadExcel} className="btn-smallbtn">Excel</button>
+            <div className="filter-grid action-buttons">
+              <button onClick={handlePrint} className="btn-smallbtn flex items-center justify-center gap-2"><Printer size={16} />Print</button>
+              <button onClick={handleDownloadExcel} className="btn-smallbtn flex items-center justify-center gap-2"><FileSpreadsheet size={16} />Excel</button>
+              <button onClick={handleSubmit} className="btn-smallbtn ">Submit</button>
             </div>
           </div>
                   
