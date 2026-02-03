@@ -106,7 +106,7 @@ export default function Admin() {
               </span>
             </label>
 
-            <button className="forgot">
+            <button className="forgot" onClick={() => navigate("ForgetPassword")}>
               Forget Password?
             </button>
           </div>

@@ -207,6 +207,40 @@
   color: #111827;
 }
 .dark .page-title {
+  /* page  */
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    
+  }
+  .content-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  .main-section {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+    background: var(--mainsection-bg);
+  }
+  .content-card {
+   background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    width: 100%;
+    margin-Bottom: 10px;
+    
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #111827;
+  }
+  .dark .page-title {
   color: #E5E7EB;
 }
 
@@ -724,6 +758,7 @@ body {
 }
 .login-card {
   width: 420px;
+  height: 500px;
   padding: 45px;
   border: 1px solid red;
   border-radius: 18px;

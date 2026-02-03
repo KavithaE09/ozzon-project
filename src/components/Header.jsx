@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Settings, Bell, Menu , ChevronDown} from "lucide-react";
+import { Settings, Bell, Menu, ChevronDown } from "lucide-react";
 
 import headerlogo from "../assets/ozzonlogo.jpeg";
 import userIcon from "../assets/user.png";
-
-
+ 
 export default function Header({ onMenuClick }) {
   const [openNotification, setOpenNotification] = useState(false);
   const notificationRef = useRef(null);
@@ -65,18 +64,17 @@ export default function Header({ onMenuClick }) {
 
   return (
     <header 
-      className="h-[76px] flex justify-between items-center border-b shadow-sm"
+      className="h-16 md:h-[68px] lg:h-[76px] flex justify-between items-center border-b shadow-sm px-3 md:px-4 lg:px-6"
       style={{
         backgroundColor: darkMode ? "#1E293B" : "white",
         borderColor: darkMode ? "#374151" : "#E5E7EB"
       }}
     >
       {/* LEFT SIDE */}
-      <div className="flex items-center" style={{ paddingLeft: "24px" }}>
-      
-        <Menu  size={24}
-          alt="menu"
-          className="w-[18.14px] h-[17.61px] cursor-pointer"
+      <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
+        {/* MENU ICON - Larger on mobile, normal on desktop */}
+        <Menu
+          className="w-7 h-7 md:w-6 md:h-6 lg:w-[18px] lg:h-[18px] cursor-pointer flex-shrink-0"
           onClick={onMenuClick}
           style={{
             color: darkMode ? "#E5E7EB" : "#374151",
@@ -84,28 +82,31 @@ export default function Header({ onMenuClick }) {
           }}
         />
 
-        <div className="h-10 flex items-center" style={{ marginLeft: "24px" }}>
+        {/* LOGO - Larger on mobile, normal on desktop */}
+        <div className="h-10 md:h-9 lg:h-10 flex items-center flex-shrink-0">
           <img
             src={headerlogo}
             alt="Ozzon Logo"
-            className="h-10 w-auto object-contain"
+            className="h-10 md:h-9 lg:h-10 w-auto object-contain"
           />
         </div>
       </div>
 
       {/* RIGHT SIDE */}
-      <div
-        className="flex items-center gap-4"
-        style={{ paddingRight: "24px", marginTop: "-0.5px" }}
-      >
-        {/* 🔔 NOTIFICATION */}
-        <div className="relative" style={{ marginRight: "12px" }}>
+      <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
+        {/* 🔔 NOTIFICATION - Responsive sizes */}
+        <div className="relative">
           <Bell
-            size={35}
+            className="w-5 h-5 md:w-6 md:h-6 lg:w-[35px] lg:h-[35px] cursor-pointer"
             fill={darkMode ? "#9CA3AF" : "#374151"}
-            stroke="none"
-            className="cursor-pointer"
+            stroke="none" 
             onClick={() => setOpenNotification(!openNotification)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = darkMode ? "#3B82F6" : "#B73E3E";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = darkMode ? "#9CA3AF" : "#374151";
+            }}
           />
 
           {openNotification && (
@@ -115,7 +116,7 @@ export default function Header({ onMenuClick }) {
                 position: "absolute",
                 right: 0,
                 marginTop: "8px",
-                width: "260px",
+                width: "240px",
                 backgroundColor: darkMode ? "#1E293B" : "white",
                 border: `1px solid ${darkMode ? "#374151" : "#9CA3AF"}`,
                 borderRadius: "6px",
@@ -136,8 +137,8 @@ export default function Header({ onMenuClick }) {
                   className="notification-link"
                   style={{
                     display: "block",
-                    padding: "10px 12px",
-                    fontSize: "14px",
+                    padding: "8px 10px",
+                    fontSize: "13px",
                     color: darkMode ? "#E5E7EB" : "#374151",
                     textDecoration: "none",
                     borderBottom: index !== 3 ? `1px solid ${darkMode ? "#374151" : "#E5E7EB"}` : "none",
@@ -159,14 +160,13 @@ export default function Header({ onMenuClick }) {
           )}
         </div>
 
-        {/* ⚙️ SETTINGS */}
+        {/* ⚙️ SETTINGS - Responsive sizes */}
         <Link
           to="/layout/settings"
           className="cursor-pointer flex items-center justify-center"
-          style={{ marginRight: "16px" }}
-        >
+        > 
           <Settings 
-            size={35} 
+            className="w-5 h-5 md:w-6 md:h-6 lg:w-[35px] lg:h-[35px]"
             style={{
               color: darkMode ? "#9CA3AF" : "#374151",
               transition: "color 0.2s"
@@ -180,21 +180,28 @@ export default function Header({ onMenuClick }) {
           />
         </Link>
 
-        {/* 👤 USER PROFILE */}
+        {/* 👤 USER PROFILE - Responsive: Icon only on mobile/tablet, full box on laptop */}
         <div ref={profileRef} className="relative">
           <div
             onClick={() => setOpenProfile(!openProfile)}
-            className="flex items-center gap-3 cursor-pointer px-4 border h-[60px]"
+            className="cursor-pointer flex items-center justify-center lg:gap-3 lg:px-4 lg:border"
             style={{ 
-              width: "227px", 
+              width: "auto",
+              height: "auto",
               borderRadius: "5px",
               backgroundColor: darkMode ? "#1E293B" : "white",
               borderColor: darkMode ? "#374151" : "#E5E7EB"
             }}
           >
-            <img src={userIcon} alt="user" className="h-10" />
+            {/* USER ICON - Always visible */}
+            <img 
+              src={userIcon} 
+              alt="user" 
+              className="w-5 h-5 md:w-6 md:h-6 lg:h-10 lg:w-auto cursor-pointer" 
+            />
 
-            <div className="flex flex-col flex-1">
+            {/* USER TEXT - Only on laptop */}
+            <div className="hidden lg:flex flex-col flex-1">
               <span 
                 className="text-[13px]"
                 style={{ color: darkMode ? "#9CA3AF" : "#6B7280" }}
@@ -206,22 +213,24 @@ export default function Header({ onMenuClick }) {
                 style={{ color: darkMode ? "#E5E7EB" : "#374151" }}
               >
                 ADMIN
-              </span>
+              </span> 
             </div>
 
+            {/* CHEVRON - Only on laptop */}
             <ChevronDown 
-              className="w-4 h-4" 
+              className="w-4 h-4 hidden lg:block" 
               style={{ color: darkMode ? "#9CA3AF" : "#374151" }}
             />
           </div>
 
+          {/* DROPDOWN MENU */}
           {openProfile && (
             <div
               style={{
                 position: "absolute",
                 right: 0,
-                top: "110%",
-                width: "230px",
+                top: "calc(100% + 8px)",
+                width: "200px",
                 backgroundColor: darkMode ? "#1E293B" : "white",
                 border: `1px solid ${darkMode ? "#374151" : "#9CA3AF"}`,
                 borderRadius: "6px",
@@ -232,8 +241,8 @@ export default function Header({ onMenuClick }) {
               <Link
                 to="/layout/profile"
                 onClick={() => setOpenProfile(false)}
-                style={{
-                  display: "block",
+                className="block"
+                style={{ 
                   padding: "10px 12px",
                   fontSize: "14px",
                   color: darkMode ? "#E5E7EB" : "#374151",
@@ -242,18 +251,24 @@ export default function Header({ onMenuClick }) {
                   transition: "background-color 0.2s"
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
-                  e.currentTarget.style.color = "white";
+                  // Only apply hover on desktop
+                  if (window.innerWidth >= 1024) {
+                    e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
+                    e.currentTarget.style.color = "white";
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
+                  if (window.innerWidth >= 1024) {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
+                  }
                 }}
               >
                 Profile
               </Link>
 
               <div
+                onClick={() => setOpenProfile(false)}
                 style={{ 
                   padding: "10px 12px", 
                   fontSize: "14px", 
@@ -262,12 +277,17 @@ export default function Header({ onMenuClick }) {
                   transition: "background-color 0.2s"
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
-                  e.currentTarget.style.color = "white";
+                  // Only apply hover on desktop
+                  if (window.innerWidth >= 1024) {
+                    e.currentTarget.style.backgroundColor = darkMode ? "#3B82F6" : "#A63128";
+                    e.currentTarget.style.color = "white";
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
+                  if (window.innerWidth >= 1024) {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = darkMode ? "#E5E7EB" : "#374151";
+                  }
                 }}
               >
                 Logout
@@ -276,16 +296,16 @@ export default function Header({ onMenuClick }) {
           )}
         </div>
 
-        {/* 🌗 DARK MODE TOGGLE (RIGHT OF USER BOX) */}
+        {/* 🌗 DARK MODE TOGGLE - Same toggle design for all devices */}
         <div
           onClick={() => setDarkMode(!darkMode)}
-          className={`ml-2 w-[58px] h-[30px] flex items-center rounded-full cursor-pointer transition-all duration-300 
+          className={`ml-1 md:ml-1.5 lg:ml-2 w-11 h-6 md:w-12 md:h-7 lg:w-[58px] lg:h-[30px] flex items-center rounded-full cursor-pointer transition-all duration-300 
           ${darkMode ? "bg-[#2F2F2F]" : "bg-[#E5E7EB]"}`}
         >
           <div
-            className={`w-[26px] h-[26px] bg-white rounded-full shadow-md flex items-center justify-center 
-            transform transition-all duration-300
-            ${darkMode ? "translate-x-[28px]" : "translate-x-[2px]"}`}
+            className={`w-5 h-5 md:w-6 md:h-6 lg:w-[26px] lg:h-[26px] bg-white rounded-full shadow-md flex items-center justify-center 
+            transform transition-all duration-300 text-xs md:text-sm lg:text-base
+            ${darkMode ? "translate-x-5 md:translate-x-5 lg:translate-x-[28px]" : "translate-x-[2px]"}`}
           >
             {darkMode ? "🌙" : "☀️"}
           </div>

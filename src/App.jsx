@@ -66,11 +66,16 @@ import AdvanceReceipt from "./components/Advance/AdvanceReceipt";
 import PurchaseOrder from "./components/Inventory/PurchaseOrder";
 import GoodsReceiptNote from "./components/Inventory/GoodsReceiptNote";
 import FollowUp from "./components/FollowUp";
+import ForgetPassword from "./components/ForgetPassword";
+import OTP from "./components/OTP";
+import Register from "./components/Register";
 
 export default function App() {
   return (
     <Routes>
-
+      <Route path="ForgetPassword" element={<ForgetPassword />} />
+      <Route path="OTP" element={<OTP />} />
+      <Route path="Register" element={<Register />} />
       <Route path="/" element={<Admin />} />
       <Route path="/Layout" element={<Layout />}>
         <Route index element={<div className=" flex h-full w-full items-center  justify-center pt-16">

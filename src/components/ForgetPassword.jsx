@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
 import loginhouse from '../assets/loginhouse.png';
 import ozzonlogo from '../assets/ozzonlogo.jpeg';
+import { useNavigate } from 'react-router-dom';
 
 export default function ForgetPassword() {
   const [phone, setPhone] = useState('');
 
+  const navigate = useNavigate();
+  const DEMO_NUMBER = "1234567890";
+
   const handleSendOtp = (e) => {
     e.preventDefault();
+
     if (!phone) {
       alert('Please enter your number');
       return;
     }
-    alert('OTP sent successfully (demo)');
+
+    if (phone === DEMO_NUMBER) {
+      // correct number → OTP page
+      navigate('/OTP', { state: { phone } });
+    } else {
+      alert('Invalid number');
+    }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center p-10 bg-white">
