@@ -64,10 +64,7 @@ export default function Sidebar({ open, onNavigate }) {
     setActive("PurchaseMaster");
     setPurchaseOpen(true);
   } 
-  else if (path.includes("/containerpurchase")) {
-    setActive("ContainerPurchase");
-    setPurchaseOpen(true);
-  } 
+ 
   else if (path.includes("/containerstatusupdateform")) {
     setActive("ContainerStatusUpdateForm");
     setSalesOpen(true);
@@ -212,6 +209,10 @@ export default function Sidebar({ open, onNavigate }) {
   // Sales routes
   else if (path.includes("/lead")) {
     setActive("Lead");
+    setSalesOpen(true);
+  }
+   else if (path.includes("/containerpurchase")) {
+    setActive("ContainerPurchase");
     setSalesOpen(true);
   }
   else if (path.includes("/followup")) {
@@ -387,8 +388,9 @@ export default function Sidebar({ open, onNavigate }) {
           />
           {salesOpen && (
             <>
+                   <SubButton label="Container Purchase" active={active === "ContainerPurchase"} isDark={isDark} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
               <SubButton label="Lead" active={active === "Lead"} isDark={isDark} onClick={() => handleClick("Lead")} />
-              <SubButton label="Follow Up" active={active === "FollowUp"} isDark={isDark} onClick={() => handleClick("FollowUp")} />
+             <SubButton label="Follow Up" active={active === "FollowUp"} isDark={isDark} onClick={() => handleClick("FollowUp")} />
               <SubButton label="Quotation" active={active === "Quotation"} isDark={isDark} onClick={() => handleClick("Quotation", "QuotationSearch")} />
               <SubButton label="Proforma Invoice" active={active === "ProformaInvoice"} isDark={isDark} onClick={() => handleClick("ProformaInvoice", "ProformaInvoiceSearch")} />
               <SubButton label="Container Status Update " active={active === "ContainerStatusUpdateForm"} isDark={isDark} onClick={() => handleClick("ContainerStatusUpdateForm", "ContainerStatusUpdateForm")} />
@@ -446,8 +448,7 @@ export default function Sidebar({ open, onNavigate }) {
             <>
               <SubButton label="Container Master" active={active === "ContainerMaster"} isDark={isDark} onClick={() => handleClick("ContainerMaster")} />
               <SubButton label="Purchase Order Master" active={active === "PurchaseMaster"} isDark={isDark} onClick={() => handleClick("PurchaseMaster", "PurchaseMaster")} />
-              <SubButton label="Container Purchase" active={active === "ContainerPurchase"} isDark={isDark} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
-              <SubButton label="Container Status" active={active === "ContainerStatus"} isDark={isDark} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
+            <SubButton label="Container Status" active={active === "ContainerStatus"} isDark={isDark} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
             </>
           )}
 

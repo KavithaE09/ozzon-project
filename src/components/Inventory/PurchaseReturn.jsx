@@ -144,17 +144,15 @@ export default function PurchaseReturn() {
   };
 
   const handleMoveUp = (index) => {
-    if (index === 0) return; // Cannot move up if it's the first row
+    if (index === 0) return;
     const newRows = [...rows];
-    // Swap with previous row
     [newRows[index - 1], newRows[index]] = [newRows[index], newRows[index - 1]];
     setRows(newRows);
   };
 
   const handleMoveDown = (index) => {
-    if (index === rows.length - 1) return; // Cannot move down if it's the last row
+    if (index === rows.length - 1) return;
     const newRows = [...rows];
-    // Swap with next row
     [newRows[index], newRows[index + 1]] = [newRows[index + 1], newRows[index]];
     setRows(newRows);
   };
@@ -207,9 +205,11 @@ export default function PurchaseReturn() {
           <div className="content-card">
             <h2 className="page-title">Purchase Return</h2>
 
-            <div className="flex gap-5 mt-6">
+            {/* Responsive Form Section */}
+            <div className="flex flex-col lg:flex-row gap-5 mt-6">
               <div className="flex-1">
-                <div className="flex gap-5">
+                {/* First Row - Responsive Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   <FloatingInput
                     label="Purchase Return Date"
                     type="date"
@@ -252,7 +252,8 @@ export default function PurchaseReturn() {
                   />
                 </div>
 
-                <div className="flex gap-5 mt-5">
+                {/* Second Row - Responsive Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
                   <FloatingDropdown
                     label="Cash Account"
                     value={cashAccountSearch}
@@ -296,7 +297,8 @@ export default function PurchaseReturn() {
                 </div>
               </div>
 
-              <div className="w-[284px] border border-gray-400 rounded-lg p-3.5 bg-white flex flex-col gap-3">
+              {/* Info Box - Responsive */}
+              <div className="w-full lg:w-[284px] border border-gray-400 rounded-lg p-3.5 bg-white flex flex-col gap-3">
                 <InfoRow label="Purchase Return Voucher No : " value={form.voucherNo} />
                 <InfoRow label="Customer Cur. Balance : " value={form.customerBal} />
                 <InfoRow label="Purchase Return A/c Cur. Balance : " value={form.salesBal} />
@@ -304,15 +306,17 @@ export default function PurchaseReturn() {
               </div>
             </div>
 
-            <div className="flex items-end mt-6">
-              <FloatingInput
-                label="Remarks"
-                value={form.remarks}
-                onChange={handleChange("remarks")}
-                width={975}
-                multiline
-              />
-              <label className="ml-5 flex items-center text-base">
+            {/* Remarks and Checkbox - Responsive */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 mt-6">
+              <div className="w-full sm:flex-1">
+                <FloatingInput
+                  label="Remarks"
+                  value={form.remarks}
+                  onChange={handleChange("remarks")}
+                  multiline
+                />
+              </div>
+              <label className="flex items-center text-base whitespace-nowrap">
                 <input
                   type="checkbox"
                   checked={form.includingTax}
@@ -325,6 +329,7 @@ export default function PurchaseReturn() {
 
             <h3 className="section-title mt-8">Purchase Return List</h3>
 
+            {/* Responsive Table Container */}
             <div className="table-container">
               <table className="data-table">
                 <thead className="table-header">
@@ -468,7 +473,7 @@ export default function PurchaseReturn() {
 
                             <Plus
                               size={16}
-                              className="add-primary"
+                              className="add-primary cursor-pointer"
                               onClick={() => addRowAbove(i)}
                             />
 
@@ -493,18 +498,20 @@ export default function PurchaseReturn() {
                   })}
                 </tbody>
               </table>
-
-              
             </div>
-            <div className="flex justify-end">
-                <button onClick={addRow} className="btn-search">
-                  <Plus size={18} /> Row
-                </button>
-              </div>
 
-            <div className="flex gap-6 mt-8 items-start">
-              <div className="flex-1">
-                <div className="grid grid-cols-3 gap-5">
+            {/* Add Row Button */}
+            <div className="flex justify-end mt-4">
+              <button onClick={addRow} className="btn-search">
+                <Plus size={18} /> Row
+              </button>
+            </div>
+
+            {/* Charges and Totals - Responsive Layout */}
+            <div className="flex flex-col lg:flex-row gap-6 mt-8 items-start">
+              {/* Charges Grid - Responsive */}
+              <div className="flex-1 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   <ChargeBox
                     label="Weighing And Loading"
                     value={charges.weighing}
@@ -627,7 +634,8 @@ export default function PurchaseReturn() {
                 </div>
               </div>
 
-              <div className="w-[300px] border border-gray-400 rounded-lg p-4 bg-white flex flex-col gap-2.5 text-base">
+              {/* Totals Box - Responsive */}
+              <div className="w-full lg:w-[300px] border border-gray-400 rounded-lg p-4 bg-white flex flex-col gap-2.5 text-base">
                 <TotalRow
                   label="Total Amount"
                   value={`₹ ${salesTotals.totalAmount.toLocaleString()}`}
@@ -666,18 +674,18 @@ export default function PurchaseReturn() {
               </div>
             </div>
 
-            <div className="flex justify-end mt-7">
+            {/* Footer Buttons - Responsive */}
+            <div className="footer-container mt-7">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
+              
               <button className="btn-search">
                 <span>✓</span>Submit
               </button>
             </div>
-          
-
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
-        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -688,11 +696,10 @@ const FloatingInput = ({
   label,
   value,
   onChange,
-  width = 255,
   type = "date",
   multiline = false
 }) => (
-  <div className="filter-grid-red" style={{ width, boxSizing: "border-box" }}>
+  <div className="filter-grid-red w-full">
     <label className="filter-label text-sm mb-1.5">
       {label}
     </label>
@@ -702,14 +709,14 @@ const FloatingInput = ({
         value={value}
         onChange={onChange}
         rows={3}
-        className="multiline-field pt-[22px] h-[60px] overflow-y-auto"
+        className="multiline-field pt-[22px] h-[60px] overflow-y-auto w-full"
       />
     ) : (
       <input
         type={type}
         value={value}
         onChange={onChange}
-        className="filter-input pt-[22px] text-sm"
+        className="filter-input pt-[22px] text-sm w-full"
       />
     )}
   </div>
@@ -726,9 +733,8 @@ const FloatingDropdown = ({
   options,
   dropdownRef,
   onSelect,
-  width = 255,
 }) => (
-  <div ref={dropdownRef} className="filter-grid-red dropdown-wrapper" style={{ width, zIndex: isOpen ? 1001 : 1 }}>
+  <div ref={dropdownRef} className="filter-grid-red dropdown-wrapper w-full" style={{ zIndex: isOpen ? 1001 : 1 }}>
     <label className="filter-label text-sm mb-1.5">
       {label}
     </label>
@@ -742,7 +748,7 @@ const FloatingDropdown = ({
         }}
         onFocus={() => setIsOpen(true)}
         placeholder="Type or select..."
-        className="dropdown-input filter-input cursor-text pr-[30px]"
+        className="dropdown-input filter-input cursor-text pr-[30px] w-full"
       />
       <ChevronDown
         size={16}
@@ -781,7 +787,7 @@ const InfoRow = ({ label, value }) => (
 );
 
 const ChargeBox = ({ label, value, onChange }) => (
-  <div className="filter-grid-red w-[255px]">
+  <div className="filter-grid-red w-full">
     <label className="filter-label text-sm mb-1.5">
       {label}
     </label>
@@ -789,7 +795,7 @@ const ChargeBox = ({ label, value, onChange }) => (
       type="number"
       value={value}
       onChange={onChange}
-      className="filter-input pt-[22px]"
+      className="filter-input pt-[22px] w-full"
     />
   </div>
 );
