@@ -210,7 +210,10 @@ export default function PurchaseSearch() {
                   )}
                 </div>
 
-                <div className="pr-2">
+                {/* ✅ FIX: "pr-2" → "btn-container" 
+                    filter-grid direct child ஆ btn-container ஆ இருக்குதா → 
+                    CSS: grid-column: 1/-1 + justify-content: flex-end → RIGHT align */}
+                <div className="btn-container">
                   <button
                     onClick={handleSearch}
                     className="btn-search"
@@ -220,16 +223,17 @@ export default function PurchaseSearch() {
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-4 gap-6">
-                <div className="col-start-4 pr-2">
-                  <button
-                    onClick={() => navigate("/layout/purchase")}
-                    className="btn-search"
-                  >
-                    <Plus size={18} />
-                    Purchase
-                  </button>
-                </div>
+              {/* ✅ FIX: Tailwind "grid grid-cols-4" + "col-start-4" → "btn-container"
+                  Mobile-ஐ Tailwind grid-cols-4 respond பண்ணாது → layout broken.
+                  btn-container use பண்ணா CSS media queries handle பண்ணும் → RIGHT align */}
+              <div className="btn-container">
+                <button
+                  onClick={() => navigate("/layout/purchase")}
+                  className="btn-search"
+                >
+                  <Plus size={18} />
+                  Purchase
+                </button>
               </div>
             </div>
 
