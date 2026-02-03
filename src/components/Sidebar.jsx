@@ -33,7 +33,7 @@ export default function Sidebar({ open, onNavigate }) {
     setActive("Dashboard");
   }
   
-  // Approval routes (முதல்ல check பண்ணனும் - sales-க்கு முன்னாடி)
+  // Approval routes 
   else if (path.includes("/quotationapproval")) {
     setActive("QuotationApproval");
     setApprovalOpen(true);
@@ -68,6 +68,10 @@ export default function Sidebar({ open, onNavigate }) {
     setActive("ContainerPurchase");
     setPurchaseOpen(true);
   } 
+  else if (path.includes("/containerstatusupdateform")) {
+    setActive("ContainerStatusUpdateForm");
+    setSalesOpen(true);
+  }
   else if (path.includes("/containerstatus")) {
     setActive("ContainerStatus");
     setPurchaseOpen(true);
@@ -205,7 +209,7 @@ export default function Sidebar({ open, onNavigate }) {
     setFormsOpen(true);
   }
 
-  // Sales routes (approval routes க்கு பிறகு)
+  // Sales routes
   else if (path.includes("/lead")) {
     setActive("Lead");
     setSalesOpen(true);
@@ -221,11 +225,7 @@ export default function Sidebar({ open, onNavigate }) {
   else if (path.includes("/proformainvoice")) {
     setActive("ProformaInvoice");
     setSalesOpen(true);
-  }
-  else if (path.includes("/containerstatusupdateform")) {
-    setActive("ContainerStatusUpdateForm");
-    setSalesOpen(true);
-  }
+  } 
 
   // Account routes
   else if (path.includes("/ledgermastergroupform")) {
@@ -445,7 +445,7 @@ export default function Sidebar({ open, onNavigate }) {
           {purchaseOpen && (
             <>
               <SubButton label="Container Master" active={active === "ContainerMaster"} isDark={isDark} onClick={() => handleClick("ContainerMaster")} />
-              <SubButton label="Purchase Master" active={active === "PurchaseMaster"} isDark={isDark} onClick={() => handleClick("PurchaseMaster", "PurchaseMaster")} />
+              <SubButton label="Purchase Order Master" active={active === "PurchaseMaster"} isDark={isDark} onClick={() => handleClick("PurchaseMaster", "PurchaseMaster")} />
               <SubButton label="Container Purchase" active={active === "ContainerPurchase"} isDark={isDark} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
               <SubButton label="Container Status" active={active === "ContainerStatus"} isDark={isDark} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
             </>

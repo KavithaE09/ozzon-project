@@ -1073,7 +1073,7 @@ export default function AssignTask() {
                   </div>
 
                   {/* Save Button */}
-                  <div classNmae="btn-container">
+                  <div className="btn-container">
                     <button onClick={handleSaveNewRow} className="btn-all" >
                       Save
                     </button>
@@ -1083,29 +1083,22 @@ export default function AssignTask() {
                 </div>
               <Pagination currentPage={rowPage} totalPages={rowTotalPages} setCurrentPage={setRowPage} />
               
-          {/* Back Button */}
-          <div className="filter-grid" >
+              {/* Footer Buttons */}
+              <div className="footer-container">
+                <button onClick={() => navigate(-1)} className="btn-back">
+                  <span>←</span>
+                  <span>Back</span>
+                </button>
 
-            <div className="btn-container">
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
-          </div>
-          <div></div>
-          <div></div>
-              {/* Submit Button */}
-              <div className="btn-container">
                 <button onClick={handleAcceptJob} className="btn-search">
                   <span>✓</span>
-                  Assign Task
+                  <span>Assign Task</span>
                 </button>
-                </div>
-              </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }

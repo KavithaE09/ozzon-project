@@ -187,19 +187,12 @@ export default function ContainerStatusUpdateForm() {
                     className="filter-input"
                   />
                 </div>
-
-                {/* Search Button */}
-                <div className="btn-container">
-                  <button onClick={handleSearch} className="btn-all">
-                    <Search size={18} /> Search
-                  </button>
-                </div>
               </div>
 
-              {/* Third Row */}
+              {/* Third Row - Remark + Search Button */}
               <div className="filter-grid" style={{ marginTop: '16px' }}>
-                {/* Remark - Spans 4 columns */}
-                <div className="filter-grid-red" style={{ gridColumn: 'span 4' }}>
+                {/* Remark - Spans 3 columns */}
+                <div className="filter-grid-red" style={{ gridColumn: 'span 3' }}>
                   <label className="filter-label">Remark</label>
                   <textarea
                     value={formData.remark}
@@ -207,6 +200,13 @@ export default function ContainerStatusUpdateForm() {
                     rows="1"
                     className='multiline-field'
                   />
+                </div>
+
+                {/* Search Button */}
+                <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
                 </div>
               </div>
             </div>

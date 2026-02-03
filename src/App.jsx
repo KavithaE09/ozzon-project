@@ -70,6 +70,7 @@ import ForgetPassword from "./components/ForgetPassword";
 import OTP from "./components/OTP";
 import Register from "./components/Register";
 
+
 export default function App() {
   return (
     <Routes>
