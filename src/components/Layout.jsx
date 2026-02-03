@@ -34,6 +34,11 @@ export default function Layout() {
         <Sidebar
           open={sidebarOpen}
           onNavigate={(page) => {
+
+            // MOBILE ONLY AUTO CLOSE
+            if (window.innerWidth < 1024) {
+              setSidebarOpen(false);
+            }
             if (page === "Dashboard") navigate("/layout");
             if (page === "Lead") navigate("/layout/lead");
             if (page === "QuotationSearch") navigate("/layout/quotation");
