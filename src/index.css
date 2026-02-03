@@ -698,6 +698,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 .login-container {
   max-width: 1400px;
@@ -790,6 +791,24 @@ body {
   cursor: pointer;
 }
 
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .login-container { flex-direction: column; gap: 30px; }
+  .logo { width: 180px; }
+  .title { font-size: 24px; }
+  .login-image { width: 280px; }
+  .login-card { width: 100%; max-width: 400px; padding: 30px; }
+  .login-card h2 { font-size: 24px; }
+}
+
+@media (max-width: 480px) {
+  .logo { width: 150px; }
+  .title { font-size: 20px; }
+  .login-image { width: 240px; }
+  .login-card { padding: 25px 20px; }
+  .login-card h2 { font-size: 22px; }
+  .remember, .forgot { font-size: 12px; }
+}
 /* ─────────────────────────────────────────── */
 /* TABLE                                       */
 /* ─────────────────────────────────────────── */
