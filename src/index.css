@@ -410,12 +410,19 @@
   background: #7C3AED !important;
 }
 .btn-smallbtn {
-  padding: 8px 12px !important;
+  padding: 8px 100px !important;
   background: #A63128 !important;
   color: white !important;
   border-radius: 4px !important;
   font-size: 14px !important;
   cursor: pointer !important;
+  justify-self: center; 
+}
+ /* proformainvoice action buttons */
+.action-buttons {
+  display: flex !important;
+  justify-content: center;
+  gap: 40px;
 }
 .btn-smallbtn:hover {
   background: #d9372b !important;
