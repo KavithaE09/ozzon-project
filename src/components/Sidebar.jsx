@@ -445,7 +445,7 @@ export default function Sidebar({ open, onNavigate }) {
           {purchaseOpen && (
             <>
               <SubButton label="Container Master" active={active === "ContainerMaster"} isDark={isDark} onClick={() => handleClick("ContainerMaster")} />
-              <SubButton label="Purchase Master" active={active === "PurchaseMaster"} isDark={isDark} onClick={() => handleClick("PurchaseMaster", "PurchaseMaster")} />
+              <SubButton label="Purchase Order Master" active={active === "PurchaseMaster"} isDark={isDark} onClick={() => handleClick("PurchaseMaster", "PurchaseMaster")} />
               <SubButton label="Container Purchase" active={active === "ContainerPurchase"} isDark={isDark} onClick={() => handleClick("ContainerPurchase", "ContainerPurchase")} />
               <SubButton label="Container Status" active={active === "ContainerStatus"} isDark={isDark} onClick={() => handleClick("ContainerStatus", "ContainerStatus")} />
             </>

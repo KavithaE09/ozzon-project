@@ -79,17 +79,17 @@ export default function PurchaseMaster() {
         <div className="main-section">
           <div className="content-card">
             {/* Purchase Master Section */}
-            <h2 className="page-title">Purchase Master</h2>
+            <h2 className="page-title">Purchase Order</h2>
             
             <div className="filter-section">
               <div className="filter-grid">
                 <div className="filter-grid-red">
-                  <label className="filter-label">Purchase Name</label>
+                  <label className="filter-label">Purchase Order Name</label>
                   <input
                     type="text"
                     value={purchaseName}
                     onChange={(e) => setPurchaseName(e.target.value)}
-                    placeholder="Enter purchase name"
+                    placeholder="Enter purchase Order name"
                     className="filter-input"
                   />
                 </div>
@@ -111,7 +111,7 @@ export default function PurchaseMaster() {
                   <label className="filter-label">Search By</label>
                   <input
                     type="text"
-                    placeholder="Purchase Name"
+                    placeholder="Purchase Order Name"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="filter-input"
@@ -129,7 +129,7 @@ export default function PurchaseMaster() {
             {/* Table */}
             <div className="master-table-container">
               <div className="master-table-header">
-                <span className="master-table-title">Purchase List</span>
+                <span className="master-table-title">Purchase Order List</span>
               </div>
               <div className="master-table-body">
                 {currentGroups.length > 0 ? (
