@@ -1,11 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import { Outlet, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 export default function Layout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth >= 1024) {
+      setSidebarOpen(true);   // Desktop
+    } else {
+      setSidebarOpen(false);  // Mobile
+    }
+  };
+
+  handleResize();
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
 
   return (
     <div className="h-screen overflow-hidden">
