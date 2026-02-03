@@ -247,7 +247,7 @@ export default function PurchaseReturn() {
                   />
 
                   {/* Purchase Type Dropdown */}
-                  <div ref={purchaseTypeDropdownRef} className="dropdown-wrapper">
+                  <div ref={purchaseTypeDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Purchase Return Type</label>
                     <div className="relative">
                       <input
@@ -256,7 +256,7 @@ export default function PurchaseReturn() {
                         onChange={handlePurchaseTypeInput}
                         onFocus={() => setIsPurchaseTypeOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input"
+                        className="filter-input dropdown-input"
                       />
                       <ChevronDown size={20} className="dropdown-icon" />
                     </div>
@@ -288,7 +288,7 @@ export default function PurchaseReturn() {
                   </div>
 
                   {/* Supplier Dropdown */}
-                  <div ref={supplierDropdownRef} className="dropdown-wrapper">
+                  <div ref={supplierDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Supplier</label>
                     <div className="relative">
                       <input
@@ -297,7 +297,7 @@ export default function PurchaseReturn() {
                         onChange={handleSupplierInput}
                         onFocus={() => setIsSupplierOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input"
+                        className="filter-input dropdown-input"
                       />
                       <ChevronDown size={20} className="dropdown-icon" />
                     </div>
@@ -331,7 +331,7 @@ export default function PurchaseReturn() {
 
                 <div className="flex gap-5 mt-5">
                   {/* Cash Account Dropdown */}
-                  <div ref={cashAccountDropdownRef} className="dropdown-wrapper">
+                  <div ref={cashAccountDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Cash Account</label>
                     <div className="relative">
                       <input
@@ -340,7 +340,7 @@ export default function PurchaseReturn() {
                         onChange={handleCashAccountInput}
                         onFocus={() => setIsCashAccountOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input"
+                        className="filter-input dropdown-input"
                       />
                       <ChevronDown size={20} className="dropdown-icon" />
                     </div>
@@ -372,7 +372,7 @@ export default function PurchaseReturn() {
                   </div>
 
                   {/* Purchase Account Dropdown */}
-                  <div ref={purchaseAccountDropdownRef} className="dropdown-wrapper">
+                  <div ref={purchaseAccountDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Purchase Account</label>
                     <div className="relative">
                       <input
@@ -381,7 +381,7 @@ export default function PurchaseReturn() {
                         onChange={handlePurchaseAccountInput}
                         onFocus={() => setIsPurchaseAccountOpen(true)}
                         placeholder="Type or select..."
-                        className="dropdown-input"
+                        className="filter-input dropdown-input"
                       />
                       <ChevronDown size={20} className="dropdown-icon" />
                     </div>
