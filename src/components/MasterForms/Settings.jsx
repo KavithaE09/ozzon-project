@@ -24,32 +24,37 @@ export default function Settings() {
   const [containerblock, setContainerblock] = useState('1');
   const [containerfabric, setContainerfabric] = useState('1');
 
-  const terms = `1. This rate is valid for 2 weeks from the quotation date.
+  /* ===== IMAGE STATES ===== */
+  const [companyLogo, setCompanyLogo] = useState([]);
+  const [companyLogoPreviews, setCompanyLogoPreviews] = useState([]);
+  const [authorizedSign, setAuthorizedSign] = useState([]);
+  const [authorizedSignPreviews, setAuthorizedSignPreviews] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const [terms, setTerms] = useState(`1. This rate is valid for 2 weeks from the quotation date.
 2. Delivery: Fabrication will take a minimum of 21 days to complete.
 3. Payment Mode: 60% in advance & balance 40% on completion and before loading.
 4. Transportation & Unloading: To be arranged by the customer at site.
 5. Buy Back: Seller has a buy-back policy once the container is used.
 6. Warranty: Six months from the date of delivery.
-7. Transit Insurance: Transit insurance can be arranged on request and will be billed separately.`;
+7. Transit Insurance: Transit insurance can be arranged on request and will be billed separately.`);
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-1 mb-2.5 bg-[#f5e6e8] p-5 overflow-y-auto">
-        <div className="bg-white rounded-lg p-[18px] mb-2.5">
+    <div className="page-container">
+      <div className="main-section">
+        <div className="content-card">
+          <h3 className="page-title">Settings</h3>
 
-          <h3 className="text-xl mb-3">Settings</h3>
+          <div className="flex gap-5 mb-5 flex-col lg:flex-row">
 
-          {/* ===== TOP SECTION ===== */}
-          <div className="flex gap-5 mb-5">
 
-            {/* ===== BANK DETAILS ===== */}
-            <div className="flex-[1.4] border border-gray-200 text-base rounded-md p-3.5">
-              <Label>Bank Details</Label>
+            <div className="flex-[1.4] filter-grid-gray">
+              <div className="section-title">Bank Details</div>
 
               <div className="grid gap-1.5">
                 {bankDetails.map((item, i) => (
                   <div key={i} className="flex items-center text-sm">
-                    <span className="w-[120px] font-medium">{item.label}</span>
+                    <span className="w-[120px] font-medium filter-label">{item.label}</span>
                     <span className="w-2.5">:</span>
                     <input
                       value={item.value}
@@ -58,15 +63,15 @@ export default function Settings() {
                         updated[i].value = e.target.value;
                         setBankDetails(updated);
                       }}
-                      className="border-none outline-none text-sm w-full bg-transparent"
+                      className="filter-input flex-1"
                     />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* ===== RIGHT SIDE INPUTS ===== */}
-            <div className="flex-1 grid grid-cols-2 gap-4">
+
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
               <FloatingInput label="Financial Year" value={financialYear} setValue={setFinancialYear} />
               <FloatingInput label="Quotation Prefix" value={quotationPrefix} setValue={setQuotationPrefix} />
               <FloatingInput label="Proforma Invoice Prefix" value={proformaPrefix} setValue={setProformaPrefix} />
@@ -74,25 +79,42 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* ===== TERMS ===== */}
-          <div className="border border-gray-200 text-base rounded-md p-3.5 mb-5">
-            <Label>Terms And Conditions</Label>
-            <div className="border border-gray-300 rounded-md p-3 text-sm whitespace-pre-line bg-gray-50">
-              {terms}
-            </div>
+
+          <div className="filter-grid-gray mb-5">
+            <div className="section-title">Terms And Conditions</div>
+            <textarea
+              value={terms}
+              onChange={(e) => setTerms(e.target.value)}
+              className="multiline-field w-full min-h-[150px]"
+              rows={8}
+            />
           </div>
 
-          {/* ===== IMAGE UPLOAD + CONTAINER FIELDS ===== */}
-          <div className="border border-gray-200 text-base rounded-md p-3.5">
-            <Label>Logo Upload</Label>
 
-            <div className="flex gap-6 mb-5">
-              <UploadField label="Company Logo" />
-              <UploadField label="Authorized Sign" />
+          <div className="filter-grid-gray">
+            <div className="section-title">Logo Upload & Container Settings</div>
+
+            <div className="flex gap-6 mb-5 flex-col md:flex-row">
+              <UploadField 
+                label="Company Logo"
+                images={companyLogo}
+                setImages={setCompanyLogo}
+                imagePreviews={companyLogoPreviews}
+                setImagePreviews={setCompanyLogoPreviews}
+                setSelectedImage={setSelectedImage}
+              />
+              <UploadField 
+                label="Authorized Sign"
+                images={authorizedSign}
+                setImages={setAuthorizedSign}
+                imagePreviews={authorizedSignPreviews}
+                setImagePreviews={setAuthorizedSignPreviews}
+                setSelectedImage={setSelectedImage}
+              />
             </div>
 
             {/* CONTAINER FIELDS */}
-            <div className="grid grid-cols-3 gap-[70px]">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FloatingInput label="Container Hold Hours" value={container} setValue={setContainer} />
               <FloatingInput label="Container Block Days for Empty" value={containerblock} setValue={setContainerblock} />
               <FloatingInput label="Container Block Days for Fabric" value={containerfabric} setValue={setContainerfabric} />
@@ -100,8 +122,8 @@ export default function Settings() {
           </div>
 
           {/* ===== SAVE BUTTON ===== */}
-          <div className="flex justify-end mt-5">
-            <button className="bg-[#7f1d1d] text-white border-none py-2.5 px-8 rounded-md cursor-pointer hover:bg-[#991b1b] transition-colors">
+          <div className="btn-container">
+            <button className="btn-search">
               Save
             </button>
           </div>
@@ -117,37 +139,86 @@ export default function Settings() {
           <span>Back</span>
         </button>
       </div>
+
+      {/* IMAGE MODAL */}
+      {selectedImage && (
+        <div className="image-modal-overlay" onClick={() => setSelectedImage(null)}>
+          <div className="image-modal-content">
+            <img
+              src={selectedImage}
+              alt="Full view"
+              className="image-modal-img"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="image-modal-close"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
-
-/* ================= COMPONENTS ================= */
+} 
 
 const FloatingInput = ({ label, value, setValue }) => (
-  <div className="w-[255px] h-[59px] border border-gray-300 rounded-md p-2 px-2.5 flex flex-col justify-center">
-    <span className="text-base font-bold text-gray-700 mb-1">
+  <div className="filter-grid-gray">
+    <label className="filter-label">
       {label}
-    </span>
+    </label>
     <input
       value={value}
       onChange={e => setValue(e.target.value)}
-      className="border-none outline-none text-sm bg-transparent"
+      className="filter-input"
     />
   </div>
 );
 
-const Label = ({ children }) => (
-  <div className="text-xs font-semibold mb-2">
-    {children}
-  </div>
-);
+const UploadField = ({ label, images, setImages, imagePreviews, setImagePreviews, setSelectedImage }) => {
+  
+  const removeImage = (index) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
 
-const UploadField = ({ label }) => (
-  <div className="flex-1">
-    <Label>{label}</Label>
-    <input 
-      type="file" 
-      className="w-full border border-gray-300 rounded-md p-2"
-    />
-  </div>
-);
+  return (
+    <div className="flex-1">
+      <label className="filter-label">{label}</label>
+      <input 
+        type="file" 
+        accept="image/*"
+        multiple
+        onChange={(e) => {
+          const files = Array.from(e.target.files);
+          const newPreviews = files.map(file => URL.createObjectURL(file));
+          setImages(prev => [...prev, ...files]);
+          setImagePreviews(prev => [...prev, ...newPreviews]);
+          e.target.value = null;
+        }}
+        className="file-input w-full"
+      />
+
+      {imagePreviews && imagePreviews.length > 0 && (
+        <div className="image-preview-container">
+          {imagePreviews.map((img, index) => (
+            <div key={index} className="image-preview-wrapper">
+              <img
+                src={img}
+                alt={`preview-${index}`}
+                onClick={() => setSelectedImage(img)}
+                className="image-preview"
+              />
+              <button
+                onClick={() => removeImage(index)}
+                className="image-remove-btn"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};

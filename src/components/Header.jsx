@@ -72,15 +72,15 @@ export default function Header({ onMenuClick }) {
     >
       {/* LEFT SIDE */}
       <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
-        {/* MENU ICON - Larger on mobile, normal on desktop */}
-        <Menu
-          className="w-7 h-7 md:w-6 md:h-6 lg:w-[18px] lg:h-[18px] cursor-pointer flex-shrink-0"
-          onClick={onMenuClick}
-          style={{
-            color: darkMode ? "#E5E7EB" : "#374151",
-            filter: darkMode ? "brightness(2)" : "none"
-          }}
-        />
+       
+<Menu
+  className="w-7 h-7 cursor-pointer flex-shrink-0"
+  onClick={onMenuClick}
+  style={{
+    color: darkMode ? "#E5E7EB" : "#374151",
+    filter: darkMode ? "brightness(2)" : "none"
+  }}
+/>
 
         {/* LOGO - Larger on mobile, normal on desktop */}
         <div className="h-10 md:h-9 lg:h-10 flex items-center flex-shrink-0">
@@ -184,7 +184,7 @@ export default function Header({ onMenuClick }) {
         <div ref={profileRef} className="relative">
           <div
             onClick={() => setOpenProfile(!openProfile)}
-            className="cursor-pointer flex items-center justify-center lg:gap-3 lg:px-4 lg:border"
+            className="cursor-pointer flex items-center justify-center lg:gap-3 lg:py-2 lg:px-4 lg:border"
             style={{ 
               width: "auto",
               height: "auto",

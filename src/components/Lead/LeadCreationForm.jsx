@@ -52,6 +52,7 @@ const jobList = [
     otherRequirements: '',
     leadPriority: '',
     brokerName: '',  
+    remark: '',
     description: ''
   });
 
@@ -169,6 +170,7 @@ const jobList = [
       otherRequirements: '',
       leadPriority: '',
       brokerName: '',
+      remark: '',
       description: ''
     });
     setLeadOwnerSearch('');
@@ -559,32 +561,22 @@ const jobReviewList = [
                 <label className="filter-label">Lead Priority</label>
                 <input type="text" name="leadPriority" value={formData.leadPriority} onChange={handleChange} placeholder="Warm" className="filter-input" />
               </div>
-               <div className="filter-grid-red" >
+
+              <div className="filter-grid-red">
                 <label className="filter-label">Broker Name</label>
                 <input type="text" name="brokerName" value={formData.brokerName} onChange={handleChange} placeholder="Broker Name" className="filter-input" />
               </div>
-              {/* 🔹 Remark field – right side of Broker Name */}
 
+              
+             
+              <div className="filter-grid-blue" style={{ gridColumn: 'span 3' }}>
+                <label className="filter-label">Remark</label>
+                <input type="text" name="remark" value={formData.remark} onChange={handleChange} placeholder="Enter remark" className="filter-input"
+                 />
+              </div>
             </div>
-            <div
-  className="filter-grid-blue mt-4"
-  style={{
-    maxWidth: "1160px",
-    width: "100%",
-  }}
->
-  <label className="filter-label">Remark</label>
 
-  <textarea 
-    name="description" 
-    value={formData.description} 
-    onChange={handleDescriptionChange} 
-    placeholder="Enter Remarks here..." 
-    rows="1" 
-    className="multiline-field"
-    style={{ width: "100%" }}
-  />
-</div>
+         
 
            
           </div>

@@ -17,7 +17,7 @@ const PartyAdvanceForm = () => {
     amount: '27436',
     creditAC: '',
     debitAC: '',
-    narration: 'Nathan',
+    remarks: 'Nathan',
     quotationDate: getTodayDate(),
     piDate: getTodayDate(),
     jobOrderNo: ''
@@ -144,8 +144,8 @@ const PartyAdvanceForm = () => {
           <div className="content-card">
             <h2 className="page-title">Party Advance</h2>
 
-            {/* MAIN INPUTS */}
-            <div className="flex gap-5 mt-6">
+            {/* MAIN INPUTS - First Row: 4 fields - Responsive */}
+            <div className="flex flex-col md:flex-row gap-5 mt-6">
               <FloatingInput
                 label="Date"
                 type="date"
@@ -165,9 +165,7 @@ const PartyAdvanceForm = () => {
                 value={formData.amount}
                 onChange={handleChange('amount')}
               />
-            </div>
 
-            <div className="flex gap-5 mt-5">
               {/* Credit A/C Dropdown */}
               <DropdownField
                 ref={creditDropdownRef}
@@ -182,7 +180,10 @@ const PartyAdvanceForm = () => {
                 hoveredValue={hoveredCredit}
                 setHoveredValue={setHoveredCredit}
               />
+            </div>
 
+            {/* Second Row: 2 fields - Responsive */}
+            <div className="flex flex-col md:flex-row gap-5 mt-5">
               {/* Debit A/C Dropdown */}
               <DropdownField
                 ref={debitDropdownRef}
@@ -199,46 +200,49 @@ const PartyAdvanceForm = () => {
               />
 
               <FloatingInput
-                label="Narration"
-                value={formData.narration}
-                onChange={handleChange('narration')}
+                label="Remarks"
+                value={formData.remarks}
+                onChange={handleChange('remarks')}
                 multiline
+                width={535}
               />
             </div>
 
-            {/* QUOTATION + PI SECTION */}
-            <div className="flex gap-4 mt-8 items-end">
+            {/* QUOTATION + PI SECTION - Both on Left, Stacked on Mobile */}
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mt-8">
               {/* LEFT – QUOTATION */}
-              <div className="flex flex-col gap-3">
-                <DisplayBox label="Quotation No" value={quotationNo} />
-                <FloatingInput
-                  label="Quotation Date"
-                  type="date"
-                  value={formData.quotationDate}
-                  onChange={handleChange('quotationDate')}
-                />
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
+                <div className="flex flex-col gap-3 w-full sm:w-auto">
+                  <DisplayBox label="Quotation No" value={quotationNo} />
+                  <FloatingInput
+                    label="Quotation Date"
+                    type="date"
+                    value={formData.quotationDate}
+                    onChange={handleChange('quotationDate')}
+                  />
+                </div>
+                <button className="btn-smallbtn w-full sm:w-[100px] h-[50px]">Open</button>
               </div>
 
-              <button className="btn-smallbtn h-[42px] mb-[2px]">Open</button>
-
-              {/* RIGHT – PI */}
-              <div className="flex flex-col gap-3">
-                <DisplayBox label="PI No" value={piNo} />
-                <FloatingInput
-                  label="PI Date"
-                  type="date"
-                  value={formData.piDate}
-                  onChange={handleChange('piDate')}
-                />
+              {/* LEFT – PI */}
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
+                <div className="flex flex-col gap-3 w-full sm:w-auto">
+                  <DisplayBox label="PI No" value={piNo} />
+                  <FloatingInput
+                    label="PI Date"
+                    type="date"
+                    value={formData.piDate}
+                    onChange={handleChange('piDate')}
+                  />
+                </div>
+                <button className="btn-smallbtn w-full sm:w-[100px] h-[50px]">Open</button>
               </div>
-
-              <button className="btn-smallbtn h-[42px] mb-[2px]">Open</button>
             </div>
 
             {/* CONTAINER LIST */}
             <h3 className="section-title mt-8">Container List</h3>
 
-            <div className="table-container">
+            <div className="table-container overflow-x-auto">
               <table className="data-table">
                 <thead className="table-header">
                   <tr>
@@ -275,7 +279,7 @@ const PartyAdvanceForm = () => {
               </table>
             </div>
 
-            <div className="flex justify-end items-end gap-4 mt-8">
+            <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-end gap-4 mt-8">
               <FloatingInput
                 label="Job Order No"
                 value={formData.jobOrderNo}
@@ -285,7 +289,7 @@ const PartyAdvanceForm = () => {
 
               <button
                 onClick={() => handleNavigate("/proformainvoice/advance/submit")}
-                className="btn-search"
+                className="btn-search w-full sm:w-auto"
               >
                 <span>✓</span> Submit
               </button>
@@ -312,7 +316,13 @@ const FloatingInput = ({
   borderColor = 'red'
 }) => {
   const borderClass = borderColor === 'blue' ? 'filter-grid-blue' : 'filter-grid-red';
-  const widthClass = width === 255 ? 'w-[255px]' : width === 320 ? 'w-[320px]' : '';
+  const widthClass = width === 255 
+    ? 'w-full md:w-[255px]' 
+    : width === 320 
+    ? 'w-full sm:w-[320px]' 
+    : width === 535 
+    ? 'w-full md:w-[535px]' 
+    : '';
   
   return (
     <div className={`${borderClass} ${widthClass}`}>
@@ -353,7 +363,7 @@ const DropdownField = React.forwardRef(({
 }, ref) => (
   <div 
     ref={ref} 
-    className="filter-grid-red dropdown-wrapper w-[255px]" 
+    className="filter-grid-red dropdown-wrapper w-full md:w-[255px]" 
     style={{ zIndex: isOpen ? 1001 : 1 }}
   >
     <label className="filter-label text-sm mb-1.5">{label}</label>
@@ -399,7 +409,7 @@ const DropdownField = React.forwardRef(({
 DropdownField.displayName = 'DropdownField';
 
 const DisplayBox = ({ label, value }) => (
-  <div className="filter-grid-red w-[255px]">
+  <div className="filter-grid-red w-full md:w-[255px]">
     <label className="filter-label text-sm mb-1.5">{label}</label>
     <div className="text-sm font-semibold pt-[3px]">{value}</div>
   </div>

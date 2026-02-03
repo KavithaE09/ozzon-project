@@ -295,6 +295,18 @@
   border: 1px solid #374151;
   border-right: 3px solid #2f22c3;
 }
+.filter-grid-gray {
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #9CA3AF;
+  position: relative;
+  margin-bottom: 8px;
+}
+.dark .filter-grid-gray {
+  background-color: #1E293B;
+  border: 1px solid #374151;
+}
 .filter-label {
   display: block;
   font-size: 16px;
