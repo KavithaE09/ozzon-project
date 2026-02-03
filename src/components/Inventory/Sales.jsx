@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2, ChevronDown } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
@@ -143,6 +143,22 @@ export default function Sales() {
     setRows(newRows);
   };
 
+  const handleMoveUp = (index) => {
+    if (index === 0) return; // Cannot move up if it's the first row
+    const newRows = [...rows];
+    // Swap with previous row
+    [newRows[index - 1], newRows[index]] = [newRows[index], newRows[index - 1]];
+    setRows(newRows);
+  };
+
+  const handleMoveDown = (index) => {
+    if (index === rows.length - 1) return; // Cannot move down if it's the last row
+    const newRows = [...rows];
+    // Swap with next row
+    [newRows[index], newRows[index + 1]] = [newRows[index + 1], newRows[index]];
+    setRows(newRows);
+  };
+
   const salesTotals = rows.reduce(
     (acc, row) => {
       const qty = Number(row.qty) || 0;
@@ -273,6 +289,7 @@ export default function Sales() {
 
                   <FloatingInput
                     label="Bill No"
+                    type="number"
                     value={form.billNo}
                     onChange={handleChange("billNo")}
                   />
@@ -363,7 +380,7 @@ export default function Sales() {
                           <input
                             value={row.code}
                             onChange={(e) => updateRow(i, "code", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full min-w-[100px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
 
@@ -371,7 +388,7 @@ export default function Sales() {
                           <input
                             value={row.product}
                             onChange={(e) => updateRow(i, "product", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full min-w-[180px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
 
@@ -379,7 +396,7 @@ export default function Sales() {
                           <input
                             value={row.unit}
                             onChange={(e) => updateRow(i, "unit", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full min-w-[100px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
 
@@ -388,7 +405,7 @@ export default function Sales() {
                             type="number"
                             value={row.qty}
                             onChange={(e) => updateRow(i, "qty", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full min-w-[80px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
 
@@ -397,39 +414,61 @@ export default function Sales() {
                             type="number"
                             value={row.rate}
                             onChange={(e) => updateRow(i, "rate", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full min-w-[100px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
 
-                        <td className="table-cell">₹ {amount.toLocaleString()}</td>
+                        <td className="table-cell min-w-[120px]">₹ {amount.toLocaleString()}</td>
 
                         <td className="table-cell">
                           <input
                             type="number"
                             value={row.disc}
                             onChange={(e) => updateRow(i, "disc", e.target.value)}
-                            className="w-full h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
+                            className="w-full min-w-[70px] h-[27px] leading-[27px] border border-gray-400 rounded px-1.5 text-[13px] box-border"
                           />
                         </td>
 
-                        <td className="table-cell">₹ {discAmount.toLocaleString()}</td>
-                        <td className="table-cell">₹ {taxable.toLocaleString()}</td>
+                        <td className="table-cell min-w-[120px]">₹ {discAmount.toLocaleString()}</td>
+                        <td className="table-cell min-w-[120px]">₹ {taxable.toLocaleString()}</td>
 
-                        <td className="table-cell">{cgstPer}%</td>
-                        <td className="table-cell">₹ {cgstAmt.toLocaleString()}</td>
+                        <td className="table-cell min-w-[80px]">{cgstPer}%</td>
+                        <td className="table-cell min-w-[120px]">₹ {cgstAmt.toLocaleString()}</td>
 
-                        <td className="table-cell">{sgstPer}%</td>
-                        <td className="table-cell">₹ {sgstAmt.toLocaleString()}</td>
+                        <td className="table-cell min-w-[80px]">{sgstPer}%</td>
+                        <td className="table-cell min-w-[120px]">₹ {sgstAmt.toLocaleString()}</td>
 
-                        <td className="table-cell font-semibold">
+                        <td className="table-cell font-semibold min-w-[130px]">
                           ₹ {total.toLocaleString()}
                         </td>
 
                         <td className="table-cell-center">
                           <div className="table-actions">
+                            <ArrowUp
+                              size={16}
+                              className={`${i === 0 ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer text-black-600 hover:text-blue-800'}`}
+                              onClick={() => {
+                                if (i !== 0) {
+                                  handleMoveUp(i);
+                                }
+                              }}
+                              title={i === 0 ? 'Already at top' : 'Move up'}
+                            />
+
+                            <ArrowDown
+                              size={16}
+                              className={`${i === rows.length - 1 ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer text-black-600 hover:text-blue-800'}`}
+                              onClick={() => {
+                                if (i !== rows.length - 1) {
+                                  handleMoveDown(i);
+                                }
+                              }}
+                              title={i === rows.length - 1 ? 'Already at bottom' : 'Move down'}
+                            />
+
                             <Plus
                               size={16}
-                              className="cursor-pointer text-black"
+                              className="add-primary"
                               onClick={() => addRowAbove(i)}
                             />
 
