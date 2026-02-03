@@ -1309,10 +1309,11 @@ export default function ProformaInvoiceForm() {
             
             {/* Action Buttons */}
             <div className="filter-grid mb-4">
-              <button onClick={handleSubmit} className="btn-smallbtn">Submit</button>
+              
               <button onClick={handlePrint} className="btn-smallbtn">Print</button>
-              <button onClick={handleDownloadPDF} className="btn-smallbtn">PDF</button>
+             {/* <button onClick={handleDownloadPDF} className="btn-smallbtn">PDF</button> */}
               <button onClick={handleDownloadExcel} className="btn-smallbtn">Excel</button>
+              <button onClick={handleSubmit} className="btn-smallbtn">Submit</button>
             </div>
           </div>
                   
