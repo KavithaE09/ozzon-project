@@ -74,7 +74,7 @@ export default function Header({ onMenuClick }) {
       {/* LEFT SIDE */}
       <div className="flex items-center" style={{ paddingLeft: "24px" }}>
       
-        <Menu  size={55}
+        <Menu  size={24}
           alt="menu"
           className="w-[18.14px] h-[17.61px] cursor-pointer"
           onClick={onMenuClick}

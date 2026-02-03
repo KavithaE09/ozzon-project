@@ -249,17 +249,15 @@ export default function PurchaseReturn() {
                   {/* Purchase Type Dropdown */}
                   <div ref={purchaseTypeDropdownRef} className="dropdown-wrapper">
                     <label className="filter-label">Purchase Return Type</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={purchaseTypeSearch}
-                        onChange={handlePurchaseTypeInput}
-                        onFocus={() => setIsPurchaseTypeOpen(true)}
-                        placeholder="Type or select..."
-                        className="dropdown-input"
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
+                    <input
+                      type="text"
+                      value={purchaseTypeSearch}
+                      onChange={handlePurchaseTypeInput}
+                      onFocus={() => setIsPurchaseTypeOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                     {isPurchaseTypeOpen && (
                       <div className="dropdown-menu">
                         {filteredPurchaseTypes.length > 0 ? (
@@ -290,17 +288,15 @@ export default function PurchaseReturn() {
                   {/* Supplier Dropdown */}
                   <div ref={supplierDropdownRef} className="dropdown-wrapper">
                     <label className="filter-label">Supplier</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={supplierSearch}
-                        onChange={handleSupplierInput}
-                        onFocus={() => setIsSupplierOpen(true)}
-                        placeholder="Type or select..."
-                        className="dropdown-input"
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
+                    <input
+                      type="text"
+                      value={supplierSearch}
+                      onChange={handleSupplierInput}
+                      onFocus={() => setIsSupplierOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                     {isSupplierOpen && (
                       <div className="dropdown-menu">
                         {filteredSuppliers.length > 0 ? (
@@ -333,17 +329,15 @@ export default function PurchaseReturn() {
                   {/* Cash Account Dropdown */}
                   <div ref={cashAccountDropdownRef} className="dropdown-wrapper">
                     <label className="filter-label">Cash Account</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={cashAccountSearch}
-                        onChange={handleCashAccountInput}
-                        onFocus={() => setIsCashAccountOpen(true)}
-                        placeholder="Type or select..."
-                        className="dropdown-input"
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
+                    <input
+                      type="text"
+                      value={cashAccountSearch}
+                      onChange={handleCashAccountInput}
+                      onFocus={() => setIsCashAccountOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                     {isCashAccountOpen && (
                       <div className="dropdown-menu">
                         {filteredCashAccounts.length > 0 ? (
@@ -374,17 +368,15 @@ export default function PurchaseReturn() {
                   {/* Purchase Account Dropdown */}
                   <div ref={purchaseAccountDropdownRef} className="dropdown-wrapper">
                     <label className="filter-label">Purchase Account</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={purchaseAccountSearch}
-                        onChange={handlePurchaseAccountInput}
-                        onFocus={() => setIsPurchaseAccountOpen(true)}
-                        placeholder="Type or select..."
-                        className="dropdown-input"
-                      />
-                      <ChevronDown size={20} className="dropdown-icon" />
-                    </div>
+                    <input
+                      type="text"
+                      value={purchaseAccountSearch}
+                      onChange={handlePurchaseAccountInput}
+                      onFocus={() => setIsPurchaseAccountOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
                     {isPurchaseAccountOpen && (
                       <div className="dropdown-menu">
                         {filteredPurchaseAccounts.length > 0 ? (
@@ -559,20 +551,16 @@ export default function PurchaseReturn() {
                         </td>
                         <td className="border border-gray-400 p-1.5 text-sm whitespace-nowrap">
                           <div className="flex items-center gap-1">
-                            {/* ADD */}
                             <Plus
                               size={20}
                               className="add-primary cursor-pointer"
                               onClick={addRowAbove}
                             />
-
                             <Edit2
                               size={16}
-                              className="cursor-pointer "
+                              className="cursor-pointer"
                               onClick={() => setEditingRow(i)}
                             />
-
-                            {/* DELETE */}
                             <Trash2
                               size={16}
                               className="cursor-pointer text-[#DC2626] hover:text-[#B91C1C]"

@@ -345,17 +345,17 @@ export default function Sidebar({ open, onNavigate }) {
               <SubButton label="User Role Settings" active={active === "UserRoleSettings"} isDark={isDark} onClick={() => handleClick("UserRoleSettings")} />
               <SubButton label="User Master" active={active === "UserMaster"} isDark={isDark} onClick={() => handleClick("UserMaster")} />
               <SubButton label="Department Master" active={active === "DepartmentMaster"} isDark={isDark} onClick={() => handleClick("DepartmentMaster")} />
-              <SubButton label="LeadOwner" active={active === "LeadOwner"} isDark={isDark} onClick={() => handleClick("LeadOwner")} />
+              <SubButton label="Lead Owner" active={active === "LeadOwner"} isDark={isDark} onClick={() => handleClick("LeadOwner")} />
               <SubButton label="Lead Status Master" active={active === "LeadStatusMaster"} isDark={isDark} onClick={() => handleClick("LeadStatusMaster")} />
               <SubButton label="Lead Source Master" active={active === "LeadSourceMaster"} isDark={isDark} onClick={() => handleClick("LeadSourceMaster")} />
-              <SubButton label="SizeType" active={active === "SizeType"} isDark={isDark} onClick={() => handleClick("SizeType")} />
+              <SubButton label="Size Type" active={active === "SizeType"} isDark={isDark} onClick={() => handleClick("SizeType")} />
               <SubButton label="Template Group" active={active === "TemplateGroup"} isDark={isDark} onClick={() => handleClick("TemplateGroup")} />
               <SubButton label="Template Specification" active={active === "TemplateSpecification"} isDark={isDark} onClick={() => handleClick("TemplateSpecification")} />
               <SubButton label="Template Settings" active={active === "TemplateSettings"} isDark={isDark} onClick={() => handleClick("TemplateSettings")} />
               <SubButton label="Material Group" active={active === "MaterialGroup"} isDark={isDark} onClick={() => handleClick("MaterialGroup")} />
               <SubButton label="Material List" active={active === "MaterialList"} isDark={isDark} onClick={() => handleClick("MaterialList")} />
               <SubButton label="Unit Master" active={active === "UnitMaster"} isDark={isDark} onClick={() => handleClick("UnitMaster")} />
-              <SubButton label="AssignLabour" active={active === "AssignLabour"} isDark={isDark} onClick={() => handleClick("AssignLabour")} />
+              <SubButton label="Assign Labour" active={active === "AssignLabour"} isDark={isDark} onClick={() => handleClick("AssignLabour")} />
               <SubButton label="Supervisor" active={active === "Supervisor"} isDark={isDark} onClick={() => handleClick("Supervisor")} />
               <SubButton label="Receiver/Giver" active={active === "Receiver"} isDark={isDark} onClick={() => handleClick("Receiver")} />
               <SubButton label="Yard" active={active === "Yard"} isDark={isDark} onClick={() => handleClick("Yard")} />
