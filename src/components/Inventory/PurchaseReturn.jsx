@@ -249,15 +249,17 @@ export default function PurchaseReturn() {
                   {/* Purchase Type Dropdown */}
                   <div ref={purchaseTypeDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Purchase Return Type</label>
-                    <input
-                      type="text"
-                      value={purchaseTypeSearch}
-                      onChange={handlePurchaseTypeInput}
-                      onFocus={() => setIsPurchaseTypeOpen(true)}
-                      placeholder="Type or select..."
-                      className="dropdown-input"
-                    />
-                    <ChevronDown size={20} className="dropdown-icon" />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={purchaseTypeSearch}
+                        onChange={handlePurchaseTypeInput}
+                        onFocus={() => setIsPurchaseTypeOpen(true)}
+                        placeholder="Type or select..."
+                        className="filter-input dropdown-input"
+                      />
+                      <ChevronDown size={20} className="dropdown-icon" />
+                    </div>
                     {isPurchaseTypeOpen && (
                       <div className="dropdown-menu">
                         {filteredPurchaseTypes.length > 0 ? (
@@ -288,15 +290,17 @@ export default function PurchaseReturn() {
                   {/* Supplier Dropdown */}
                   <div ref={supplierDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Supplier</label>
-                    <input
-                      type="text"
-                      value={supplierSearch}
-                      onChange={handleSupplierInput}
-                      onFocus={() => setIsSupplierOpen(true)}
-                      placeholder="Type or select..."
-                      className="dropdown-input"
-                    />
-                    <ChevronDown size={20} className="dropdown-icon" />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={supplierSearch}
+                        onChange={handleSupplierInput}
+                        onFocus={() => setIsSupplierOpen(true)}
+                        placeholder="Type or select..."
+                        className="filter-input dropdown-input"
+                      />
+                      <ChevronDown size={20} className="dropdown-icon" />
+                    </div>
                     {isSupplierOpen && (
                       <div className="dropdown-menu">
                         {filteredSuppliers.length > 0 ? (
@@ -329,15 +333,17 @@ export default function PurchaseReturn() {
                   {/* Cash Account Dropdown */}
                   <div ref={cashAccountDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Cash Account</label>
-                    <input
-                      type="text"
-                      value={cashAccountSearch}
-                      onChange={handleCashAccountInput}
-                      onFocus={() => setIsCashAccountOpen(true)}
-                      placeholder="Type or select..."
-                      className="dropdown-input"
-                    />
-                    <ChevronDown size={20} className="dropdown-icon" />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={cashAccountSearch}
+                        onChange={handleCashAccountInput}
+                        onFocus={() => setIsCashAccountOpen(true)}
+                        placeholder="Type or select..."
+                        className="filter-input dropdown-input"
+                      />
+                      <ChevronDown size={20} className="dropdown-icon" />
+                    </div>
                     {isCashAccountOpen && (
                       <div className="dropdown-menu">
                         {filteredCashAccounts.length > 0 ? (
@@ -368,15 +374,17 @@ export default function PurchaseReturn() {
                   {/* Purchase Account Dropdown */}
                   <div ref={purchaseAccountDropdownRef} className="filter-grid-red dropdown-wrapper">
                     <label className="filter-label">Purchase Account</label>
-                    <input
-                      type="text"
-                      value={purchaseAccountSearch}
-                      onChange={handlePurchaseAccountInput}
-                      onFocus={() => setIsPurchaseAccountOpen(true)}
-                      placeholder="Type or select..."
-                      className="dropdown-input"
-                    />
-                    <ChevronDown size={20} className="dropdown-icon" />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={purchaseAccountSearch}
+                        onChange={handlePurchaseAccountInput}
+                        onFocus={() => setIsPurchaseAccountOpen(true)}
+                        placeholder="Type or select..."
+                        className="filter-input dropdown-input"
+                      />
+                      <ChevronDown size={20} className="dropdown-icon" />
+                    </div>
                     {isPurchaseAccountOpen && (
                       <div className="dropdown-menu">
                         {filteredPurchaseAccounts.length > 0 ? (
