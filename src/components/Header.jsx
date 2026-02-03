@@ -213,7 +213,7 @@ export default function Header({ onMenuClick }) {
                 style={{ color: darkMode ? "#E5E7EB" : "#374151" }}
               >
                 ADMIN
-              </span>
+              </span> 
             </div>
 
             {/* CHEVRON - Only on laptop */}
