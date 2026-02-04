@@ -1,7 +1,6 @@
 
-
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown, Search, Printer, FileSpreadsheet } from 'lucide-react';
+import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown, Search, Printer, FileSpreadsheet,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
  
 export default function QuotationForm() {
@@ -1471,7 +1470,7 @@ export default function QuotationForm() {
                 Excel
               </button>
               <button onClick={handleSubmit} className="btn-smallbtn">
-                Submit
+                <Send /> Submit
               </button>
             </div>
 

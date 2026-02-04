@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown } from 'lucide-react';
+import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function TemplateSettings() {
@@ -315,7 +315,16 @@ export default function TemplateSettings() {
       <div className="content-wrapper"> 
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Template Settings</h2>
+           <div className="page-header">
+              <h1 className="page-title">Template Settings</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             <div className="filter-grid-red mb-6">
               <label className="filter-label">Template Name</label>

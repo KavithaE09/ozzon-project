@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronRight, Edit2, Trash2, ChevronLeft,Send } from 'lucide-react';
+import { Search, ChevronRight, Edit2, Trash2, ChevronLeft,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LeadSource() {
@@ -76,8 +76,16 @@ export default function LeadSource() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            {/* Lead Source Section */}
-            <h2 className="page-title">Lead Source</h2>
+            <div className="page-header">
+                         <h1 className="page-title">Lead Source</h1>
+                         <button 
+                           onClick={() => navigate(-1)} 
+                           className="page-back-btn"
+                           aria-label="Go back"
+                         >
+                           <Undo2   className="page-back-icon" />
+                         </button>
+                       </div>
             
             <div className="filter-section">
               <div className="filter-grid">
@@ -198,14 +206,7 @@ export default function LeadSource() {
                 </button>
               </div>
             )}
-            
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+           
           </div>
         </div>
       </div>
