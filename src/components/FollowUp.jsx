@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Send } from "lucide-react";
 export default function FollowUp() {
   const navigate = useNavigate();
   const getTodayDate = () => {
@@ -203,7 +203,7 @@ export default function FollowUp() {
 
               {selectedLead && (
                 <button className="btn-all">
-                  <span>✓</span> Submit
+                  <Send size={18} />  Submit
                 </button>
               )}
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LeadCreationForm(){
@@ -576,8 +576,7 @@ export default function LeadCreationForm(){
               </button> 
               
               <button onClick={handleSubmit} className="btn-all order-1 sm:order-2">
-                <span>✓</span>
-                <span>Submit</span>
+               <Send size={18} />  Submit
               </button>
             </div>
 

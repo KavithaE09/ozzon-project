@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ContainerPurchase() {
@@ -503,8 +503,7 @@ export default function ContainerPurchase() {
               </button>
 
               <button onClick={handleSubmit} className="btn-all">
-                <span>✓</span>
-                <span>Submit</span>
+                <Send size={18} />  Submit
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown } from 'lucide-react';
+import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function UserRoleSettings() {
@@ -191,8 +191,7 @@ export default function UserRoleSettings() {
 
               <div className="btn-container">
                 <button onClick={handleSubmit} className="btn-search">
-                  <span>✓</span>
-                  <span>Submit</span>
+                  <Send size={18} />  Submit
                 </button>
               </div>
               <div></div>

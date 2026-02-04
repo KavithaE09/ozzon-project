@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search, Edit2, Trash2,ChevronLeft, } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Edit2, Trash2,ChevronLeft,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function MaterialList() {
@@ -373,8 +373,7 @@ const currentRecords = filteredRecords.slice(
                   onClick={handleSubmit}
                   className="btn-all"
                 >
-                  <span>✓</span>
-                  <span>Submit</span>
+                  <Send size={18} />  Submit
                 </button>
               </div>
             </div>

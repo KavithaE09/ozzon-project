@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Search, Edit2, Trash2,ChevronLeft, } from 'lucide-react';import { useNavigate } from 'react-router-dom';
+import { ChevronRight, Search, Edit2, Trash2,ChevronLeft,Send } from 'lucide-react';import { useNavigate } from 'react-router-dom';
 
 export default function Credit() {
   const navigate = useNavigate();
@@ -146,8 +146,7 @@ const currentGroups = filteredGroups.slice(
                   gap: '8px'
                 }}
               >
-                <span>✓</span>
-                <span>Submit</span>
+                <Send size={18} />  Submit
               </button>
             </div>
 

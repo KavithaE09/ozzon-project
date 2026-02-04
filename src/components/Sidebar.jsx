@@ -286,23 +286,15 @@ export default function Sidebar({ open, onNavigate }) {
             paddingBottom: "16px",
             paddingLeft: "20px",
             paddingRight: "12px",
-            scrollbarWidth: "thin",
-            scrollbarColor: isDark ? "#374151 transparent" : "#FFFFFF40 transparent",
           }}
         >
           <style>{`
             .sidebar-scroll::-webkit-scrollbar {
-              width: 6px;
+              display: none;
             }
-            .sidebar-scroll::-webkit-scrollbar-track {
-              background: transparent;
-            }
-            .sidebar-scroll::-webkit-scrollbar-thumb {
-              background: ${isDark ? "#374151" : "#FFFFFF40"};
-              border-radius: 3px;
-            }
-            .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-              background: ${isDark ? "#475569" : "#FFFFFF60"};
+            .sidebar-scroll {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
             }
 
             /* Hover lift animation */
@@ -379,10 +371,10 @@ export default function Sidebar({ open, onNavigate }) {
               <SubButton label="Role Master" icon={<Shield size={18} />} active={active === "RoleMaster"} isDark={isDark} onClick={() => handleClick("RoleMaster")} />
               <SubButton label="User Role Settings" icon={<UserCog size={18} />} active={active === "UserRoleSettings"} isDark={isDark} onClick={() => handleClick("UserRoleSettings")} />
               <SubButton label="User Master" icon={<Users size={18} />} active={active === "UserMaster"} isDark={isDark} onClick={() => handleClick("UserMaster")} />
-              <SubButton label="Department " icon={<Building size={18} />} active={active === "DepartmentMaster"} isDark={isDark} onClick={() => handleClick("DepartmentMaster")} />
+              <SubButton label="Department Master" icon={<Building size={18} />} active={active === "DepartmentMaster"} isDark={isDark} onClick={() => handleClick("DepartmentMaster")} />
               <SubButton label="Lead Owner" icon={<UserCheck size={18} />} active={active === "LeadOwner"} isDark={isDark} onClick={() => handleClick("LeadOwner")} />
-              <SubButton label="Lead Status " icon={<Activity size={18} />} active={active === "LeadStatusMaster"} isDark={isDark} onClick={() => handleClick("LeadStatusMaster")} />
-              <SubButton label="Lead Source " icon={<TrendingUp size={18} />} active={active === "LeadSourceMaster"} isDark={isDark} onClick={() => handleClick("LeadSourceMaster")} />
+              <SubButton label="Lead Status Master" icon={<Activity size={18} />} active={active === "LeadStatusMaster"} isDark={isDark} onClick={() => handleClick("LeadStatusMaster")} />
+              <SubButton label="Lead Source Master" icon={<TrendingUp size={18} />} active={active === "LeadSourceMaster"} isDark={isDark} onClick={() => handleClick("LeadSourceMaster")} />
               <SubButton label="Size Type" icon={<Ruler size={18} />} active={active === "SizeType"} isDark={isDark} onClick={() => handleClick("SizeType")} />
               <SubButton label="Template Group" icon={<FolderOpen size={18} />} active={active === "TemplateGroup"} isDark={isDark} onClick={() => handleClick("TemplateGroup")} />
               <SubButton label="Template Specification" icon={<FileText size={18} />} active={active === "TemplateSpecification"} isDark={isDark} onClick={() => handleClick("TemplateSpecification")} />
@@ -425,7 +417,7 @@ export default function Sidebar({ open, onNavigate }) {
               <SubButton label="Follow Up" icon={<ClipboardCheck size={18} />} active={active === "FollowUp"} isDark={isDark} onClick={() => handleClick("FollowUp")} />
               <SubButton label="Quotation" icon={<FileSpreadsheet size={18} />} active={active === "Quotation"} isDark={isDark} onClick={() => handleClick("Quotation", "QuotationSearch")} />
               <SubButton label="Proforma Invoice" icon={<FileText size={18} />} active={active === "ProformaInvoice"} isDark={isDark} onClick={() => handleClick("ProformaInvoice", "ProformaInvoiceSearch")} />
-              <SubButton label="Container Status Update" icon={<RefreshCcw size={18} />} active={active === "ContainerStatusUpdateForm"} isDark={isDark} onClick={() => handleClick("ContainerStatusUpdateForm", "ContainerStatusUpdateForm")} />
+              <SubButton label="Container Status " icon={<RefreshCcw size={18} />} active={active === "ContainerStatusUpdateForm"} isDark={isDark} onClick={() => handleClick("ContainerStatusUpdateForm", "ContainerStatusUpdateForm")} />
             </>
           )}
 
@@ -564,10 +556,10 @@ export default function Sidebar({ open, onNavigate }) {
           />
           {approvalOpen && (
             <>
-              <SubButton label="Quotation Approval" icon={<FileCheck size={18} />} active={active === "QuotationApproval"} isDark={isDark} onClick={() => handleClick("QuotationApproval", "QuotationApproval")} />
-              <SubButton label="Proforma Invoice Approval" icon={<FileCheck size={18} />} active={active === "ProformaInvoiceApproval"} isDark={isDark} onClick={() => handleClick("ProformaInvoiceApproval", "ProformaInvoiceApproval")} />
-              <SubButton label="Container Hold Request Approval" icon={<Archive size={18} />} active={active === "ContainerHoldRequestApprovalForm"} isDark={isDark} onClick={() => handleClick("ContainerHoldRequestApprovalForm", "ContainerHoldRequestApprovalForm")} />
-              <SubButton label="Container Block Request Approval" icon={<Archive size={18} />} active={active === "ContainerBlockApproval"} isDark={isDark} onClick={() => handleClick("ContainerBlockRequestApprovalForm", "ContainerBlockRequestApprovalForm")} />
+              <SubButton label="Quotation " icon={<FileCheck size={18} />} active={active === "QuotationApproval"} isDark={isDark} onClick={() => handleClick("QuotationApproval", "QuotationApproval")} />
+              <SubButton label="Proforma Invoice " icon={<FileCheck size={18} />} active={active === "ProformaInvoiceApproval"} isDark={isDark} onClick={() => handleClick("ProformaInvoiceApproval", "ProformaInvoiceApproval")} />
+              <SubButton label="Container Hold Request " icon={<Archive size={18} />} active={active === "ContainerHoldRequestApprovalForm"} isDark={isDark} onClick={() => handleClick("ContainerHoldRequestApprovalForm", "ContainerHoldRequestApprovalForm")} />
+              <SubButton label="Container Block Request" icon={<Archive size={18} />} active={active === "ContainerBlockApproval"} isDark={isDark} onClick={() => handleClick("ContainerBlockRequestApprovalForm", "ContainerBlockRequestApprovalForm")} />
               <SubButton label="Job Order Acceptance" icon={<CheckCircle size={18} />} active={active === "JobOrderAcceptance"} isDark={isDark} onClick={() => handleClick("JobOrderAcceptance", "JobOrderAcceptance")} />
             </>
           )}
@@ -586,9 +578,9 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen, isDark 
       if (hover) return "#1E3A5F"; // Blue tint on hover
       return "#374151";
     } else {
-      if (active) return "#FFFFFF";
+      if (active) return "#feecec";
       if (hover) return "#8B2820"; // Darker red on hover
-      return "#A63028";
+      return "";
     }
   };
 
@@ -605,15 +597,16 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen, isDark 
             : "#E5E7EB"
           : active
             ? "#A63028"
-            : "#FFFFFF",
-        width: "200px",
-        height: "40px",
+            : "#feecec",
+        width: "210px",
+        height: "45px",
         border: isDark ? "1px solid #475569" : "none",
         marginBottom: "8px",
         paddingLeft: "16px",
         paddingRight: "12px",
         flexShrink: 0,
         cursor: "pointer",
+        opacity: active ? 1 : 0.85,
       }}
       className="btn-hover-lift flex items-center justify-between rounded-[12px] font-poppins font-semibold text-[14px]"
     >
@@ -644,9 +637,9 @@ function SubButton({ label, icon, active, onClick, isDark }) {
       if (hover) return "#1E3A5F"; // Blue tint on hover
       return "#334155";
     } else {
-      if (active) return "#FFFFFF";
+      if (active) return "#feecec";
       if (hover) return "#8B2820"; // Darker red on hover
-      return "#A63028";
+      return "";
     }
   };
 
@@ -656,7 +649,7 @@ function SubButton({ label, icon, active, onClick, isDark }) {
       : "#E5E7EB"
     : active
       ? "#A63028"
-      : "#FFFFFF";
+      : "#feecec";
 
   return (
     <button
@@ -665,12 +658,12 @@ function SubButton({ label, icon, active, onClick, isDark }) {
       onMouseLeave={() => setHover(false)}
       style={{
         backgroundColor: getBackgroundColor(),
-        width: "172px",
+        width: "180px",
         height: "42px",
         border: isDark ? "1px solid #475569" : "none",
         color: textColor,
         marginBottom: "8px",
-        marginLeft: "18px",
+        marginLeft: "20px",
         paddingLeft: "16px",
         paddingRight: "12px",
         flexShrink: 0,

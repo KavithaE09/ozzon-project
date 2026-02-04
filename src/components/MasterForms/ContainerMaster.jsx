@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit2, Trash2, ChevronLeft, ChevronRight,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ContainerMaster() {
@@ -172,8 +172,7 @@ export default function ContainerMaster() {
 
               {/* Submit Button */}
               <button className="btn-all">
-                <span>✓</span>
-                <span>Submit</span>
+                <Send size={18} />  Submit
               </button>
             </div>
 

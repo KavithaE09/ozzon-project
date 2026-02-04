@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LeadSearch() {
@@ -325,7 +325,7 @@ export default function LeadSearch() {
            {/* Back Button */}
             <div className="footer-container">
               <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
+                <ArrowLeft size={16} />
                 <span>Back</span>
               </button>
             </div>

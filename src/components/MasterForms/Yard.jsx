@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronRight, Edit2, Trash2, ChevronLeft } from 'lucide-react';
+import { Search, ChevronRight, Edit2, Trash2, ChevronLeft,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Yard() {
@@ -99,8 +99,7 @@ export default function Yard() {
                 </div>
                 <div className="btn-container">
                   <button onClick={handleSubmit} className="btn-all">
-                    <span>✓</span>
-                    <span>Submit</span>
+                    <Send size={18} />  Submit
                   </button>
                 </div>
               </div>
