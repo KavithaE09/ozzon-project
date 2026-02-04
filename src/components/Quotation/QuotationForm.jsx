@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { Menu, ChevronDown, Edit2, Trash2, Plus, Check, X, ArrowUp, ArrowDown,Search } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown, Search, Printer, FileSpreadsheet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Printer, FileSpreadsheet } from 'lucide-react';
-
+ 
 export default function QuotationForm() {
   const navigate = useNavigate();
   const [hoveredOption, setHoveredOption] = useState(null);
+  const [currentPage1, setCurrentPage1] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
+  const rowsPerPage = 5;
   
   const getTodayDate = () => {
     const today = new Date();
@@ -26,64 +28,54 @@ export default function QuotationForm() {
 
   const customerOptions = ['Admin', 'Customer A', 'Customer B', 'Customer C', 'Customer D'];
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
-  
-  React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      const dropdown = document.getElementById('customer-dropdown-container');
-      if (dropdown && !dropdown.contains(event.target)) {
-        setShowCustomerDropdown(false);
-      }
-      
-      // Close all dropdowns when clicking outside
-      const dropdownMenus = document.querySelectorAll('.dropdown-wrapper');
-      let clickedInside = false;
-      
-      dropdownMenus.forEach((menu) => {
-        if (menu.contains(event.target)) {
-          clickedInside = true;
-        }
-      });
-      
-      if (!clickedInside) {
-        setShowGroupDropdown(null);
-        setShowSpecDropdown(null);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
+ 
   // First Table State
   const [rows1, setRows1] = useState([
-    { id: 1, slNo: 1, group: 'Door', specification: 'MODIFICATION OF PLAIN OFFICE WITH COUNTER WINDOW', dimension: '20*8*8.6', noOfUnit: 1, amount: 1000000, hiddenAmount: 1000000 },
+    { id: 1, slNo: 1, group: 'Door', specification: '(7 X 3 )FT Size Metal safety door with UPVC door SS hinges, lock and canopy above door', dimension: '20*8*8.6', noOfUnit: 1, amount: 1000000, hiddenAmount: 1000000 },
     { id: 2, slNo: 2, group: 'Window', specification: 'UPVC sliding window with mesh', dimension: '20*8*8.6', noOfUnit: 2, amount: 500000, hiddenAmount: 500000 },
     { id: 3, slNo: 3, group: 'Flooring', specification: 'Vitrified tiles 2x2 feet', dimension: '20*8*8.6', noOfUnit: 1, amount: 100000, hiddenAmount: 100000 },
-    { id: 4, slNo: 4, group: 'Roofing', specification: 'MS sheet roofing with insulation', dimension: '20*8*8.6', noOfUnit: 1, amount: 100000, hiddenAmount: 100000 }
-  ]);
+  ]); 
 
   // Second Table State
   const [rows2, setRows2] = useState([
-    { id: 5, slNo: 1, group: 'Electrical', specification: 'Wiring and fixtures', dimension: '20*8*8.6', noOfUnit: 1, amount: 50000, hiddenAmount: 50000 },
-    { id: 6, slNo: 2, group: 'Plumbing', specification: 'Water supply system', dimension: '20*8*8.6', noOfUnit: 1, amount: 75000, hiddenAmount: 75000 }
+    { id: 7, slNo: 1, group: 'Electrical', specification: 'Wiring and fixtures', dimension: '20*8*8.6', noOfUnit: 1, amount: 50000, hiddenAmount: 50000 },
+    { id: 8, slNo: 2, group: 'Plumbing', specification: 'Water supply system', dimension: '20*8*8.6', noOfUnit: 1, amount: 75000, hiddenAmount: 75000 }
   ]);
+
+  // Pagination calculations
+  const totalPages1 = Math.ceil(rows1.length / rowsPerPage);
+  const indexOfLastRow1 = currentPage1 * rowsPerPage;
+  const indexOfFirstRow1 = indexOfLastRow1 - rowsPerPage;
+  const currentRows1 = rows1.slice(indexOfFirstRow1, indexOfLastRow1);
+
+  const totalPages2 = Math.ceil(rows2.length / rowsPerPage);
+  const indexOfLastRow2 = currentPage2 * rowsPerPage;
+  const indexOfFirstRow2 = indexOfLastRow2 - rowsPerPage;
+  const currentRows2 = rows2.slice(indexOfFirstRow2, indexOfLastRow2);
 
   const [openMenuIndex1, setOpenMenuIndex1] = useState(null);
   const [openMenuIndex2, setOpenMenuIndex2] = useState(null);
   const [editingRow1, setEditingRow1] = useState(null);
   const [editingRow2, setEditingRow2] = useState(null);
-  const [showGroupModal, setShowGroupModal] = useState(false);
-  const [showSpecModal, setShowSpecModal] = useState(false);
-  const [currentRowForModal, setCurrentRowForModal] = useState(null);
-  const [showAddForm1, setShowAddForm1] = useState(false);
-  const [showAddForm2, setShowAddForm2] = useState(false);
-  const [insertAfterRowId, setInsertAfterRowId] = useState(null);
-  const [showGroupDropdown, setShowGroupDropdown] = useState(null);
-  const [showSpecDropdown, setShowSpecDropdown] = useState(null);
-  const [currentTable, setCurrentTable] = useState(null);
+  const [editedData1, setEditedData1] = useState({});
+  const [editedData2, setEditedData2] = useState({});
+  const [addingRow1, setAddingRow1] = useState(false);
+  const [addingRow2, setAddingRow2] = useState(false);
+  const [newRowPosition1, setNewRowPosition1] = useState(null);
+  const [newRowPosition2, setNewRowPosition2] = useState(null);
 
-  const groupMasters = ['Door', 'Window', 'Flooring', 'Roofing', 'Electrical', 'Plumbing'];
+  // Dropdown states
+  const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
+  const [specDropdownOpen, setSpecDropdownOpen] = useState(false);
+  const [groupSearchTerm, setGroupSearchTerm] = useState('');
+  const [specSearchTerm, setSpecSearchTerm] = useState('');
+  const [hoveredGroup, setHoveredGroup] = useState(null);
+  const [hoveredSpec, setHoveredSpec] = useState(null);
+  
+  const groupDropdownRef = useRef(null);
+  const specDropdownRef = useRef(null);
+
+  const groupMasters = ['Door', 'Window', 'Flooring', 'Roofing', 'Electrical', 'Plumbing'].sort();
   const specMasters = [
     '(7 X 3 )FT Size Metal safety door with UPVC door SS hinges, lock and canopy above door',
     'UPVC sliding window with mesh',
@@ -91,11 +83,10 @@ export default function QuotationForm() {
     'MS sheet roofing with insulation',
     'Wiring and fixtures',
     'Water supply system'
-  ];
+  ].sort();
 
   const [newRowData, setNewRowData] = useState({
-    slNo: '',
-    group: '',
+    group: '', 
     specification: '',
     dimension: '',
     noOfUnit: '',
@@ -120,32 +111,90 @@ export default function QuotationForm() {
   const [discount, setDiscount] = useState(10000);
   const [gstPercentage, setGstPercentage] = useState(18);
   const [showSubmitMessage, setShowSubmitMessage] = useState(false);
-  
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (groupDropdownRef.current && !groupDropdownRef.current.contains(event.target)) {
+        setGroupDropdownOpen(false);
+      }
+      if (specDropdownRef.current && !specDropdownRef.current.contains(event.target)) {
+        setSpecDropdownOpen(false);
+      }
+      
+      const dropdown = document.getElementById('customer-dropdown-container');
+      if (dropdown && !dropdown.contains(event.target)) {
+        setShowCustomerDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter options based on search term
+  const filteredGroupOptions = groupMasters.filter(option =>
+    option.toLowerCase().includes(groupSearchTerm.toLowerCase())
+  );
+
+  const filteredSpecOptions = specMasters.filter(option =>
+    option.toLowerCase().includes(specSearchTerm.toLowerCase())
+  );
+
+  // Recalculate serial numbers
+  const recalculateSerialNumbers = (rowsArray) => {
+    return rowsArray.map((row, index) => ({
+      ...row,
+      slNo: index + 1
+    }));
+  };
+
   const handleAddButtonClick = (tableNum) => {
     if (tableNum === 1) {
-      setShowAddForm1(true);
-      setCurrentTable(1);
+      setAddingRow1(true);
+      setNewRowPosition1('bottom');
     } else {
-      setShowAddForm2(true);
-      setCurrentTable(2);
+      setAddingRow2(true);
+      setNewRowPosition2('bottom');
     }
-    setInsertAfterRowId(null);
+    setNewRowData({
+      group: '',
+      specification: '',
+      dimension: '',
+      noOfUnit: '',
+      amount: '',
+      hiddenAmount: ''
+    });
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
   };
 
   const handleInsertRow = (afterRowId, tableNum) => {
     if (tableNum === 1) {
-      setShowAddForm1(true);
+      setAddingRow1(true);
+      setNewRowPosition1(afterRowId);
+      setOpenMenuIndex1(null);
     } else {
-      setShowAddForm2(true);
+      setAddingRow2(true);
+      setNewRowPosition2(afterRowId);
+      setOpenMenuIndex2(null);
     }
-    setCurrentTable(tableNum);
-    setInsertAfterRowId(afterRowId);
+    setNewRowData({
+      group: '',
+      specification: '',
+      dimension: '',
+      noOfUnit: '',
+      amount: '',
+      hiddenAmount: ''
+    });
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
   };
 
-  const handleSaveNewRow = () => {
+  const handleSaveNewRow = (tableNum) => {
     const row = {
       id: Date.now(),
-      slNo: newRowData.slNo || (currentTable === 1 ? rows1.length + 1 : rows2.length + 1),
+      slNo: 0,
       group: newRowData.group,
       specification: newRowData.specification,
       dimension: newRowData.dimension,
@@ -154,38 +203,35 @@ export default function QuotationForm() {
       hiddenAmount: parseFloat(newRowData.hiddenAmount) || 0
     };
 
-    if (currentTable === 1) {
+    if (tableNum === 1) {
       let newRows;
-      if (insertAfterRowId) {
-        const index = rows1.findIndex(r => r.id === insertAfterRowId);
-        newRows = [...rows1];
-        newRows.splice(index, 0, row); // Insert BEFORE the clicked row
-      } else {
+      if (newRowPosition1 === 'bottom') {
         newRows = [...rows1, row];
+      } else {
+        const index = rows1.findIndex(r => r.id === newRowPosition1);
+        newRows = [...rows1];
+        newRows.splice(index + 1, 0, row);
       }
-      // Recalculate serial numbers
-      newRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows1(newRows);
-      setShowAddForm1(false);
+      setRows1(recalculateSerialNumbers(newRows));
+      setAddingRow1(false);
+      setNewRowPosition1(null);
+      setCurrentPage1(1);
     } else {
       let newRows;
-      if (insertAfterRowId) {
-        const index = rows2.findIndex(r => r.id === insertAfterRowId);
-        newRows = [...rows2];
-        newRows.splice(index, 0, row); // Insert BEFORE the clicked row
-      } else {
+      if (newRowPosition2 === 'bottom') {
         newRows = [...rows2, row];
+      } else {
+        const index = rows2.findIndex(r => r.id === newRowPosition2);
+        newRows = [...rows2];
+        newRows.splice(index + 1, 0, row);
       }
-      // Recalculate serial numbers
-      newRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows2(newRows);
-      setShowAddForm2(false);
+      setRows2(recalculateSerialNumbers(newRows));
+      setAddingRow2(false);
+      setNewRowPosition2(null);
+      setCurrentPage2(1);
     }
 
-    setInsertAfterRowId(null);
-    setCurrentTable(null);
-    setNewRowData({
-      slNo: '',
+    setNewRowData({ 
       group: '',
       specification: '',
       dimension: '',
@@ -193,20 +239,28 @@ export default function QuotationForm() {
       amount: '',
       hiddenAmount: ''
     });
-  };
-  
-  const stopEditing = () => {
-    setEditingRow1(null);
-    setEditingRow2(null);
-    setShowGroupDropdown(null);
-    setShowSpecDropdown(null);
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
   };
 
-  const handleDropdownKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      stopEditing();
+  const handleCancelNewRow = (tableNum) => {
+    if (tableNum === 1) {
+      setAddingRow1(false);
+      setNewRowPosition1(null);
+    } else {
+      setAddingRow2(false);
+      setNewRowPosition2(null);
     }
+    setNewRowData({
+      group: '',
+      specification: '',
+      dimension: '',
+      noOfUnit: '',
+      amount: '',
+      hiddenAmount: ''
+    });
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
   };
 
   const toggleMenu = (index, tableNum) => {
@@ -219,105 +273,136 @@ export default function QuotationForm() {
     }
   };
 
-  const handleEdit = (index, tableNum) => {
+  const handleEdit = (row, tableNum) => {
     if (tableNum === 1) {
-      setEditingRow1(rows1[index].id);
+      setEditingRow1(row.id);
+      setEditedData1({ ...row });
+      setGroupSearchTerm(row.group);
+      setSpecSearchTerm(row.specification);
       setOpenMenuIndex1(null);
     } else {
-      setEditingRow2(rows2[index].id);
+      setEditingRow2(row.id);
+      setEditedData2({ ...row });
+      setGroupSearchTerm(row.group);
+      setSpecSearchTerm(row.specification);
       setOpenMenuIndex2(null);
     }
   };
 
-  const handleDelete = (index, tableNum) => {
+  const handleSaveEdit = (tableNum) => {
     if (tableNum === 1) {
-      const newRows = rows1.filter((_, i) => i !== index);
-      // Recalculate serial numbers
-      const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows1(updatedRows);
-      setOpenMenuIndex1(null);
+      setRows1(prevRows =>
+        prevRows.map(row =>
+          row.id === editingRow1 ? { ...editedData1 } : row
+        )
+      );
+      setEditingRow1(null);
+      setEditedData1({});
     } else {
-      const newRows = rows2.filter((_, i) => i !== index);
-      // Recalculate serial numbers
-      const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows2(updatedRows);
-      setOpenMenuIndex2(null);
+      setRows2(prevRows =>
+        prevRows.map(row =>
+          row.id === editingRow2 ? { ...editedData2 } : row
+        )
+      );
+      setEditingRow2(null);
+      setEditedData2({});
+    }
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
+  };
+
+  const handleCancelEdit = (tableNum) => {
+    if (tableNum === 1) {
+      setEditingRow1(null);
+      setEditedData1({});
+    } else {
+      setEditingRow2(null);
+      setEditedData2({});
+    }
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
+  };
+
+  const handleDelete = (rowId, tableNum) => {
+    if (window.confirm('Are you sure you want to delete this row?')) {
+      if (tableNum === 1) {
+        const newRows = rows1.filter(row => row.id !== rowId);
+        setRows1(recalculateSerialNumbers(newRows));
+        setOpenMenuIndex1(null);
+        setCurrentPage1(1);
+      } else {
+        const newRows = rows2.filter(row => row.id !== rowId);
+        setRows2(recalculateSerialNumbers(newRows));
+        setOpenMenuIndex2(null);
+        setCurrentPage2(1);
+      }
     }
   };
 
   const handleMoveUp = (index, tableNum) => {
-    if (index === 0) return; // Cannot move up if it's the first row
-    
-    if (tableNum === 1) {
+    if (tableNum === 1) { 
+      if (index === 0) return;
+      const actualIndex = indexOfFirstRow1 + index;
       const newRows = [...rows1];
-      // Swap with previous row
-      [newRows[index - 1], newRows[index]] = [newRows[index], newRows[index - 1]];
-      // Recalculate serial numbers
-      const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows1(updatedRows);
+      [newRows[actualIndex - 1], newRows[actualIndex]] = [newRows[actualIndex], newRows[actualIndex - 1]];
+      setRows1(recalculateSerialNumbers(newRows));
       setOpenMenuIndex1(null);
     } else {
+      if (index === 0) return;
+      const actualIndex = indexOfFirstRow2 + index;
       const newRows = [...rows2];
-      // Swap with previous row
-      [newRows[index - 1], newRows[index]] = [newRows[index], newRows[index - 1]];
-      // Recalculate serial numbers
-      const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows2(updatedRows);
+      [newRows[actualIndex - 1], newRows[actualIndex]] = [newRows[actualIndex], newRows[actualIndex - 1]];
+      setRows2(recalculateSerialNumbers(newRows));
       setOpenMenuIndex2(null);
     }
   };
 
   const handleMoveDown = (index, tableNum) => {
     if (tableNum === 1) {
-      if (index === rows1.length - 1) return; // Cannot move down if it's the last row
+      const actualIndex = indexOfFirstRow1 + index;
+      if (actualIndex === rows1.length - 1) return;
       const newRows = [...rows1];
-      // Swap with next row
-      [newRows[index], newRows[index + 1]] = [newRows[index + 1], newRows[index]];
-      // Recalculate serial numbers
-      const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows1(updatedRows);
+      [newRows[actualIndex], newRows[actualIndex + 1]] = [newRows[actualIndex + 1], newRows[actualIndex]];
+      setRows1(recalculateSerialNumbers(newRows));
       setOpenMenuIndex1(null);
     } else {
-      if (index === rows2.length - 1) return; // Cannot move down if it's the last row
+      const actualIndex = indexOfFirstRow2 + index;
+      if (actualIndex === rows2.length - 1) return;
       const newRows = [...rows2];
-      // Swap with next row
-      [newRows[index], newRows[index + 1]] = [newRows[index + 1], newRows[index]];
-      // Recalculate serial numbers
-      const updatedRows = newRows.map((r, idx) => ({ ...r, slNo: idx + 1 }));
-      setRows2(updatedRows);
+      [newRows[actualIndex], newRows[actualIndex + 1]] = [newRows[actualIndex + 1], newRows[actualIndex]];
+      setRows2(recalculateSerialNumbers(newRows));
       setOpenMenuIndex2(null);
     }
   };
 
-  const updateRow = (id, field, value, tableNum) => {
+  const updateEditedData = (field, value, tableNum) => {
     if (tableNum === 1) {
-      setRows1(rows1.map(row => 
-        row.id === id ? { ...row, [field]: value } : row
-      ));
+      setEditedData1(prev => ({ ...prev, [field]: value }));
     } else {
-      setRows2(rows2.map(row => 
-        row.id === id ? { ...row, [field]: value } : row
-      ));
+      setEditedData2(prev => ({ ...prev, [field]: value }));
     }
   };
-  
-  const selectFromMaster = (type, value) => {
-    if (type === 'group') {
-      if (currentRowForModal === 'newRow') {
-        setNewRowData({ ...newRowData, group: value });
-      } else {
-        updateRow(currentRowForModal.id, 'group', value, currentRowForModal.table);
-      }
-      setShowGroupModal(false);
+
+  const handleSelectGroup = (option, isEdit = false, tableNum = null) => {
+    if (isEdit && tableNum) {
+      updateEditedData('group', option, tableNum);
+      setGroupSearchTerm(option);
     } else {
-      if (currentRowForModal === 'newRow') {
-        setNewRowData({ ...newRowData, specification: value });
-      } else {
-        updateRow(currentRowForModal.id, 'specification', value, currentRowForModal.table);
-      }
-      setShowSpecModal(false);
+      setNewRowData({ ...newRowData, group: option });
+      setGroupSearchTerm(option);
     }
-    setCurrentRowForModal(null);
+    setGroupDropdownOpen(false);
+  };
+
+  const handleSelectSpec = (option, isEdit = false, tableNum = null) => {
+    if (isEdit && tableNum) {
+      updateEditedData('specification', option, tableNum);
+      setSpecSearchTerm(option);
+    } else {
+      setNewRowData({ ...newRowData, specification: option });
+      setSpecSearchTerm(option);
+    }
+    setSpecDropdownOpen(false);
   };
 
   // Terms and Conditions Functions
@@ -369,15 +454,7 @@ export default function QuotationForm() {
   };
 
   const handleSubmit = () => {
-    if (!formData.pino || !formData.pino.trim()) {
-      alert('Please fill PI NO');
-      return;
-    }
-    if (!formData.pidate) {
-      alert('Please select PI Date');
-      return;
-    }
-    if (!formData.quotationno || !formData.quotationno.trim()) {
+    if (!formData.quotationno || !formData.quotationno.trim()) { 
       alert('Please fill Quotation No');
       return;
     }
@@ -392,73 +469,21 @@ export default function QuotationForm() {
     if (!formData.address || !formData.address.trim()) {
       alert('Please fill Address');
       return;
-    } 
+    }
     
     setShowSubmitMessage(true);
     setTimeout(() => setShowSubmitMessage(false), 3000);
   };
 
-  const handlePrint = () => {
-    if (!formData.pino || !formData.pino.trim()) {
-      alert('Please fill PI NO before printing');
-      return;
-    }
-    if (!formData.pidate) {
-      alert('Please select PI Date before printing');
-      return;
-    }
-    if (!formData.quotationno || !formData.quotationno.trim()) {
-      alert('Please fill Quotation No before printing');
-      return;
-    }
-    if (!formData.quotationdate) {
-      alert('Please select Quotation Date before printing');
-      return;
-    }
-    if (!formData.customerName) {
-      alert('Please select Customer Name before printing');
-      return;
-    }
-    if (!formData.address || !formData.address.trim()) {
-      alert('Please fill Address before printing');
-      return;
-    }
-    window.print();
-  };
-
-  const handleDownloadPDF = () => {
-    if (!formData.pino || !formData.pino.trim()) {
-      alert('Please fill PI NO before downloading PDF');
-      return;
-    }
-    if (!formData.pidate) {
-      alert('Please select PI Date before downloading PDF');
-      return;
-    }
-    if (!formData.quotationno || !formData.quotationno.trim()) {
-      alert('Please fill Quotation No before downloading PDF');
-      return;
-    }
-    if (!formData.quotationdate) {
-      alert('Please select Quotation Date before downloading PDF');
-      return;
-    }
-    if (!formData.customerName) {
-      alert('Please select Customer Name before downloading PDF');
-      return;
-    }
-    if (!formData.address || !formData.address.trim()) {
-      alert('Please fill Address before downloading PDF');
-      return;
-    }
+  const handlePrint = () => { 
     window.print();
   };
 
   const handleDownloadExcel = () => {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Proforma Invoice\n";
-    csvContent += `PI No:,${formData.pino}\n`;
-    csvContent += `PI Date:,${formData.pidate}\n`;
+    csvContent += "Quotation Form\n";
+    csvContent += `Quotation No:,${formData.quotationno}\n`;
+    csvContent += `Quotation Date:,${formData.quotationdate}\n`;
     csvContent += "Sl No,Template Group,Template Specification,Dimension,No. of Unit,Amount,Hidden Amount\n";
     rows1.forEach(row => {
       csvContent += `${row.slNo},"${row.group}","${row.specification}",${row.dimension},${row.noOfUnit},${row.amount},${row.hiddenAmount}\n`;
@@ -467,7 +492,7 @@ export default function QuotationForm() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `proforma_invoice_${formData.pino.replace(/\//g, '_')}.csv`);
+    link.setAttribute("download", `quotation_${formData.quotationno.replace(/\//g, '_')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -477,238 +502,568 @@ export default function QuotationForm() {
     setFormData({
       ...formData,
       address: e.target.value
-    }); 
+    });
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
   };
 
-  // Render Table Row function to avoid repetition
-  const renderTableRow = (row, index, rows, tableNum) => {
-    const editingRow = tableNum === 1 ? editingRow1 : editingRow2;
-    const openMenuIndex = tableNum === 1 ? openMenuIndex1 : openMenuIndex2;
-
+  // Render Table function
+  const renderTable = (currentRows, rows, tableNum, editingRow, editedData, openMenuIndex, indexOfFirstRow) => {
     return (
-      <tr key={row.id} className="table-row">
-        <td className="table-cell">{row.slNo}</td>
+      <tbody>
+        {currentRows.map((row, index) => (
+          <React.Fragment key={row.id}>
+            <tr className="table-row">
+              <td className="table-cell">{row.slNo}</td>
 
-        {/* GROUP */}
-        <td className="table-cell relative">
-          {editingRow === row.id ? (
-            <div className="dropdown-wrapper">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowGroupDropdown(showGroupDropdown === row.id ? null : row.id);
-                }}
-                onKeyDown={handleDropdownKeyDown}
-                tabIndex={0}
-                className="dropdown-input"
-              >
-                <span>{row.group}</span>
-                <ChevronDown size={16} className="dropdown-icon" />
-              </div>
-
-              {showGroupDropdown === row.id && (
-                <div className="dropdown-menu">
-                  {groupMasters.map((option, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => {
-                        updateRow(row.id, 'group', option, tableNum);
-                        setShowGroupDropdown(null);
-                        stopEditing();
-                      }}
-                      onMouseEnter={() => setHoveredOption(option)}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      className={`dropdown-item-option ${
-                        hoveredOption === option 
-                          ? 'dropdown-item-hovered' 
-                          : row.group === option 
-                          ? 'dropdown-item-selected' 
-                          : 'dropdown-item-default'
-                      }`}
-                    >
-                      {option}
+              {/* GROUP */}
+              <td className="table-cell">
+                {editingRow === row.id ? (
+                  <div ref={groupDropdownRef} className="relative">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={groupSearchTerm}
+                        onChange={(e) => {
+                          setGroupSearchTerm(e.target.value);
+                          setGroupDropdownOpen(true);
+                        }}
+                        onFocus={() => setGroupDropdownOpen(true)}
+                        placeholder="Type or select..."
+                        className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                      />
+                      <ChevronDown
+                        size={16}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <span>{row.group}</span>
-          )}
-        </td>
+                    {groupDropdownOpen && (
+                      <div className="dropdown-menu">
+                        {filteredGroupOptions.length > 0 ? (
+                          filteredGroupOptions.map((option, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => handleSelectGroup(option, true, tableNum)}
+                              onMouseEnter={() => setHoveredGroup(option)}
+                              onMouseLeave={() => setHoveredGroup(null)}
+                              className={`dropdown-item-option ${
+                                hoveredGroup === option
+                                  ? 'dropdown-item-hovered'
+                                  : editedData.group === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {option}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="dropdown-no-matches">No matches found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span>{row.group}</span>
+                )}
+              </td>
 
-        {/* SPECIFICATION */}
-        <td className="table-cell relative">
-          {editingRow === row.id ? (
-            <div className="dropdown-wrapper">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowSpecDropdown(showSpecDropdown === row.id ? null : row.id);
-                }}
-                onKeyDown={handleDropdownKeyDown}
-                tabIndex={0}
-                className="dropdown-input"
-              >
-                <span>{row.specification}</span>
-                <ChevronDown size={16} className="dropdown-icon" />
-              </div>
-
-              {showSpecDropdown === row.id && (
-                <div className="dropdown-menu">
-                  {specMasters.map((option, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => {
-                        updateRow(row.id, 'specification', option, tableNum);
-                        setShowSpecDropdown(null);
-                        stopEditing();
-                      }}
-                      onMouseEnter={() => setHoveredOption(option)}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      className={`dropdown-item-option ${
-                        hoveredOption === option 
-                          ? 'dropdown-item-hovered' 
-                          : row.specification === option 
-                          ? 'dropdown-item-selected' 
-                          : 'dropdown-item-default'
-                      }`}
-                    >
-                      {option}
+              {/* SPECIFICATION */}
+              <td className="table-cell spec-column">
+                {editingRow === row.id ? (
+                  <div ref={specDropdownRef} className="relative">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={specSearchTerm}
+                        onChange={(e) => {
+                          setSpecSearchTerm(e.target.value);
+                          setSpecDropdownOpen(true);
+                        }}
+                        onFocus={() => setSpecDropdownOpen(true)}
+                        placeholder="Type or select..."
+                        className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                      />
+                      <ChevronDown
+                        size={16}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <span>{row.specification}</span>
-          )}
-        </td>
+                    {specDropdownOpen && (
+                      <div className="dropdown-menu max-w-[200px]">
+                        {filteredSpecOptions.length > 0 ? (
+                          filteredSpecOptions.map((option, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => handleSelectSpec(option, true, tableNum)}
+                              onMouseEnter={() => setHoveredSpec(option)}
+                              onMouseLeave={() => setHoveredSpec(null)}
+                              className={`dropdown-item-option ${
+                                hoveredSpec === option
+                                  ? 'dropdown-item-hovered'
+                                  : editedData.specification === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {option}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="dropdown-no-matches">No matches found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span>{row.specification}</span>
+                )}
+              </td>
 
-        {/* DIMENSION */}
-        <td className="table-cell">
-          {editingRow === row.id ? (
-            <input
-              type="text"
-              className="filter-input"
-              value={row.dimension}
-              onChange={(e) => updateRow(row.id, 'dimension', e.target.value, tableNum)}
-              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-            />
-          ) : (
-            <span>{row.dimension}</span>
-          )}
-        </td>
+              {/* DIMENSION */}
+              <td className="table-cell">
+                {editingRow === row.id ? (
+                  <input
+                    type="text"
+                    value={editedData.dimension}
+                    onChange={(e) => updateEditedData('dimension', e.target.value, tableNum)}
+                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                ) : (
+                  <span>{row.dimension}</span>
+                )}
+              </td>
 
-        {/* NO OF UNIT */}
-        <td className="table-cell">
-          {editingRow === row.id ? (
-            <input
-              type="number"
-              className="filter-input"
-              value={row.noOfUnit}
-              onChange={(e) => updateRow(row.id, 'noOfUnit', parseInt(e.target.value), tableNum)}
-              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-            />
-          ) : (
-            <span>{row.noOfUnit}</span>
-          )}
-        </td>
+              {/* NO OF UNIT */}
+              <td className="table-cell">
+                {editingRow === row.id ? (
+                  <input
+                    type="number"
+                    value={editedData.noOfUnit}
+                    onChange={(e) => updateEditedData('noOfUnit', parseFloat(e.target.value), tableNum)}
+                    className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                ) : (
+                  <span>{row.noOfUnit}</span>
+                )}
+              </td>
 
-        {/* AMOUNT */}
-        <td className="table-cell">
-          {editingRow === row.id ? (
-            <input
-              type="number"
-              className="filter-input "
-              value={row.amount}
-              onChange={(e) => updateRow(row.id, 'amount', parseFloat(e.target.value), tableNum)}
-              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-            />
-          ) : (
-            <span>₹ {row.amount.toFixed(2)}</span>
-          )}
-        </td>
+              {/* AMOUNT */}
+              <td className="table-cell">
+                {editingRow === row.id ? (
+                  <input
+                    type="number"
+                    value={editedData.amount}
+                    onChange={(e) => updateEditedData('amount', parseFloat(e.target.value), tableNum)}
+                    className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                ) : (
+                  <span>₹ {row.amount.toFixed(2)}</span>
+                )}
+              </td>
 
-        {/* HIDDEN AMOUNT */}
-        <td className="table-cell">
-          {editingRow === row.id ? (
-            <input
-              type="number"
-              className="filter-input"
-              value={row.hiddenAmount}
-              onChange={(e) => updateRow(row.id, 'hiddenAmount', parseFloat(e.target.value), tableNum)}
-              onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
-            />
-          ) : (
-            <span>₹ {row.hiddenAmount.toFixed(2)}</span>
-          )}
-        </td>
+              {/* HIDDEN AMOUNT */}
+              <td className="table-cell">
+                {editingRow === row.id ? (
+                  <input
+                    type="number"
+                    value={editedData.hiddenAmount}
+                    onChange={(e) => updateEditedData('hiddenAmount', parseFloat(e.target.value), tableNum)}
+                    className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                ) : (
+                  <span>₹ {row.hiddenAmount.toFixed(2)}</span>
+                )}
+              </td>
 
-        {/* ACTIONS */}
-        <td className="table-cell-center">
-          <div className="table-actions relative">
-            <button onClick={() => toggleMenu(index, tableNum)} className="btn-action">
-              <Menu size={18} />
-            </button>
+              {/* ACTIONS */}
+              <td className="table-cell-center">
+                {editingRow === row.id ? (
+                  <div className="flex gap-2 justify-center">
+                    <button onClick={() => handleSaveEdit(tableNum)} title="Save">
+                      <CheckCircle size={18} className="cursor-pointer text-green-600 hover:opacity-70" />
+                    </button>
+                    <button onClick={() => handleCancelEdit(tableNum)} title="Cancel">
+                      <XCircle size={18} className="cursor-pointer text-red-600 hover:opacity-70" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="table-actions relative">
+                    <button onClick={() => toggleMenu(index, tableNum)} className="btn-action">
+                      <Menu size={18} className="text-gray-700" />
+                    </button>
 
-            {openMenuIndex === index && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-md flex gap-2 p-2 z-10">
-                <ArrowUp 
-                  size={18} 
-                  className={`${index === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-blue-600 cursor-pointer hover:text-blue-800'}`}
-                  onClick={() => {
-                    if (index !== 0) {
-                      handleMoveUp(index, tableNum);
-                    }
-                  }}
-                  title={index === 0 ? 'Already at top' : 'Move up'}
-                />
-                <ArrowDown 
-                  size={18} 
-                  className={`${
-                    (tableNum === 1 && index === rows1.length - 1) || (tableNum === 2 && index === rows2.length - 1)
-                      ? 'text-gray-300 cursor-not-allowed' 
-                      : 'text-blue-600 cursor-pointer hover:text-blue-800'
-                  }`}
-                  onClick={() => {
-                    if ((tableNum === 1 && index !== rows1.length - 1) || (tableNum === 2 && index !== rows2.length - 1)) {
-                      handleMoveDown(index, tableNum);
-                    }
-                  }}
-                  title={
-                    (tableNum === 1 && index === rows1.length - 1) || (tableNum === 2 && index === rows2.length - 1)
-                      ? 'Already at bottom' 
-                      : 'Move down'
-                  }
-                />
-                <Plus 
-                  size={18} 
-                  className="add-primary"
-                  onClick={() => {
-                    handleInsertRow(row.id, tableNum);
-                    tableNum === 1 ? setOpenMenuIndex1(null) : setOpenMenuIndex2(null);
-                  }}
-                  title="Insert row above"
-                />
-                <Edit2 
-                  size={18} 
-                  onClick={() => handleEdit(index, tableNum)}
-                  title="Edit row"
-                />
-                <Trash2 
-                  size={18} 
-                  className="text-primary"
-                  onClick={() => handleDelete(index, tableNum)}
-                  title="Delete row"
-                />
-              </div>
+                    {openMenuIndex === index && (
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-md shadow-md flex gap-2 p-2 z-10">
+                        <ArrowUp
+                          size={18}
+                          className={`${
+                            indexOfFirstRow + index === 0
+                              ? 'text-gray-300 cursor-not-allowed'
+                              : 'text-blue-600 cursor-pointer hover:text-blue-800'
+                          }`}
+                          onClick={() => {
+                            if (indexOfFirstRow + index !== 0) {
+                              handleMoveUp(index, tableNum);
+                            }
+                          }}
+                          title={indexOfFirstRow + index === 0 ? 'Already at top' : 'Move up'}
+                        />
+                        <ArrowDown
+                          size={18}
+                          className={`${
+                            indexOfFirstRow + index === rows.length - 1
+                              ? 'text-gray-300 cursor-not-allowed'
+                              : 'text-blue-600 cursor-pointer hover:text-blue-800'
+                          }`}
+                          onClick={() => {
+                            if (indexOfFirstRow + index !== rows.length - 1) {
+                              handleMoveDown(index, tableNum);
+                            }
+                          }}
+                          title={
+                            indexOfFirstRow + index === rows.length - 1
+                              ? 'Already at bottom'
+                              : 'Move down'
+                          }
+                        />
+                        <Plus
+                          size={18}
+                          className="text-green-600 cursor-pointer"
+                          onClick={() => handleInsertRow(row.id, tableNum)}
+                          title="Insert Row"
+                        />
+                        <Edit2
+                          size={18}
+                          className="text-gray-700 cursor-pointer"
+                          onClick={() => handleEdit(row, tableNum)}
+                          title="Edit"
+                        />
+                        <Trash2
+                          size={18}
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleDelete(row.id, tableNum)}
+                          title="Delete"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </td>
+            </tr>
+
+            {/* Insert new row */}
+            {((tableNum === 1 && addingRow1 && newRowPosition1 === row.id) ||
+              (tableNum === 2 && addingRow2 && newRowPosition2 === row.id)) && (
+              <tr className="table-row bg-blue-50">
+                <td className="table-cell font-bold text-blue-600">
+                  {rows.findIndex(r => r.id === row.id) + 2}
+                </td>
+
+                {/* GROUP */}
+                <td className="table-cell">
+                  <div ref={groupDropdownRef} className="relative">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={groupSearchTerm}
+                        onChange={(e) => {
+                          setGroupSearchTerm(e.target.value);
+                          setGroupDropdownOpen(true);
+                        }}
+                        onFocus={() => setGroupDropdownOpen(true)}
+                        placeholder="Type or select..."
+                        className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                      />
+                      <ChevronDown
+                        size={16}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      />
+                    </div>
+                    {groupDropdownOpen && (
+                      <div className="dropdown-menu">
+                        {filteredGroupOptions.length > 0 ? (
+                          filteredGroupOptions.map((option, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => handleSelectGroup(option, false)}
+                              onMouseEnter={() => setHoveredGroup(option)}
+                              onMouseLeave={() => setHoveredGroup(null)}
+                              className={`dropdown-item-option ${
+                                hoveredGroup === option
+                                  ? 'dropdown-item-hovered'
+                                  : newRowData.group === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {option}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="dropdown-no-matches">No matches found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </td>
+
+                {/* SPECIFICATION */}
+                <td className="table-cell">
+                  <div ref={specDropdownRef} className="relative">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={specSearchTerm}
+                        onChange={(e) => {
+                          setSpecSearchTerm(e.target.value);
+                          setSpecDropdownOpen(true);
+                        }}
+                        onFocus={() => setSpecDropdownOpen(true)}
+                        placeholder="Type or select..."
+                        className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                      />
+                      <ChevronDown
+                        size={16}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      />
+                    </div>
+                    {specDropdownOpen && (
+                      <div className="dropdown-menu">
+                        {filteredSpecOptions.length > 0 ? (
+                          filteredSpecOptions.map((option, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => handleSelectSpec(option, false)}
+                              onMouseEnter={() => setHoveredSpec(option)}
+                              onMouseLeave={() => setHoveredSpec(null)}
+                              className={`dropdown-item-option ${
+                                hoveredSpec === option
+                                  ? 'dropdown-item-hovered'
+                                  : newRowData.specification === option
+                                  ? 'dropdown-item-selected'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {option}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="dropdown-no-matches">No matches found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </td>
+
+                <td className="table-cell">
+                  <input
+                    type="text"
+                    placeholder="20*8*8.6"
+                    value={newRowData.dimension}
+                    onChange={(e) => setNewRowData({ ...newRowData, dimension: e.target.value })}
+                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                </td>
+
+                <td className="table-cell">
+                  <input
+                    type="number"
+                    placeholder="1"
+                    value={newRowData.noOfUnit}
+                    onChange={(e) => setNewRowData({ ...newRowData, noOfUnit: e.target.value })}
+                    className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                </td>
+
+                <td className="table-cell">
+                  <input
+                    type="number"
+                    placeholder="10000"
+                    value={newRowData.amount}
+                    onChange={(e) => setNewRowData({ ...newRowData, amount: e.target.value })}
+                    className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                </td>
+
+                <td className="table-cell">
+                  <input
+                    type="number"
+                    placeholder="10000"
+                    value={newRowData.hiddenAmount}
+                    onChange={(e) => setNewRowData({ ...newRowData, hiddenAmount: e.target.value })}
+                    className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                  />
+                </td>
+
+                <td className="table-cell-center">
+                  <div className="flex gap-2 justify-center">
+                    <button onClick={() => handleSaveNewRow(tableNum)} title="Save">
+                      <CheckCircle size={18} className="cursor-pointer text-green-600 hover:opacity-70" />
+                    </button>
+                    <button onClick={() => handleCancelNewRow(tableNum)} title="Cancel">
+                      <XCircle size={18} className="cursor-pointer text-red-600 hover:opacity-70" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
             )}
-          </div>
-        </td>
-      </tr>
+          </React.Fragment>
+        ))}
+
+        {/* Add row at bottom */}
+        {((tableNum === 1 && addingRow1 && newRowPosition1 === 'bottom') ||
+          (tableNum === 2 && addingRow2 && newRowPosition2 === 'bottom')) && (
+          <tr className="table-row bg-blue-50">
+            <td className="table-cell font-bold text-blue-600">{rows.length + 1}</td>
+
+            <td className="table-cell">
+              <div ref={groupDropdownRef} className="relative">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={groupSearchTerm}
+                    onChange={(e) => {
+                      setGroupSearchTerm(e.target.value);
+                      setGroupDropdownOpen(true);
+                    }}
+                    onFocus={() => setGroupDropdownOpen(true)}
+                    placeholder="Type or select..."
+                    className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                  />
+                  <ChevronDown
+                    size={16}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  />
+                </div>
+                {groupDropdownOpen && (
+                  <div className="dropdown-menu">
+                    {filteredGroupOptions.length > 0 ? (
+                      filteredGroupOptions.map((option, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleSelectGroup(option, false)}
+                          onMouseEnter={() => setHoveredGroup(option)}
+                          onMouseLeave={() => setHoveredGroup(null)}
+                          className={`dropdown-item-option ${
+                            hoveredGroup === option
+                              ? 'dropdown-item-hovered'
+                              : newRowData.group === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
+                        >
+                          {option}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="dropdown-no-matches">No matches found</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </td>
+
+            <td className="table-cell">
+              <div ref={specDropdownRef} className="relative">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={specSearchTerm}
+                    onChange={(e) => {
+                      setSpecSearchTerm(e.target.value);
+                      setSpecDropdownOpen(true);
+                    }}
+                    onFocus={() => setSpecDropdownOpen(true)}
+                    placeholder="Type or select..."
+                    className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                  />
+                  <ChevronDown
+                    size={16}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  />
+                </div>
+                {specDropdownOpen && (
+                  <div className="dropdown-menu">
+                    {filteredSpecOptions.length > 0 ? (
+                      filteredSpecOptions.map((option, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleSelectSpec(option, false)}
+                          onMouseEnter={() => setHoveredSpec(option)}
+                          onMouseLeave={() => setHoveredSpec(null)}
+                          className={`dropdown-item-option ${
+                            hoveredSpec === option
+                              ? 'dropdown-item-hovered'
+                              : newRowData.specification === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
+                        >
+                          {option}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="dropdown-no-matches">No matches found</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </td>
+
+            <td className="table-cell">
+              <input
+                type="text"
+                placeholder="20*8*8.6"
+                value={newRowData.dimension}
+                onChange={(e) => setNewRowData({ ...newRowData, dimension: e.target.value })}
+                className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm"
+              />
+            </td>
+
+            <td className="table-cell">
+              <input
+                type="number"
+                placeholder="1"
+                value={newRowData.noOfUnit}
+                onChange={(e) => setNewRowData({ ...newRowData, noOfUnit: e.target.value })}
+                className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm"
+              />
+            </td>
+
+            <td className="table-cell">
+              <input
+                type="number"
+                placeholder="10000"
+                value={newRowData.amount}
+                onChange={(e) => setNewRowData({ ...newRowData, amount: e.target.value })}
+                className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+              />
+            </td>
+
+            <td className="table-cell">
+              <input
+                type="number"
+                placeholder="10000"
+                value={newRowData.hiddenAmount}
+                onChange={(e) => setNewRowData({ ...newRowData, hiddenAmount: e.target.value })}
+                className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+              />
+            </td>
+
+            <td className="table-cell-center">
+              <div className="flex gap-2 justify-center">
+                <button onClick={() => handleSaveNewRow(tableNum)} title="Save">
+                  <CheckCircle size={18} className="cursor-pointer text-green-600 hover:opacity-70" />
+                </button>
+                <button onClick={() => handleCancelNewRow(tableNum)} title="Cancel">
+                  <XCircle size={18} className="cursor-pointer text-red-600 hover:opacity-70" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        )}
+      </tbody>
     );
   };
 
@@ -728,7 +1083,7 @@ export default function QuotationForm() {
           <div className="content-card">
             <h2 className="page-title">Quotation Form</h2>
 
-            {/* Form Fields - First Row */}
+            {/* Form Fields */}
             <div className="filter-grid">
               <div className="filter-grid-red">
                 <label className="filter-label">Quotation No</label>
@@ -736,31 +1091,32 @@ export default function QuotationForm() {
                   type="text"
                   className="filter-input"
                   value={formData.quotationno}
-                  onChange={(e) => setFormData({...formData, quotationno: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, quotationno: e.target.value })}
                 />
               </div>
-              
+
               <div className="filter-grid-red">
                 <label className="filter-label">Quotation Date</label>
                 <input
                   type="date"
                   className="filter-input"
                   value={formData.quotationdate}
-                  onChange={(e) => setFormData({...formData, quotationdate: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, quotationdate: e.target.value })}
                 />
               </div>
+              
               <div className="btn-container">
-                  <button  className="btn-search">
-                    <Search size={18} /> Search
-                  </button>
-                </div>
+                <button className="btn-search">
+                  <Search size={18} /> Search
+                </button>
+              </div>
             </div>
 
             {/* Customer Dropdown */}
             <div className="grid grid-cols-2 gap-4 mb-0.5">
               <div id="customer-dropdown-container" className="filter-grid-red">
                 <label className="filter-label">Customer Name</label>
-                <div 
+                <div
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowCustomerDropdown(!showCustomerDropdown);
@@ -777,16 +1133,16 @@ export default function QuotationForm() {
                         key={idx}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setFormData({...formData, customerName: customer});
+                          setFormData({ ...formData, customerName: customer });
                           setShowCustomerDropdown(false);
                         }}
                         onMouseEnter={() => setHoveredOption(customer)}
                         onMouseLeave={() => setHoveredOption(null)}
                         className={`dropdown-item-option ${
-                          hoveredOption === customer 
-                            ? 'dropdown-item-hovered' 
-                            : formData.customerName === customer 
-                            ? 'dropdown-item-selected' 
+                          hoveredOption === customer
+                            ? 'dropdown-item-hovered'
+                            : formData.customerName === customer
+                            ? 'dropdown-item-selected'
                             : 'dropdown-item-default'
                         }`}
                       >
@@ -801,11 +1157,11 @@ export default function QuotationForm() {
             <div className="grid grid-cols-2 gap-4 mb-0.5">
               <div className="filter-grid-red">
                 <label className="filter-label">Address</label>
-                <textarea 
+                <textarea
                   className="multiline-field"
-                  value={formData.address} 
-                  onChange={handleAddressChange} 
-                  rows="1" 
+                  value={formData.address}
+                  onChange={handleAddressChange}
+                  rows="1"
                 />
               </div>
             </div>
@@ -816,21 +1172,20 @@ export default function QuotationForm() {
                 <label className="filter-label">Template Name</label>
                 <div className="dropdown-input">
                   <span>{formData.templateName}</span>
-                  <ChevronDown size={16} className="dropdown-icon"/>
+                  <ChevronDown size={16} className="dropdown-icon" />
                 </div>
               </div>
-               <div className="filter-grid-red">
+              <div className="filter-grid-red">
                 <label className="filter-label">Template Description</label>
                 <input
                   type="text"
                   className="filter-input"
                   value={formData.templatedescription}
-                  onChange={(e) => setFormData({...formData, templatedescription: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, templatedescription: e.target.value })}
                 />
               </div>
-              
-            </div>
-            
+            </div> 
+
             {/* First Table */}
             <div className="table-container">
               <table className="data-table">
@@ -846,174 +1201,69 @@ export default function QuotationForm() {
                     <th className="table-th-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {rows1.map((row, index) => renderTableRow(row, index, rows1, 1))}
-                </tbody>
+                {renderTable(currentRows1, rows1, 1, editingRow1, editedData1, openMenuIndex1, indexOfFirstRow1)}
               </table>
+            </div>
 
-              {/* Add Row Button for Table 1 */}
-              <div className="flex justify-end m-5">
-                <button onClick={() => handleAddButtonClick(1)} className="btn-smallbtn">
-                  <span>+</span> Add Row
+            {/* Add Row Button Table 1 */}
+            <div className="flex justify-end mb-2 mt-2">
+              <button
+                onClick={() => handleAddButtonClick(1)}
+                className="btn-all flex items-center gap-2"
+              >
+                <Plus size={18} />
+                Add Row
+              </button>
+            </div>
+
+            {/* Pagination Table 1 */}
+            {rows1.length > rowsPerPage && (
+              <div className="pagination-container">
+                <button
+                  disabled={currentPage1 === 1}
+                  onClick={() => setCurrentPage1(p => p - 1)}
+                  className={`pagination-btn ${
+                    currentPage1 === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                {Array.from({ length: totalPages1 }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage1(page)}
+                    className={`pagination-page-btn ${
+                      currentPage1 === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={currentPage1 === totalPages1}
+                  onClick={() => setCurrentPage1(p => p + 1)}
+                  className={`pagination-btn ${
+                    currentPage1 === totalPages1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={18} />
                 </button>
               </div>
-              
-              {showAddForm1 && (
-                <div className="grid grid-cols-8 gap-3 items-end pb-2 mb-5">
-                  <div className="filter-grid-blue">
-                    <label className="filter-label">Sl No</label>
-                    <div className="filter-input" style={{fontWeight: 'bold', color: '#2f22c3'}}>
-                      {insertAfterRowId 
-                        ? rows1.findIndex(r => r.id === insertAfterRowId) + 1
-                        : rows1.length + 1
-                      }
-                    </div>
-                  </div>
+            )}
 
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Template Group</label>
-                    <div className="dropdown-wrapper">
-                      <div
-                        onClick={() => {
-                          setShowGroupDropdown(showGroupDropdown === 'newRow1' ? null : 'newRow1');
-                        }}
-                        className="dropdown-input"
-                      >
-                        <span>{newRowData.group || 'Select'}</span>
-                        <ChevronDown size={16} className="dropdown-icon" />
-                      </div>
-                      
-                      {showGroupDropdown === 'newRow1' && (
-                        <div className="dropdown-menu">
-                          {groupMasters.map((option, idx) => (
-                            <div
-                              key={idx}
-                              onClick={() => {
-                                setNewRowData({ ...newRowData, group: option });
-                                setShowGroupDropdown(null);
-                              }}
-                              onMouseEnter={() => setHoveredOption(option)}
-                              onMouseLeave={() => setHoveredOption(null)}
-                              className={`dropdown-item-option ${
-                                hoveredOption === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : newRowData.group === option 
-                                  ? 'dropdown-item-selected' 
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Template Specification</label>
-                    <div className="dropdown-wrapper">
-                      <div
-                        onClick={() => {
-                          setShowSpecDropdown(showSpecDropdown === 'newRow1' ? null : 'newRow1');
-                        }}
-                        className="dropdown-input"
-                      >
-                        <span>{newRowData.specification || 'Select'}</span>
-                        <ChevronDown size={16} className="dropdown-icon" />
-                      </div>
-                      
-                      {showSpecDropdown === 'newRow1' && (
-                        <div className="dropdown-menu">
-                          {specMasters.map((option, idx) => (
-                            <div
-                              key={idx}
-                              onClick={() => {
-                                setNewRowData({ ...newRowData, specification: option });
-                                setShowSpecDropdown(null);
-                              }}
-                              onMouseEnter={() => setHoveredOption(option)}
-                              onMouseLeave={() => setHoveredOption(null)}
-                              className={`dropdown-item-option ${
-                                hoveredOption === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : newRowData.specification === option 
-                                  ? 'dropdown-item-selected' 
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Dimension</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="Input"
-                      value={newRowData.dimension}
-                      onChange={(e) => setNewRowData({ ...newRowData, dimension: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">No. of Unit</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="20*8*8.6"
-                      value={newRowData.noOfUnit}
-                      onChange={(e) => setNewRowData({ ...newRowData, noOfUnit: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Amount</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="₹ 10,00,000"
-                      value={newRowData.amount}
-                      onChange={(e) => setNewRowData({ ...newRowData, amount: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Hidden Amount</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="₹ 10,00,000"
-                      value={newRowData.hiddenAmount}
-                      onChange={(e) => setNewRowData({ ...newRowData, hiddenAmount: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="flex items-end">
-                    <button onClick={handleSaveNewRow} className="btn-smallbtn">
-                      Save
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex justify-end mt-3 mb-1.5">
-                <div className="px-5 py-3 bg-gray-50 flex gap-3 items-center">
-                  <span className="filter-label">Quotation Charges :</span>
-                  <span className="filter-label">₹ {rows1.reduce((sum, row) => sum + row.amount, 0).toLocaleString()}</span>
-                </div>
+            <div className="flex justify-end mt-3 mb-1.5">
+              <div className="px-5 py-3 bg-gray-50 flex gap-3 items-center">
+                <span className="filter-label">Quotation Charges:</span>
+                <span className="filter-label">₹ {rows1.reduce((sum, row) => sum + row.amount, 0).toFixed(2)}</span>
               </div>
             </div>
-            
+
             <h2 className="page-title">Additional Charges</h2>
-            
+
             {/* Second Table */}
-            <div className="table-container mb-5">
+            <div className="table-container">
               <table className="data-table">
                 <thead className="table-header">
                   <tr>
@@ -1027,216 +1277,123 @@ export default function QuotationForm() {
                     <th className="table-th-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {rows2.map((row, index) => renderTableRow(row, index, rows2, 2))}
-                </tbody>
+                {renderTable(currentRows2, rows2, 2, editingRow2, editedData2, openMenuIndex2, indexOfFirstRow2)}
               </table>
+            </div>
 
-              {/* Add Row Button for Table 2 */}
-              <div className="flex justify-end m-5">
-                <button onClick={() => handleAddButtonClick(2)} className="btn-smallbtn">
-                  <span>+</span> Add Row
+            {/* Add Row Button Table 2 */}
+            <div className="flex justify-end mb-2 mt-2">
+              <button
+                onClick={() => handleAddButtonClick(2)}
+                className="btn-all flex items-center gap-2"
+              >
+                <Plus size={18} />
+                Add Row
+              </button>
+            </div>
+
+            {/* Pagination Table 2 */}
+            {rows2.length > rowsPerPage && (
+              <div className="pagination-container">
+                <button
+                  disabled={currentPage2 === 1}
+                  onClick={() => setCurrentPage2(p => p - 1)}
+                  className={`pagination-btn ${
+                    currentPage2 === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                {Array.from({ length: totalPages2 }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage2(page)}
+                    className={`pagination-page-btn ${
+                      currentPage2 === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  disabled={currentPage2 === totalPages2}
+                  onClick={() => setCurrentPage2(p => p + 1)}
+                  className={`pagination-btn ${
+                    currentPage2 === totalPages2 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={18} />
                 </button>
               </div>
-              
-              {showAddForm2 && (
-                <div className="grid grid-cols-8 gap-3 items-end pb-2 mb-5">
-                  <div className="filter-grid-blue">
-                    <label className="filter-label">Sl No</label>
-                    <div className="filter-input" style={{fontWeight: 'bold', color: '#2f22c3'}}>
-                      {insertAfterRowId 
-                        ? rows2.findIndex(r => r.id === insertAfterRowId) + 1
-                        : rows2.length + 1
-                      }
-                    </div>
-                  </div>
+            )}
 
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Template Group</label>
-                    <div className="dropdown-wrapper">
-                      <div
-                        onClick={() => {
-                          setShowGroupDropdown(showGroupDropdown === 'newRow2' ? null : 'newRow2');
-                        }}
-                        className="dropdown-input"
-                      >
-                        <span>{newRowData.group || 'Select'}</span>
-                        <ChevronDown size={16} className="dropdown-icon" />
-                      </div>
-                      
-                      {showGroupDropdown === 'newRow2' && (
-                        <div className="dropdown-menu">
-                          {groupMasters.map((option, idx) => (
-                            <div
-                              key={idx}
-                              onClick={() => {
-                                setNewRowData({ ...newRowData, group: option });
-                                setShowGroupDropdown(null);
-                              }}
-                              onMouseEnter={() => setHoveredOption(option)}
-                              onMouseLeave={() => setHoveredOption(null)}
-                              className={`dropdown-item-option ${
-                                hoveredOption === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : newRowData.group === option 
-                                  ? 'dropdown-item-selected' 
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Template Specification</label>
-                    <div className="dropdown-wrapper">
-                      <div
-                        onClick={() => {
-                          setShowSpecDropdown(showSpecDropdown === 'newRow2' ? null : 'newRow2');
-                        }}
-                        className="dropdown-input"
-                      >
-                        <span>{newRowData.specification || 'Select'}</span>
-                        <ChevronDown size={16} className="dropdown-icon" />
-                      </div>
-                      
-                      {showSpecDropdown === 'newRow2' && (
-                        <div className="dropdown-menu">
-                          {specMasters.map((option, idx) => (
-                            <div
-                              key={idx}
-                              onClick={() => {
-                                setNewRowData({ ...newRowData, specification: option });
-                                setShowSpecDropdown(null);
-                              }}
-                              onMouseEnter={() => setHoveredOption(option)}
-                              onMouseLeave={() => setHoveredOption(null)}
-                              className={`dropdown-item-option ${
-                                hoveredOption === option 
-                                  ? 'dropdown-item-hovered' 
-                                  : newRowData.specification === option 
-                                  ? 'dropdown-item-selected' 
-                                  : 'dropdown-item-default'
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Dimension</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="Input"
-                      value={newRowData.dimension}
-                      onChange={(e) => setNewRowData({ ...newRowData, dimension: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">No. of Unit</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="20*8*8.6"
-                      value={newRowData.noOfUnit}
-                      onChange={(e) => setNewRowData({ ...newRowData, noOfUnit: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Amount</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="₹ 10,00,000"
-                      value={newRowData.amount}
-                      onChange={(e) => setNewRowData({ ...newRowData, amount: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="filter-grid-green">
-                    <label className="filter-label">Hidden Amount</label>
-                    <input
-                      type="text"
-                      className="filter-input"
-                      placeholder="₹ 10,00,000"
-                      value={newRowData.hiddenAmount}
-                      onChange={(e) => setNewRowData({ ...newRowData, hiddenAmount: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="flex items-end">
-                    <button onClick={handleSaveNewRow} className="btn-smallbtn w-full">
-                      Save
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex justify-end mt-3 mb-1.5">
-                <div className="px-5 py-3 bg-gray-50 flex gap-3 items-center">
-                  <span className="filter-label">Additional Charges :</span>
-                  <span className="filter-label">₹ {rows2.reduce((sum, row) => sum + row.amount, 0).toLocaleString()}</span>
-                </div>
+            <div className="flex justify-end mt-3 mb-1.5">
+              <div className="px-5 py-3 bg-gray-50 flex gap-3 items-center">
+                <span className="filter-label">Additional Charges:</span>
+                <span className="filter-label">₹ {rows2.reduce((sum, row) => sum + row.amount, 0).toFixed(2)}</span>
               </div>
             </div>
 
             <div className="flex justify-end mt-3 mb-3">
               <div className="border border-gray-400 rounded-md px-5 py-3 bg-gray-50 flex gap-3 items-center">
-                <span className="filter-label">Net Amount :</span>
-                <span className="filter-label">₹ {calculateTotal().toLocaleString()}</span>
+                <span className="filter-label">Net Amount:</span>
+                <span className="filter-label">₹ {calculateTotal().toFixed(2)}</span>
               </div>
             </div>
- 
+
             {/* Total Amount */}
-            <div className="mb-5 border border-gray-400 rounded-lg p-4">
+            <div className="mb-5 border border-gray-400 rounded-md p-3">
               <h3 className="section-title">Total Amount</h3>
-              
-              <div className="filter-grid pb-2">
-                <div className="p-3 bg-gray-50 border border-gray-400 rounded-md text-sm font-medium">
+
+              <div className="grid grid-cols-4 gap-4 pb-1.5">
+                <div className="filter-grid-gray">
                   <div className="filter-label">Total</div>
-                  <div>₹ {calculateTotal().toLocaleString()}</div>
+                  <input
+                    readOnly
+                    value={`₹ ${calculateTotal().toFixed(2)}`}
+                    className="filter-input bg-transparent"
+                  />
                 </div>
-                
-                <div className="p-3 bg-gray-50 border border-gray-400 rounded-md text-sm font-medium">
+
+                <div className="filter-grid-red">
                   <div className="filter-label">Discount</div>
                   <input
                     type="number"
-                    className="filter-input"
                     value={discount}
                     onChange={(e) => setDiscount(Number(e.target.value) || 0)}
-                  /> 
+                    className="filter-input bg-transparent"
+                  />
                 </div>
-                
-                <div className="p-3 bg-gray-50 border border-gray-400 rounded-md text-sm font-medium">
+
+                <div className="filter-grid-gray">
                   <div className="filter-label">Taxable Value</div>
-                  <div>₹ {calculateTaxableValue().toLocaleString()}</div>
+                  <input
+                    readOnly
+                    value={`₹ ${calculateTaxableValue().toFixed(2)}`}
+                    className="filter-input bg-transparent"
+                  />
                 </div>
-                
-                <div className="p-3 bg-gray-50 border border-gray-400 rounded-md text-sm font-medium">
+
+                <div className="filter-grid-red">
                   <div className="filter-label">GST 18%</div>
                   <input
-                    type="number"
-                    className="filter-input"
+                    type="number" 
                     value={gstPercentage}
                     onChange={(e) => setGstPercentage(Number(e.target.value) || 0)}
+                    className="filter-input bg-transparent"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-gray-50 border border-gray-400 rounded-md text-sm font-medium mt-4">
+              <div className="filter-grid-gray">
                 <div className="filter-label">Net Amount</div>
-                <div className="text-base font-bold">₹ {calculateNetAmount().toLocaleString()}</div>
+                <input
+                  readOnly
+                  value={`₹ ${calculateNetAmount().toFixed(2)}`}
+                  className="filter-input bg-transparent"
+                />
               </div>
             </div>
 
@@ -1258,7 +1415,7 @@ export default function QuotationForm() {
                       className="btn-action"
                       title="Add New Term"
                     >
-                      <Plus size={18} className="add-primary"/>
+                      <Plus size={18} className="add-primary" />
                     </button>
                   )}
                 </div>
@@ -1271,14 +1428,14 @@ export default function QuotationForm() {
                         <textarea
                           value={editTermText}
                           onChange={(e) => setEditTermText(e.target.value)}
-                          className="multiline-field"
+                          className="multiline-field flex-1"
                           rows="2"
                         />
                         <button onClick={handleSaveTerm} className="btn-action" title="Save">
-                          <Check size={16} className="add-primary" />
+                          <CheckCircle size={16} className="text-green-600" />
                         </button>
                         <button onClick={handleCancelEditTerm} className="btn-action" title="Cancel">
-                          <X size={16} className="text-primary" />
+                          <XCircle size={16} className="text-red-600" />
                         </button>
                       </>
                     ) : (
@@ -1290,7 +1447,7 @@ export default function QuotationForm() {
                               <Edit2 size={16} />
                             </button>
                             <button onClick={() => handleDeleteTerm(index)} className="btn-action" title="Delete">
-                              <Trash2 size={16} className="text-primary" />
+                              <Trash2 size={16} className="text-red-600" />
                             </button>
                           </div>
                         )}
@@ -1300,72 +1457,32 @@ export default function QuotationForm() {
                 ))}
               </div>
             </div>
-            
+
             {/* Action Buttons */}
             <div className="filter-grid action-buttons">
-              <button onClick={handlePrint} className="btn-smallbtn flex items-center justify-center gap-2"><Printer size={16} />Print</button>
-              <button onClick={handleDownloadExcel} className="btn-smallbtn flex items-center justify-center gap-2"><FileSpreadsheet size={16} />Excel</button>
-              <button onClick={handleSubmit} className="btn-smallbtn ">Submit</button>
+              <button onClick={handlePrint} className="btn-smallbtn flex items-center justify-center gap-2">
+                <Printer size={16} />
+                Print
+              </button>
+              <button onClick={handleDownloadExcel} className="btn-smallbtn flex items-center justify-center gap-2">
+                <FileSpreadsheet size={16} />
+                Excel
+              </button>
+              <button onClick={handleSubmit} className="btn-smallbtn">
+                Submit
+              </button>
+            </div>
+
+            {/* Back Button */}
+            <div className="footer-container">
+              <button onClick={() => navigate(-1)} className="btn-back">
+                <span>←</span>
+                <span>Back</span>
+              </button>
             </div>
           </div>
-                  
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
         </div>
       </div>
-
-      {/* Modals */}
-      {showGroupModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-white rounded-lg p-6 w-96 max-h-[500px] overflow-auto">
-            <h3 className="text-lg font-semibold mb-4">Select Group</h3>
-            <div className="flex flex-col gap-2">
-              {groupMasters.map((group, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => selectFromMaster('group', group)}
-                  className="p-3 border border-gray-200 rounded cursor-pointer text-left bg-white text-sm"
-                >
-                  {group}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => setShowGroupModal(false)}
-              className="mt-4 px-5 py-2.5 border-0 rounded bg-gray-600 text-white cursor-pointer w-full"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showSpecModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-white rounded-lg p-6 w-[500px] max-h-[500px] overflow-auto">
-            <h3 className="text-lg font-semibold mb-4">Select Specification</h3>
-            <div className="flex flex-col gap-2">
-              {specMasters.map((spec, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => selectFromMaster('spec', spec)}
-                  className="p-3 border border-gray-200 rounded cursor-pointer text-left bg-white text-[13px]"
-                >
-                  {spec}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => setShowSpecModal(false)}
-              className="mt-4 px-5 py-2.5 border-0 rounded bg-gray-600 text-white cursor-pointer w-full"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
