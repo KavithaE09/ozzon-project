@@ -1094,9 +1094,10 @@
 /* ─────────────────────────────────────────── */
 .table-container {
   overflow-x: auto;
+  overflow-y: visible;
   border-radius: 4px;
   border: 1px solid #d1d5db;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
   max-width: 100%;
 }
 .dark .table-container {
@@ -1161,6 +1162,12 @@
   padding: 14px 16px;
   color: #374151;
   white-space: nowrap;
+   position: relative;
+}
+.table-cell.spec-column {
+  max-width: 250px; 
+  white-space: normal;
+  text-overflow: ellipsis;
 }
 .dark .table-cell {
   color: #E5E7EB;
