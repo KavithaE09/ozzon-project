@@ -368,7 +368,7 @@ const currentRecords = filteredRecords.slice(
               
               <div></div>
 
-              <div className="grid justify-start mt-5">
+             <div className="btn-container">
                 <button 
                   onClick={handleSubmit}
                   className="btn-all"
@@ -438,14 +438,11 @@ const currentRecords = filteredRecords.slice(
               
               <div></div>
 
-              <div className="grid justify-start mt-5">
-                <button
-                  onClick={handleSearch}
-                  className="btn-all"
-                >
-                  <Search size={18} /> Search
-                </button>
-              </div>
+              <div className="btn-container">
+                  <button onClick={handleSearch} className="btn-all">
+                    <Search size={18} /> Search
+                  </button>
+                </div>
             </div>
 
             <div className="border border-gray-400 rounded-md overflow-hidden">

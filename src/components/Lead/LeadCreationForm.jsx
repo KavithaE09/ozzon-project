@@ -2,33 +2,30 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-
-
 export default function LeadCreationForm(){
   
-  
-const jobList = [
-  {
-    leadNo: 'L-1',
-    quotationNo: 'Q-1',
-    piNo: 'P-1',
-    jobOrderNo: 'J-1',
-    jobOrderDate: '01-01-2026',
-    assignDate: '01-01-2026',
-    salesPerson: 'Raneesh',
-    customerName: 'Raneesh'
-  },
-  {
-    leadNo: 'L-2',
-    quotationNo: 'Q-1',
-    piNo: 'P-1',
-    jobOrderNo: 'J-1',
-    jobOrderDate: '01-01-2026',
-    assignDate: '01-01-2026',
-    salesPerson: 'Raneesh',
-    customerName: 'Raneesh'
-  }
-];
+  const jobList = [
+    {
+      leadNo: 'L-1',
+      quotationNo: 'Q-1',
+      piNo: 'P-1',
+      jobOrderNo: 'J-1',
+      jobOrderDate: '01-01-2026',
+      assignDate: '01-01-2026',
+      salesPerson: 'Raneesh',
+      customerName: 'Raneesh'
+    },
+    {
+      leadNo: 'L-2',
+      quotationNo: 'Q-1',
+      piNo: 'P-1',
+      jobOrderNo: 'J-1',
+      jobOrderDate: '01-01-2026',
+      assignDate: '01-01-2026',
+      salesPerson: 'Raneesh',
+      customerName: 'Raneesh'
+    }
+  ];
 
   const navigate = useNavigate();
   const leadOwnerDropdownRef = useRef(null);
@@ -142,7 +139,6 @@ const jobList = [
       ...formData,
       description: e.target.value
     });
-    // Auto-resize textarea
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
   };
@@ -200,181 +196,178 @@ const jobList = [
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-   const [containers, setContainers] = useState([
-      { id: 1, selected: false, sNo: 1, containerNo: 'TCKU 1524662', partyName: 'Christine Brooks', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04-09-2019', photo: '', status: 'Available'},
-      { id: 2, selected: false, sNo: 2, containerNo: 'TCKU 1524662', partyName: 'Rosie Pearson', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04 Sep 2019', photo: '', status: 'Hold'}
-    ]);
+  const [containers, setContainers] = useState([
+    { id: 1, selected: false, sNo: 1, containerNo: 'TCKU 1524662', partyName: 'Christine Brooks', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04-09-2019', photo: '', status: 'Available'},
+    { id: 2, selected: false, sNo: 2, containerNo: 'TCKU 1524662', partyName: 'Rosie Pearson', szType: '20"', grade: '', liner: '', yard: 'Golbal', mfgDate: '04-09-2019', inDate: '04-09-2019', deliveryDate: '04 Sep 2019', photo: '', status: 'Hold'}
+  ]);
 
-    const [openRow, setOpenRow] = useState(null);
-    const [tableData, setTableData] = useState([
-        {
-          sNo: 1,
-          leadNo: 101,
-          leadDate: '04-09-2019',
-          qNo: 'Q-101',
-          qDate: '04 Sep 2019',
-          piNo: '',
-          piDate: '04 Sep 2019',
-          salesPerson: 'Raneesh',
-          containerNo: 'TCKU 1524662',
-          partyName: 'Christine Brooks',
-          szType: '20"',
-          grade: '',
-          liner: '',
-          inDate: '04-09-2019',
-          deliveryDate: '04-09-2019',
-          photo: '',
-          status: 'Sold Out'
-        },
-        {
-          sNo: 2,
-          leadNo: 101,
-          leadDate: '04 Sep 2019',
-          qNo: 'Q-101',
-          qDate: '04 Sep 2019',
-          piNo: '',
-          piDate: '04 Sep 2019',
-          salesPerson: 'Raneesh',
-          containerNo: 'TCKU 1524662',
-          partyName: 'Rosie Pearson',
-          szType: '20"',
-          grade: '',
-          liner: '',
-          inDate: '04 Sep 2019',
-          deliveryDate: '04 Sep 2019',
-          photo: '',
-          status: 'Sold Out'
-        }
-      ]);
+  const [openRow, setOpenRow] = useState(null);
+  const [tableData, setTableData] = useState([
+    {
+      sNo: 1,
+      leadNo: 101,
+      leadDate: '04-09-2019',
+      qNo: 'Q-101',
+      qDate: '04 Sep 2019',
+      piNo: '',
+      piDate: '04 Sep 2019',
+      salesPerson: 'Raneesh',
+      containerNo: 'TCKU 1524662',
+      partyName: 'Christine Brooks',
+      szType: '20"',
+      grade: '',
+      liner: '',
+      inDate: '04-09-2019',
+      deliveryDate: '04-09-2019',
+      photo: '',
+      status: 'Sold Out'
+    },
+    {
+      sNo: 2,
+      leadNo: 101,
+      leadDate: '04 Sep 2019',
+      qNo: 'Q-101',
+      qDate: '04 Sep 2019',
+      piNo: '',
+      piDate: '04 Sep 2019',
+      salesPerson: 'Raneesh',
+      containerNo: 'TCKU 1524662',
+      partyName: 'Rosie Pearson',
+      szType: '20"',
+      grade: '',
+      liner: '',
+      inDate: '04 Sep 2019',
+      deliveryDate: '04 Sep 2019',
+      photo: '',
+      status: 'Sold Out'
+    }
+  ]);
 
-const jobOrders = [
-  {
-    jobOrderNo: 'TCKU 1524662',
-    jobDate: '20-01-25',
-    customerName: 'Raneesh',
-    salesPerson: 'Ramesh',
-    narration: 'Ramesh',
-    status: 'Unit',
-    remark: 'Unit'
-  },
-  {
-    jobOrderNo: 'TCKU 1524662',
-    jobDate: '20-01-25',
-    customerName: 'Raneesh',
-    salesPerson: 'Ramesh',
-    narration: 'Ramesh',
-    status: 'Unit',
-    remark: 'Unit'
-  },
-  {
-    jobOrderNo: 'TCKU 1524663',
-    jobDate: '21-01-25',
-    customerName: 'Bala',
-    salesPerson: 'Suresh',
-    narration: 'Suresh',
-    status: 'Pending',
-    remark: 'Pending'
-  },
-  {
-    jobOrderNo: 'TCKU 1524664',
-    jobDate: '22-01-25',
-    customerName: 'Naveen',
-    salesPerson: 'Kumar',
-    narration: 'Kumar',
-    status: 'Completed',
-    remark: 'Done'
-  },
-  {
-    jobOrderNo: 'TCKU 1524665',
-    jobDate: '23-01-25',
-    customerName: 'Raja',
-    salesPerson: 'Vijay',
-    narration: 'Vijay',
-    status: 'In Progress',
-    remark: 'Working'
-  }
-];
+  const jobOrders = [
+    {
+      jobOrderNo: 'TCKU 1524662',
+      jobDate: '20-01-25',
+      customerName: 'Raneesh',
+      salesPerson: 'Ramesh',
+      narration: 'Ramesh',
+      status: 'Unit',
+      remark: 'Unit'
+    },
+    {
+      jobOrderNo: 'TCKU 1524662',
+      jobDate: '20-01-25',
+      customerName: 'Raneesh',
+      salesPerson: 'Ramesh',
+      narration: 'Ramesh',
+      status: 'Unit',
+      remark: 'Unit'
+    },
+    {
+      jobOrderNo: 'TCKU 1524663',
+      jobDate: '21-01-25',
+      customerName: 'Bala',
+      salesPerson: 'Suresh',
+      narration: 'Suresh',
+      status: 'Pending',
+      remark: 'Pending'
+    },
+    {
+      jobOrderNo: 'TCKU 1524664',
+      jobDate: '22-01-25',
+      customerName: 'Naveen',
+      salesPerson: 'Kumar',
+      narration: 'Kumar',
+      status: 'Completed',
+      remark: 'Done'
+    },
+    {
+      jobOrderNo: 'TCKU 1524665',
+      jobDate: '23-01-25',
+      customerName: 'Raja',
+      salesPerson: 'Vijay',
+      narration: 'Vijay',
+      status: 'In Progress',
+      remark: 'Working'
+    }
+  ];
 
-const jobReviewList = [
-  {
-    description: 'Door - MODIFICATION OF PLAIN OFFICE WITH COUNTER WINDOW',
-    dimension: '20*8*8.6',
-    unit: 1,
-    amount: 1000000,
-    hiddenAmount: 1000000
-  },
-  {
-    description: 'Window - UPVC sliding window with mesh',
-    dimension: '20*8*8.6',
-    unit: 2,
-    amount: 500000,
-    hiddenAmount: 500000
-  },
-  {
-    description: 'Flooring - Vitrified tiles 2x2 feet',
-    dimension: '20*8*8.6',
-    unit: 1,
-    amount: 100000,
-    hiddenAmount: 100000
-  },
-  {
-    description: 'Roofing - MS sheet roofing with insulation',
-    dimension: '20*8*8.6',
-    unit: 1,
-    amount: 100000,
-    hiddenAmount: 100000
-  }
-];
-
-
+  const jobReviewList = [
+    {
+      description: 'Door - MODIFICATION OF PLAIN OFFICE WITH COUNTER WINDOW',
+      dimension: '20*8*8.6',
+      unit: 1,
+      amount: 1000000,
+      hiddenAmount: 1000000
+    },
+    {
+      description: 'Window - UPVC sliding window with mesh',
+      dimension: '20*8*8.6',
+      unit: 2,
+      amount: 500000,
+      hiddenAmount: 500000
+    },
+    {
+      description: 'Flooring - Vitrified tiles 2x2 feet',
+      dimension: '20*8*8.6',
+      unit: 1,
+      amount: 100000,
+      hiddenAmount: 100000
+    },
+    {
+      description: 'Roofing - MS sheet roofing with insulation',
+      dimension: '20*8*8.6',
+      unit: 1,
+      amount: 100000,
+      hiddenAmount: 100000
+    }
+  ];
 
   return (
-    
     <div className="page-container">
       <div className="content-wrapper">
         <div className="main-section">
           
           <div className="content-card">
-          <div className="flex justify-center">
+            {/* Progress Stepper - Responsive */}
+            <div className="flex justify-center overflow-x-auto pb-4 px-2">
+              <div className="flex min-w-max">
+                {[
+                  'Lead',
+                  'Quotation',
+                  'Proforma Invoice',
+                  'Advance',
+                  'Job assign',
+                  'Job completed',
+                  'Sold out'
+                ].map((label, index) => (
+                  <div key={index} className="relative flex flex-col items-center w-[100px] sm:w-[120px] md:w-[140px]">
+                    {/* LINE (except last) */}
+                    {index !== 6 && <div className="absolute top-[18px] left-1/2 w-full h-0.5 bg-gray-300 z-[1]" />}
 
-  {[
-    'Lead',
-    'Quotation',
-    'Performa Invoice',
-    'Advance',
-    'Job assign',
-    'Job completed',
-    'Sold out'
-  ].map((label, index) => (
-    <div key={index} className="relative flex flex-col items-center w-[140px]">
+                    {/* CIRCLE */}
+                    <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-semibold z-[2] text-sm ${
+                      index === 0 
+                        ? 'bg-red-600 text-white' 
+                        : 'border-2 border-gray-400 bg-white text-gray-700'
+                    }`}>
+                      {index === 0 ? '✓' : index + 1}
+                    </div>
 
-      {/* LINE (except last) */}
-      {index !== 6 && <div className="absolute top-[18px] left-1/2 w-full h-0.5 bg-gray-300 z-[1]" />}
+                    {/* LABEL */}
+                    <div className={`mt-2 text-[10px] sm:text-xs text-center px-1 ${
+                      index === 0 ? 'text-red-600 font-semibold' : ''
+                    }`}>
+                      {label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-      {/* CIRCLE */}
-      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold z-[2] ${
-        index === 0 
-          ? 'bg-red-600 text-white' 
-          : 'border-2 border-gray-400 bg-white text-gray-700'
-      }`}>
-        {index === 0 ? '✓' : index + 1}
-      </div>
-
-      {/* LABEL */}
-      <div className={`mt-2 text-xs text-center ${
-        index === 0 ? 'text-red-600 font-semibold' : ''
-      }`}>
-        {label}
-      </div>
-
-    </div>
-  ))}
-
-</div>
-
-            <h2 className="page-title">Lead</h2>
+            <h2 className="page-title px-4 sm:px-6">Lead</h2>
             
-            <div className="filter-grid" >
+            {/* Form Grid - Responsive */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6">
               {/* Lead Owner Dropdown */}
               <div ref={leadOwnerDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Owner</label>
@@ -568,214 +561,210 @@ const jobReviewList = [
                 <input type="text" name="brokerName" value={formData.brokerName} onChange={handleChange} placeholder="Broker Name" className="filter-input" />
               </div>
 
-              
-             
-              <div className="filter-grid-blue" style={{ gridColumn: 'span 3' }}>
+              {/* Remark field - full width on mobile, spans 3 cols on larger screens */}
+              <div className="filter-grid-blue col-span-1 sm:col-span-2 lg:col-span-3">
                 <label className="filter-label">Remark</label>
-                <input type="text" name="remark" value={formData.remark} onChange={handleChange} placeholder="Enter remark" className="filter-input"
-                 />
+                <input type="text" name="remark" value={formData.remark} onChange={handleChange} placeholder="Enter remark" className="filter-input" />
               </div>
             </div>
 
-         
-
-           
-          </div>
-
-          
-            <div className="flex gap-8">
-              <button onClick={handleClear} className="btn-back ml-auto mt-8" >
+            {/* Action Buttons - Responsive */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 px-4 sm:px-6 mt-8">
+              <button onClick={handleClear} className="btn-back sm:ml-auto order-2 sm:order-1">
                 <span>✕</span>
                 <span>Clear</span>
               </button> 
               
-              <button onClick={handleSubmit} className="btn-all mt-6" >
+              <button onClick={handleSubmit} className="btn-all order-1 sm:order-2">
                 <span>✓</span>
                 <span>Submit</span>
               </button>
             </div>
+
+            {/* Tables Section - Responsive */}
             <div className="flex w-full mt-6 flex-col bg-gray-50 rounded-xl shadow-sm">
               
-              <div className="mt-4">
-          <h3 className="section-title ml-[18px]">Container List</h3>
-          <div className="table-container w-[98%] ml-[18px]">
-            <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead className="table-header">
-                   <tr>
-                   
-                    <th className="table-th">S/No</th>
-                    <th className="table-th">Container No</th>
-                    <th className="table-th">Party Name</th>
-                    <th className="table-th">Sz/Type</th>
-                    <th className="table-th">Grade</th>
-                    <th className="table-th">Liner</th>
-                    <th className="table-th">Yard</th>
-                    <th className="table-th">MFG Date</th>
-                    <th className="table-th">In Date</th>
-                    <th className="table-th">Delivery Date</th>
-                    <th className="table-th">Photo</th>
-                    <th className="table-th">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {containers.map((container) => (
-                    <tr key={container.id} className="table-row">
-                      
-                      <td className="table-cell">{container.sNo}.</td>
-                      <td className="table-cell">{container.containerNo}</td>
-                      <td className="table-cell">{container.partyName}</td>
-                      <td className="table-cell">{container.szType}</td>
-                      <td className="table-cell">{container.grade}</td>
-                      <td className="table-cell">{container.liner}</td>
-                      <td className="table-cell">{container.yard}</td>
-                      <td className="table-cell">{container.mfgDate}</td>
-                      <td className="table-cell">{container.inDate}</td>
-                      <td className="table-cell">{container.deliveryDate}</td>
-                      <td className="table-cell">{container.photo}</td>
-                      <td className="table-cell">{container.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              {/* Container List Table */}
+              <div className="mt-4 px-2 sm:px-4">
+                <h3 className="section-title ml-2 sm:ml-[18px]">Container List</h3>
+                <div className="table-container w-full sm:w-[98%] ml-0 sm:ml-[18px]">
+                  <div className="overflow-x-auto">
+                    <table className="data-table min-w-[800px]">
+                      <thead className="table-header">
+                        <tr>
+                          <th className="table-th">S/No</th>
+                          <th className="table-th">Container No</th>
+                          <th className="table-th">Party Name</th>
+                          <th className="table-th">Sz/Type</th>
+                          <th className="table-th">Grade</th>
+                          <th className="table-th">Liner</th>
+                          <th className="table-th">Yard</th>
+                          <th className="table-th">MFG Date</th>
+                          <th className="table-th">In Date</th>
+                          <th className="table-th">Delivery Date</th>
+                          <th className="table-th">Photo</th>
+                          <th className="table-th">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {containers.map((container) => (
+                          <tr key={container.id} className="table-row">
+                            <td className="table-cell">{container.sNo}.</td>
+                            <td className="table-cell">{container.containerNo}</td>
+                            <td className="table-cell">{container.partyName}</td>
+                            <td className="table-cell">{container.szType}</td>
+                            <td className="table-cell">{container.grade}</td>
+                            <td className="table-cell">{container.liner}</td>
+                            <td className="table-cell">{container.yard}</td>
+                            <td className="table-cell">{container.mfgDate}</td>
+                            <td className="table-cell">{container.inDate}</td>
+                            <td className="table-cell">{container.deliveryDate}</td>
+                            <td className="table-cell">{container.photo}</td>
+                            <td className="table-cell">{container.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Job Order Table */}
+              <div className="mt-4 px-2 sm:px-4">
+                <h3 className="section-title ml-2 sm:ml-[18px]">Job order</h3>
+                <div className="table-container w-full sm:w-[98%] ml-0 sm:ml-[18px]">
+                  <div className="overflow-x-auto">
+                    <table className="data-table min-w-[700px]">
+                      <thead className="table-header">
+                        <tr>
+                          {[
+                            'S/No',
+                            'Job Order No',
+                            'Job Date',
+                            'Customer Name',
+                            'Sales Person',
+                            'Narration',
+                            'Status',
+                            'Remark'
+                          ].map((head, i) => (
+                            <th key={i} className="table-th-center">
+                              {head}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {jobOrders.map((row, index) => (
+                          <tr key={index} className="table-row">
+                            <td className="table-cell-center">{index + 1}.</td>
+                            <td className="table-cell-center">{row.jobOrderNo}</td>
+                            <td className="table-cell-center">{row.jobDate}</td>
+                            <td className="table-cell-center">{row.customerName}</td>
+                            <td className="table-cell-center">{row.salesPerson}</td>
+                            <td className="table-cell-center">{row.narration}</td>
+                            <td className="table-cell-center">{row.status}</td>
+                            <td className="table-cell-center">{row.remark}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Task Assign Table */}
+              <div className="mt-4 px-2 sm:px-4">
+                <h3 className="section-title ml-2 sm:ml-[18px]">task assign</h3>
+                <div className="table-container w-full sm:w-[98%] ml-0 sm:ml-[18px]">
+                  <div className="overflow-x-auto">
+                    <table className="data-table min-w-[900px]">
+                      <thead className="table-header">
+                        <tr>
+                          {[
+                            'S/No',
+                            'Lead No',
+                            'Quotation No',
+                            'PI No',
+                            'Job Order No',
+                            'Job Order Date',
+                            'Assign Date',
+                            'Sales Person',
+                            'Customer Name'
+                          ].map((head, index) => (
+                            <th key={index} className="table-th-center">
+                              {head}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {jobList.map((row, index) => (
+                          <tr key={index} className="table-row">
+                            <td className="table-cell-center">{index + 1}.</td>
+                            <td className="table-cell-center">{row.leadNo}</td>
+                            <td className="table-cell-center">{row.quotationNo}</td>
+                            <td className="table-cell-center">{row.piNo}</td>
+                            <td className="table-cell-center">{row.jobOrderNo}</td>
+                            <td className="table-cell-center">{row.jobOrderDate}</td>
+                            <td className="table-cell-center">{row.assignDate}</td>
+                            <td className="table-cell-center">{row.salesPerson}</td>
+                            <td className="table-cell-center">{row.customerName}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Task Completion Table */}
+              <div className="mt-4 px-2 sm:px-4 pb-4">
+                <h3 className="section-title ml-2 sm:ml-[18px]">task completion</h3>
+                <div className="table-container w-full sm:w-[98%] ml-0 sm:ml-[18px]">
+                  <div className="overflow-x-auto">
+                    <table className="data-table min-w-[700px]">
+                      <thead className="table-header">
+                        <tr>
+                          {[
+                            'Sl No',
+                            'Description',
+                            'Dimension',
+                            'No. of Unit',
+                            'Amount',
+                            'Hidden Amount'
+                          ].map((head, index) => (
+                            <th key={index} className={index === 1 ? 'table-th' : 'table-th-center'}>
+                              {head}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {jobReviewList.map((row, index) => (
+                          <tr key={index} className="table-row">
+                            <td className="table-cell-center">{index + 1}</td>
+                            <td className="table-cell">{row.description}</td>
+                            <td className="table-cell-center">{row.dimension}</td>
+                            <td className="table-cell-center">{row.unit}</td>
+                            <td className="table-cell text-right whitespace-nowrap">₹ {row.amount.toLocaleString()}</td>
+                            <td className="table-cell text-right whitespace-nowrap">₹ {row.hiddenAmount.toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer - Responsive */}
+            <div className="footer-container w-full max-w-[1250px] mt-8 px-4 sm:px-6">
+              <button onClick={() => navigate(-1)} className="btn-back w-full sm:w-auto">
+                <span>←</span>
+                <span>Back</span>
+              </button>
             </div>
           </div>
-      </div>
-      <div className="mt-4">
-          <h3 className="section-title ml-[18px]">Job order</h3>
-          <div className="table-container w-[98%] ml-[18px]">
-  <table className="data-table">
-    <thead className="table-header">
-      <tr>
-        {[
-          'S/No',
-          'Job Order No',
-          'Job Date',
-          'Customer Name',
-          'Sales Person',
-          'Narration',
-          'Status',
-          'Remark'
-        ].map((head, i) => (
-          <th key={i} className="table-th-center">
-            {head}
-          </th>
-        ))}
-      </tr>
-    </thead>
-
-    <tbody>
-      {jobOrders.map((row, index) => (
-        <tr key={index} className="table-row">
-          <td className="table-cell-center">{index + 1}.</td>
-          <td className="table-cell-center">{row.jobOrderNo}</td>
-          <td className="table-cell-center">{row.jobDate}</td>
-          <td className="table-cell-center">{row.customerName}</td>
-          <td className="table-cell-center">{row.salesPerson}</td>
-          <td className="table-cell-center">{row.narration}</td>
-          <td className="table-cell-center">{row.status}</td>
-          <td className="table-cell-center">{row.remark}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-<div className="mt-4">
-          <h3 className="section-title ml-[18px]">task assign</h3>
-          </div>
-<div className="table-container w-[98%] ml-[18px]">
-  <table className="data-table">
-    <thead className="table-header">
-      <tr>
-        {[
-          'S/No',
-          'Lead No',
-          'Quotation No',
-          'PI No',
-          'Job Order No',
-          'Job Order Date',
-          'Assign Date',
-          'Sales Person',
-          'Customer Name'
-        ].map((head, index) => (
-          <th key={index} className="table-th-center">
-            {head}
-          </th>
-        ))}
-      </tr>
-    </thead>
-
-    <tbody>
-      {jobList.map((row, index) => (
-        <tr key={index} className="table-row">
-          <td className="table-cell-center">{index + 1}.</td>
-          <td className="table-cell-center">{row.leadNo}</td>
-          <td className="table-cell-center">{row.quotationNo}</td>
-          <td className="table-cell-center">{row.piNo}</td>
-          <td className="table-cell-center">{row.jobOrderNo}</td>
-          <td className="table-cell-center">{row.jobOrderDate}</td>
-          <td className="table-cell-center">{row.assignDate}</td>
-          <td className="table-cell-center">{row.salesPerson}</td>
-          <td className="table-cell-center">{row.customerName}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-<div className="mt-4">
-          <h3 className="section-title ml-[18px]">task completion</h3>
-          </div>
-          <div className="table-container w-[98%] ml-[18px]">
-  <table className="data-table">
-    <thead className="table-header">
-      <tr>
-        {[
-          'Sl No',
-          'Description',
-          'Dimension',
-          'No. of Unit',
-          'Amount',
-          'Hidden Amount'
-        ].map((head, index) => (
-          <th key={index} className={index === 1 ? 'table-th' : 'table-th-center'}>
-            {head}
-          </th>
-        ))}
-      </tr>
-    </thead>
-
-    <tbody>
-      {jobReviewList.map((row, index) => (
-        <tr key={index} className="table-row">
-          <td className="table-cell-center">{index + 1}</td>
-
-          <td className="table-cell">
-            {row.description}
-          </td>
-
-          <td className="table-cell-center">{row.dimension}</td>
-          <td className="table-cell-center">{row.unit}</td>
-
-          <td className="table-cell text-right whitespace-nowrap">₹ {row.amount.toLocaleString()}</td>
-          <td className="table-cell text-right whitespace-nowrap">₹ {row.hiddenAmount.toLocaleString()}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
- 
-</div>
-
-
-            </div>
-            
-            </div>
-             <div className="footer-container max-w-[1250px] mt-8">
-            <button onClick={() => navigate(-1)} className="btn-back">
-              <span>←</span>
-              <span>Back</span>
-            </button>
-            </div>
-           
         </div>
       </div>
     </div>
