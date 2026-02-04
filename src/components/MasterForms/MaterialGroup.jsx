@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllMaterialGroups, createMaterialGroup, updateMaterialGroup, deleteMaterialGroup } from '../../api/masterApi';
 
 export default function MaterialGroupMaster() {

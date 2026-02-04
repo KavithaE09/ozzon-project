@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllSizeTypes, createSizeType, updateSizeType, deleteSizeType } from '../../api/masterApi';
 
 export default function SizeTypeMaster() {

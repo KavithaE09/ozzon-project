@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllRecGives, createRecGive, updateRecGive, deleteRecGive } from '../../api/masterApi';
 
 export default function RecGiveMaster() {

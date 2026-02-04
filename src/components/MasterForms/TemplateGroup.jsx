@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllTempGroups, createTempGroup, updateTempGroup, deleteTempGroup } from '../../api/masterApi';
 
 export default function TempGroupMaster() {

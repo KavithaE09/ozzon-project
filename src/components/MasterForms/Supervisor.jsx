@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllSupervisors, createSupervisor, updateSupervisor, deleteSupervisor } from '../../api/masterApi';
 
 export default function SupervisorMaster() {

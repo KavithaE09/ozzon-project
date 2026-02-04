@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllLeadSources, createLeadSource, updateLeadSource, deleteLeadSource } from '../../api/masterApi';
 
 export default function LeadSourceMaster() {

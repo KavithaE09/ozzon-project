@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllDepartments, createDepartment, updateDepartment, deleteDepartment } from '../../api/masterApi';
 
 export default function DepartmentMaster() {

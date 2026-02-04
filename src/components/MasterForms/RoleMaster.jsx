@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllRoles, createRole, updateRole, deleteRole } from '../../api/masterApi';
 
 export default function RoleMaster() {

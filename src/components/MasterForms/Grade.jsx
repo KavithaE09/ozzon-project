@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllGrades, createGrade, updateGrade, deleteGrade } from '../../api/masterApi';
 
 export default function GradeMaster() {

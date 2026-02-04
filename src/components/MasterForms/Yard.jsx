@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllYards, createYard, updateYard, deleteYard } from '../../api/masterApi';
 
 export default function YardMaster() {

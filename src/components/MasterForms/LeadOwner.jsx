@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllLeadOwners, createLeadOwner, updateLeadOwner, deleteLeadOwner } from '../../api/masterApi';
 
 export default function LeadOwnerMaster() {

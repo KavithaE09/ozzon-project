@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllLeadStatuses, createLeadStatus, updateLeadStatus, deleteLeadStatus } from '../../api/masterApi';
 
 export default function LeadStatusMaster() {

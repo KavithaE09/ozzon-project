@@ -1,4 +1,4 @@
-import MasterForm from './MasterForm';
+import MasterForm from './singlefieldMasterForm';
 import { getAllUnits, createUnit, updateUnit, deleteUnit } from '../../api/masterApi';
 
 export default function UnitMaster() {
