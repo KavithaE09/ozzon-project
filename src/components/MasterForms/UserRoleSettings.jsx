@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown,Send } from 'lucide-react';
+import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function UserRoleSettings() {
@@ -145,7 +145,16 @@ export default function UserRoleSettings() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">User Role Settings</h2>
+             <div className="page-header">
+              <h1 className="page-title">User Role Settings</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Role Select Section */}
             <div className="filter-grid">
@@ -356,10 +365,7 @@ export default function UserRoleSettings() {
             </div>
           )}
 
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
+      
         </div>
       </div>
       </div>

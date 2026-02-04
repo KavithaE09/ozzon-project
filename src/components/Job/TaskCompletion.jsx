@@ -1,9 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-<<<<<<< HEAD
-import { Send, ChevronDown, Printer, Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-=======
-import { Check, X, ChevronDown, Printer, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Menu, ArrowUp, ArrowDown, CheckCircle, XCircle } from 'lucide-react';
->>>>>>> 4454f65ab2cb5c36ae04e06e4274714257352f06
+import { Check, X, ChevronDown, Printer, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Menu, ArrowUp, ArrowDown, CheckCircle, XCircle,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function TaskCompletion() {
