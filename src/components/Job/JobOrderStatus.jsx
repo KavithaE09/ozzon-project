@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search, Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, Search, Plus, Edit2, Trash2, ChevronLeft, ChevronRight,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function JobOrderStatus() {
@@ -423,8 +423,7 @@ export default function JobOrderStatus() {
 
           <div className="flex justify-end mb-6">
             <button onClick={handleSubmit} className="btn-search">
-              <span>✓</span>
-              <span>Submit</span>
+               <Send size={18} />  Submit
             </button>
           </div>
 

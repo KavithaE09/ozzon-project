@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Edit2 } from "lucide-react";
+import { Plus, Trash2, Edit2,Send } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 export default function PurchaseOrder() {
@@ -187,7 +187,7 @@ export default function PurchaseOrder() {
               <button 
                 className="btn-search ml-auto mt-2.5"
               >
-                Submit
+                 <Send size={18} />  Submit
               </button>
             </div>
           </div>

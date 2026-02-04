@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown,Send } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
@@ -309,7 +309,7 @@ export default function Sales() {
                 <span>Back</span>
               </button>
               <button className="btn-search">
-                <span>✓</span>Submit
+               <Send size={18} /> Submit
               </button>
             </div>
           </div>

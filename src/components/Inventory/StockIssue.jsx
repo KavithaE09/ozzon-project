@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronDown, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Search,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function StockIssue() {
@@ -846,8 +846,7 @@ export default function StockIssue() {
 
             <div className="flex justify-end pt-5">
               <button onClick={handleSubmit} className="btn-search">
-                <span>✓</span>
-                <span>Submit</span>
+                <Send size={18} /> Submit
               </button>
             </div>
           </>

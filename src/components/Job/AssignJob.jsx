@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Printer, Edit2, Trash2, ChevronDown, Search } from 'lucide-react';
+import { Printer, Edit2, Trash2, ChevronDown, Search,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AssignJob() {
@@ -585,8 +585,7 @@ export default function AssignJob() {
            {/* Submit Button */}
         <div className="btn-container">
           <button onClick={handleSubmit} className="btn-search">
-            <span>✓</span>
-            Submit
+            <Send size={18} />  Submit
           </button>
         </div>
         </div>

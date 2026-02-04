@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Edit2, Printer } from "lucide-react";
+import { Plus, Trash2, Edit2, Printer,Send } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 export default function GoodsReceiptNotes() {
@@ -211,20 +211,17 @@ export default function GoodsReceiptNotes() {
                 </table>
 </div>
                 {/* ADD ROW */}
-                <div className="flex justify-end mt-2.5">
-                  <button 
-                    onClick={addRow}
-                    className="px-3.5 py-1.5 rounded-md border border-gray-300 bg-white cursor-pointer font-semibold text-sm hover:bg-gray-50"
-                  >
-                    + Row
-                  </button>
-                </div>
-             
+              <div className="flex justify-end mt-4">
+                            <button onClick={addRow} className="btn-search">
+                              <Plus size={18} /> Row
+                            </button>
+                          </div>
+              
 
             {/* SUBMIT BUTTON */}
             <div className="flex justify-end mt-6">
               <button className="btn-search">
-                Submit
+                 <Send size={18} />  Submit
               </button>
             </div>
           </div>

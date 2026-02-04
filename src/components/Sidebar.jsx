@@ -1,10 +1,4 @@
-import { 
-  Home, Building2, List, ClipboardList, ChevronRight, CheckCircle, 
-  BarChart3, ShoppingCart, BriefcaseBusiness, Users, Shield, UserCog,
-  Building, Target, Activity, TrendingUp, FileText, Settings as SettingsIcon,
-  Package, Layers, Ruler, Briefcase, UserCheck, MapPin, Award, FileSpreadsheet,
-  FolderOpen, TrendingDown, Box, ClipboardCheck, Truck, FileCheck, 
-  Archive, RotateCcw, Send, ArrowDownToLine, DollarSign, Receipt, PenTool, RefreshCcw, Container
+import { Home, Building2, List, ClipboardList, ChevronRight, CheckCircle, BarChart3, ShoppingCart, BriefcaseBusiness, Users, Shield, UserCog,Building, Target, Activity, TrendingUp, FileText, Settings as SettingsIcon, Package, Layers, Ruler, Briefcase, UserCheck, MapPin, Award, FileSpreadsheet,FolderOpen, TrendingDown, Box, ClipboardCheck, Truck, FileCheck, Archive, RotateCcw, Send, ArrowDownToLine, DollarSign, Receipt, PenTool, RefreshCcw, Container
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -25,7 +19,7 @@ export default function Sidebar({ open, onNavigate }) {
   useEffect(() => {
     const path = location.pathname.toLowerCase();
 
-    // Reset all முதல்ல
+    
     setFormsOpen(false);
     setSalesOpen(false);
     setAccountsOpen(false);
@@ -598,7 +592,7 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen, isDark 
           : active
             ? "#A63028"
             : "#feecec",
-        width: "210px",
+        width: "205px",
         height: "45px",
         border: isDark ? "1px solid #475569" : "none",
         marginBottom: "8px",
@@ -659,7 +653,7 @@ function SubButton({ label, icon, active, onClick, isDark }) {
       style={{
         backgroundColor: getBackgroundColor(),
         width: "180px",
-        height: "42px",
+        height: "45px",
         border: isDark ? "1px solid #475569" : "none",
         color: textColor,
         marginBottom: "8px",

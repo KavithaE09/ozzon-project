@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown,Send } from 'lucide-react';
+import { ChevronDown, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ContainerPurchase() {
@@ -183,7 +183,18 @@ export default function ContainerPurchase() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Container Purchase</h2>
+            
+            {/* 🆕 Page Header with Back Button */}
+            <div className="page-header">
+              <h1 className="page-title">Container Purchase</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             <div className="filter-section">
               <div className="filter-grid">
@@ -495,13 +506,9 @@ export default function ContainerPurchase() {
               </div>
             )}
 
-            {/* Footer Buttons */}
+            {/* Footer Buttons - Only Submit button now */}
             <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-
+              <div></div> {/* Empty div for spacing */}
               <button onClick={handleSubmit} className="btn-all">
                 <Send size={18} />  Submit
               </button>

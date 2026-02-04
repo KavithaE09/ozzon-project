@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, X, ChevronDown, Printer, Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Send, ChevronDown, Printer, Plus, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function TaskCompletion() {
@@ -826,8 +826,7 @@ export default function TaskCompletion() {
               type="button"
               className="btn-search"
             >
-              <span>✓</span>
-              Submit
+               <Send size={18} />  Submit
             </button>
           </div>
         </div>

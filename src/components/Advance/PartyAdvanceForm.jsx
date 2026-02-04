@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const PartyAdvanceForm = () => {
@@ -291,7 +291,7 @@ const PartyAdvanceForm = () => {
                 onClick={() => handleNavigate("/proformainvoice/advance/submit")}
                 className="btn-search w-full sm:w-auto"
               >
-                <span>✓</span> Submit
+                 <Send size={18} />  Submit
               </button>
             </div>
 
