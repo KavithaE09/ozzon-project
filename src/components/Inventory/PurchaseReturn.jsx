@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown,Send } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown,Send,Undo2 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react"; 
 import { useNavigate } from 'react-router-dom';
  
@@ -203,7 +203,16 @@ export default function PurchaseReturn() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Purchase Return</h2>
+           <div className="page-header">
+                         <h1 className="page-title">Purchase Return</h1>
+                         <button 
+                           onClick={() => navigate(-1)} 
+                           className="page-back-btn"
+                           aria-label="Go back"
+                         >
+                           <Undo2   className="page-back-icon" />
+                         </button>
+                       </div>
 
             {/* Responsive Form Section */}
             <div className="flex flex-col lg:flex-row gap-5 mt-6">
@@ -676,10 +685,7 @@ export default function PurchaseReturn() {
 
             {/* Footer Buttons - Responsive */}
             <div className="footer-container mt-7">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
+              
               
               <button className="btn-search">
                 <Send size={18}  /> Submit

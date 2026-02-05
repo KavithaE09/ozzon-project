@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search, Plus, Edit2, Trash2, ChevronLeft, ChevronRight,Send } from 'lucide-react';
+import { ChevronDown, Search, Plus, Edit2, Trash2, ChevronLeft, ChevronRight,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function JobOrderStatus() {
@@ -193,7 +193,16 @@ export default function JobOrderStatus() {
     <div className="page-container">
       <div className="main-section bg-[#f9e6e8]">
         <div className="content-card">
-          <h2 className="page-title">Job Order Status Update</h2>
+          <div className="page-header">
+                     <h1 className="page-title">Job Order Status</h1>
+                     <button 
+                       onClick={() => navigate(-1)} 
+                       className="page-back-btn"
+                       aria-label="Go back"
+                     >
+                       <Undo2   className="page-back-icon" />
+                     </button>
+                   </div>
 
           <div className="grid grid-cols-4 gap-4 mb-6 items-end">
             <div className="filter-grid-blue">
@@ -704,11 +713,7 @@ export default function JobOrderStatus() {
             </div>
           </div>
         </div>
-        
-        <button onClick={() => navigate(-1)} className="btn-back">
-          <span>←</span>
-          <span>Back</span>
-        </button>
+       
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search,Undo2 } from 'lucide-react';
 
 export default function ContainerStatusUpdateForm() {
   const navigate = useNavigate();
@@ -102,7 +102,16 @@ export default function ContainerStatusUpdateForm() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Container Status Update</h2>
+             <div className="page-header">
+              <h1 className="page-title">Container Status Update</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Filter Section */}
             <div className="filter-section">
@@ -330,13 +339,7 @@ export default function ContainerStatusUpdateForm() {
               </div>
             )}
 
-                     {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+            
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CheckCircle, XCircle, ChevronDown, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Menu, ArrowUp, ArrowDown } from 'lucide-react';
+import { CheckCircle, XCircle, ChevronDown, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Menu,Undo2, ArrowUp, ArrowDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function JobOrderAcceptance() {
@@ -322,7 +322,16 @@ export default function JobOrderAcceptance() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h3 className="page-title">Job Order Acceptance</h3>
+            <div className="page-header">
+              <h1 className="page-title">Job Order Acceptance</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Job Orders Table */}
             <div className="table-container">
@@ -895,11 +904,7 @@ export default function JobOrderAcceptance() {
               </div>
            
 
-            {/* Back Button */}
-            <button onClick={() => navigate(-1)} className="btn-back">
-              <span>←</span>
-              <span>Back</span>
-            </button>
+           
           </div>
         </div>
       </div>

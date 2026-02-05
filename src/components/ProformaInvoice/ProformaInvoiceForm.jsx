@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown, Printer, FileSpreadsheet } from 'lucide-react';
+import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown, Printer, FileSpreadsheet,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ProformaInvoiceForm() {
@@ -1108,7 +1108,16 @@ export default function ProformaInvoiceForm() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Proforma Invoice Form</h2>
+              <div className="page-header">
+              <h1 className="page-title">Proforma Invoice</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Form Fields */}
             <div className="filter-grid">
@@ -1561,13 +1570,7 @@ export default function ProformaInvoiceForm() {
               </button>
             </div>
 
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+           
           </div>
         </div>
       </div>

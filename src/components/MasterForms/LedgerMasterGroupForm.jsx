@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, Search,Send } from 'lucide-react';
+import { ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, Search,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LedgerMasterGroupForm() {
@@ -128,7 +128,16 @@ export default function LedgerMasterGroupForm() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Account Group Form</h2>
+            <div className="page-header">
+              <h1 className="page-title">Account Group Form</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Form Section */}
             <div className="filter-section">
@@ -348,13 +357,7 @@ export default function LedgerMasterGroupForm() {
               </div>
             )}
 
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+          
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronLeft, ChevronRight,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function SalesSearch() {
@@ -163,7 +163,16 @@ export default function SalesSearch() {
         {/* Content Area */}
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Sales</h2>
+            <div className="page-header">
+                          <h1 className="page-title">Sales</h1>
+                          <button 
+                            onClick={() => navigate(-1)} 
+                            className="page-back-btn"
+                            aria-label="Go back"
+                          >
+                            <Undo2   className="page-back-icon" />
+                          </button>
+                        </div>
 
             {/* Filter Section */}
             <div className="filter-section">
@@ -359,13 +368,7 @@ export default function SalesSearch() {
             </div>
           )}
 
-          <button 
-            onClick={() => navigate(-1)}
-            className="btn-back"
-          >
-            <span>←</span>
-            <span>Back</span>
-          </button>
+         
         </div>
       </div>
     </div>

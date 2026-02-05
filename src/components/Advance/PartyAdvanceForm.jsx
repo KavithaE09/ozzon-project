@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown,Send } from 'lucide-react';
+import { ChevronDown,Send ,Undo2} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const PartyAdvanceForm = () => {
@@ -142,7 +142,16 @@ const PartyAdvanceForm = () => {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Party Advance</h2>
+           <div className="page-header">
+                         <h1 className="page-title">Party Advance</h1>
+                         <button 
+                           onClick={() => navigate(-1)} 
+                           className="page-back-btn"
+                           aria-label="Go back"
+                         >
+                           <Undo2   className="page-back-icon" />
+                         </button>
+                       </div>
 
             {/* MAIN INPUTS - First Row: 4 fields - Responsive */}
             <div className="flex flex-col md:flex-row gap-5 mt-6">
@@ -294,11 +303,6 @@ const PartyAdvanceForm = () => {
                  <Send size={18} />  Submit
               </button>
             </div>
-
-            <button onClick={() => navigate(-1)} className="btn-back">
-              <span>←</span>
-              <span>Back</span>
-            </button>
           </div>
         </div>
       </div>

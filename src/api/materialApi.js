@@ -1,8 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = "http://localhost:5000/api";
 
 const materialApi = {
+
   getAllMaterials: async () => {
     const response = await axios.get(`${API_BASE_URL}/material-list`);
     return response.data;
@@ -30,15 +31,18 @@ const materialApi = {
     return response.data;
   },
 
+  /* ✅ correct master routes */
+
   getMaterialGroups: async () => {
-    const response = await axios.get(`${API_BASE_URL}/material-groups`);
+    const response = await axios.get(`${API_BASE_URL}/master/materialgroup`);
     return response.data;
   },
 
   getUnits: async () => {
-    const response = await axios.get(`${API_BASE_URL}/units`);
+    const response = await axios.get(`${API_BASE_URL}/master/unit`);
     return response.data;
   }
+
 };
 
 export default materialApi;

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown,Send } from 'lucide-react';
+import { ChevronDown,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LedgerMasterForm() {
@@ -156,7 +156,16 @@ export default function LedgerMasterForm() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Ledger Master</h2>
+            <div className="page-header">
+              <h1 className="page-title">Ledger Master</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Party Details */}
             <div className="filter-grid" style={{ marginBottom: '32px' }}>
@@ -530,10 +539,7 @@ export default function LedgerMasterForm() {
             </div>
              {/* Action Buttons */}
           <div className="footer-container">
-            <button onClick={() => navigate(-1)} className="btn-back">
-              <span>←</span>
-              <span>Back</span>
-            </button>
+           
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={handleClear} className="btn-all">

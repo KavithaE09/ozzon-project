@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CheckCircle, XCircle, ChevronLeft, ChevronRight,Undo2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -135,7 +135,16 @@ export default function ContainerHoldRequestApprovalForm() {
       <div className="content-wrapper">
         <main className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Container Hold Request Approval</h2>
+            <div className="page-header">
+                          <h1 className="page-title">Container Hold Request Approval</h1>
+                          <button 
+                            onClick={() => navigate(-1)} 
+                            className="page-back-btn"
+                            aria-label="Go back"
+                          >
+                            <Undo2   className="page-back-icon" />
+                          </button>
+                        </div>
 
             <div className="table-container">
               <table className="data-table">
@@ -247,10 +256,7 @@ export default function ContainerHoldRequestApprovalForm() {
             </div>
           )}
 
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
+          
           </div>
         </main>
       </div>

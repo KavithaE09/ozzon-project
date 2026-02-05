@@ -663,8 +663,8 @@ function SubButton({ label, icon, active, onClick, isDark }) {
         flexShrink: 0,
         cursor: "pointer",
       }}
-      className="btn-hover-lift flex items-center gap-[10px] rounded-[10px] font-poppins text-[13px]"
-    >
+      className="btn-hover-lift flex items-center gap-[10px] rounded-[10px] font-poppins text-[12px]"
+    > 
       {icon}
       {label}
     </button>
