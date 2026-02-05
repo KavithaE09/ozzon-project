@@ -302,7 +302,7 @@ useEffect(() => {
 </div>
 {/* ✅ Role Settings Dropdown */}
 <div ref={roleDropdownRef} className="filter-grid-red">
-  <label className="filter-label">Role Settings</label>
+  <label className="filter-label">Role</label>
 
   <div className="dropdown-wrapper">
     <input
