@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft, ArrowLeft } from 'lucide-react';
+import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft, ArrowLeft,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LeadSearch() {
@@ -116,8 +116,17 @@ export default function LeadSearch() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card bg-white dark:bg-[#353C44]">
+<div className="page-header">
+              <h1 className="page-title">Lead</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
-            <h2 className="page-title">Lead</h2>
 
             {/* Filter Section */}
             <div className="filter-section">
@@ -322,13 +331,7 @@ export default function LeadSearch() {
               </div>
             )}
 
-           {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <ArrowLeft size={16} />
-                <span>Back</span>
-              </button>
-            </div>
+          
           </div>
         </div>
       </div>

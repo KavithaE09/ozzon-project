@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown,Send } from 'lucide-react';
+import { ChevronDown,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LeadCreationForm(){
@@ -364,7 +364,17 @@ export default function LeadCreationForm(){
               </div>
             </div>
 
-            <h2 className="page-title px-4 sm:px-6">Lead</h2>
+           <div className="page-header">
+              <h1 className="page-title">Lead</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
+
             
             {/* Form Grid - Responsive */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6">
@@ -756,13 +766,7 @@ export default function LeadCreationForm(){
               </div>
             </div>
 
-            {/* Footer - Responsive */}
-            <div className="footer-container w-full max-w-[1250px] mt-8 px-4 sm:px-6">
-              <button onClick={() => navigate(-1)} className="btn-back w-full sm:w-auto">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+            
           </div>
         </div>
       </div>

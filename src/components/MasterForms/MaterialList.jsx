@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import materialApi from "../../services/materialapi.js";
+import materialApi from "../../api/materialApi.js";
 
 export default function MaterialList() {
   const navigate = useNavigate();
@@ -269,7 +269,17 @@ export default function MaterialList() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Material List</h2>
+            <div className="page-header">
+              <h1 className="page-title">Material List</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
+
 
             <div className="filter-grid mb-4">
               <div className="filter-grid-red">
@@ -650,12 +660,7 @@ export default function MaterialList() {
             </button>
           </div>
 
-          {/* Back Button */}
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
-            
+          
         </div>
         
       </div>

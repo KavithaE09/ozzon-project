@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Search, ChevronDown, Printer, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, ChevronDown, Printer, Edit2, Trash2, ChevronLeft, ChevronRight,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -129,7 +129,17 @@ export default function QuotationSearchForm() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Quotation</h2>
+            <div className="page-header">
+              <h1 className="page-title">Quotation</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
+
 
             {/* Filter Section */}
             <div className="filter-section">
@@ -358,12 +368,7 @@ export default function QuotationSearchForm() {
               </div>
             )}
            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+          
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Undo2 } from 'lucide-react';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -43,7 +44,17 @@ export default function Settings() {
     <div className="page-container">
       <div className="main-section">
         <div className="content-card">
-          <h3 className="page-title">Settings</h3>
+         <div className="page-header">
+              <h1 className="page-title">Settings</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
+
 
           <div className="flex gap-5 mb-5 flex-col lg:flex-row">
 
@@ -131,13 +142,7 @@ export default function Settings() {
         </div>
 
         {/* BACK BUTTON */}
-        <button 
-          onClick={() => navigate(-1)}
-          className="btn-back"
-        >
-          <span>←</span>
-          <span>Back</span>
-        </button>
+        
       </div>
 
       {/* IMAGE MODAL */}

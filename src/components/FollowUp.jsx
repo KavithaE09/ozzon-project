@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Send } from "lucide-react";
+import { Send ,Undo2} from "lucide-react";
 export default function FollowUp() {
   const navigate = useNavigate();
   const getTodayDate = () => {
@@ -57,7 +57,17 @@ export default function FollowUp() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Follow Up</h2>
+           <div className="page-header">
+              <h1 className="page-title">Follow Up</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
+
 
             {/* MAIN TABLE */}
             <div className="table-container">
@@ -196,10 +206,7 @@ export default function FollowUp() {
 
             {/* SUBMIT AND BACK BUTTONS */}
             <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
+             
 
               {selectedLead && (
                 <button className="btn-all">
