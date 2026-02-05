@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search, Edit2, Trash2,ChevronLeft,Send } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import materialApi from "../../services/materialapi.js";
 
 export default function MaterialList() {
   const navigate = useNavigate();
@@ -8,56 +9,44 @@ export default function MaterialList() {
   const [searchBy, setSearchBy] = useState('');
   const [groupName, setGroupName] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-
-  const groupOptions = ["Group 1", "Group 2", "Group 3"];
+  const [groupOptions, setGroupOptions] = useState([]);
   const groupnameOptions = ["Group 1", "Group 2", "Group 3"];
-  const unitOptions = ["Box", "Kg", "Liter"];
+  const [unitOptions, setUnitOptions] = useState([]);
   
   const [formData, setFormData] = useState({
-    productCode: '',
-    productName: '',
-    group: '',
-    unit: '',
-    sellingRate: '',
-    maxStock: '',
-    minStock: '',
-    gst: '',
-    hsnCode: '',
-    reOrderLevel: ''
+    ProductCode: '',
+    ProductName: '',
+    MaterialGroupId: '',
+    UnitId: '',
+    SellingRate: '',
+    MaxStockQty: '',
+    MinStockQty: '',
+    GSTAmount: '',
+    HSNCode: '',
+    ReOrderLevel: ''
   });
 
-  const [allRecords, setAllRecords] = useState([
-    { id: 1, name: 'ADMIN', rate: '₹ 78962', group: 'Group 1' },
-    { id: 2, name: 'RANEESH', rate: '₹ 78962', group: 'Group 2' },
-    { id: 3, name: 'BALA', rate: '₹ 78962', group: 'Group 1' },
-    { id: 4, name: 'NAVEEN', rate: '₹ 78962', group: 'Group 3' }
-  ]);
-
-  const [filteredRecords, setFilteredRecords] = useState([
-    { id: 1, name: 'ADMIN', rate: '₹ 78962', group: 'Group 1' },
-    { id: 2, name: 'RANEESH', rate: '₹ 78962', group: 'Group 2' },
-    { id: 3, name: 'BALA', rate: '₹ 78962', group: 'Group 1' },
-    { id: 4, name: 'NAVEEN', rate: '₹ 78962', group: 'Group 3' }
-  ]);
+  const [allRecords, setAllRecords] = useState([]);
+  const [filteredRecords, setFilteredRecords] = useState([]);
 
   const [editingId, setEditingId] = useState(null);
   const [editingData, setEditingData] = useState({ name: '', rate: '' });
+  
   const rowsPerPage = 2;
-const totalPages = Math.max(
-  1,
-  Math.ceil(filteredRecords.length / rowsPerPage)
-);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRecords.length / rowsPerPage)
+  );
 
+  const indexOfLast = currentPage * rowsPerPage;
+  const indexOfFirst = indexOfLast - rowsPerPage;
 
-const indexOfLast = currentPage * rowsPerPage;
-const indexOfFirst = indexOfLast - rowsPerPage;
-
-const currentRecords = filteredRecords.slice(
-  indexOfFirst,
-  indexOfLast
-);
-
+  const currentRecords = filteredRecords.slice(
+    indexOfFirst,
+    indexOfLast
+  );
 
   // Group dropdown state
   const [groupSearch, setGroupSearch] = useState('');
@@ -89,6 +78,42 @@ const currentRecords = filteredRecords.slice(
     opt.toLowerCase().includes(unitSearch.toLowerCase())
   );
 
+  // Component load ஆகும்போது data fetch பண்ண
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = async () => {
+    try {
+      setLoading(true);
+      
+      // Materials fetch
+      const materialsRes = await materialApi.getAllMaterials();
+      if (materialsRes.success) {
+        setAllRecords(materialsRes.data);
+        setFilteredRecords(materialsRes.data);
+      }
+
+      // Groups fetch
+      const groupsRes = await materialApi.getMaterialGroups();
+      if (groupsRes.success) {
+        setGroupOptions(groupsRes.data.map(g => g.GroupName));
+      }
+
+      // Units fetch
+      const unitsRes = await materialApi.getUnits();
+      if (unitsRes.success) {
+        setUnitOptions(unitsRes.data.map(u => u.UnitName));
+      }
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      alert('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (groupRef.current && !groupRef.current.contains(event.target)) {
@@ -106,73 +131,103 @@ const currentRecords = filteredRecords.slice(
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSearch = () => {
-    let filtered = allRecords;
-
-    if (searchBy.trim()) {
-      filtered = filtered.filter(record =>
-        record.name.toLowerCase().includes(searchBy.toLowerCase())
-      );
+  const handleSearch = async () => {
+    if (!searchBy.trim()) {
+      setFilteredRecords(allRecords);
+      return;
     }
 
-    if (groupnameSearch && groupnameSearch !== 'Group Name') {
-      filtered = filtered.filter(record =>
-        record.group === groupnameSearch
-      );
+    try {
+      setLoading(true);
+      const response = await materialApi.searchMaterials(searchBy);
+      
+      if (response.success) {
+        setFilteredRecords(response.data);
+        setCurrentPage(1);
+      }
+    } catch (error) {
+      console.error('Error searching materials:', error);
+      alert('Failed to search materials');
+    } finally {
+      setLoading(false);
     }
-
-    setFilteredRecords(filtered);
-    setCurrentPage(1);
   };
 
-  const handleSubmit = () => {
-    if (formData.productName.trim() !== '') {
-      const newRecord = {
-        id: allRecords.length > 0 ? Math.max(...allRecords.map(r => r.id)) + 1 : 1,
-        name: formData.productName.toUpperCase(),
-        rate: formData.sellingRate ? `₹ ${formData.sellingRate}` : '₹ 0',
-        group: formData.group || 'N/A'
-      };
-      setAllRecords([...allRecords, newRecord]);
-      setFilteredRecords([...allRecords, newRecord]);
+  const handleSubmit = async () => {
+    if (formData.ProductName.trim() === '') {
+      alert('Product Name is required');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await materialApi.createMaterial(formData);
       
-      // Reset form
-      setFormData({
-        productCode: '',
-        productName: '',
-        group: '',
-        unit: '',
-        sellingRate: '',
-        maxStock: '',
-        minStock: '',
-        gst: '',
-        hsnCode: '',
-        reOrderLevel: ''
-      });
-      setGroupSearch('');
-      setUnitSearch('');
-      setCurrentPage(1);
+      if (response.success) {
+        alert('Material created successfully');
+        
+        // Reset form
+        setFormData({
+          ProductCode: '',
+          ProductName: '',
+          MaterialGroupId: '',
+          UnitId: '',
+          SellingRate: '',
+          MaxStockQty: '',
+          MinStockQty: '',
+          GSTAmount: '',
+          HSNCode: '',
+          ReOrderLevel: ''
+        });
+        setGroupSearch('');
+        setUnitSearch('');
+        
+        // Refresh data
+        await fetchAllData();
+        setCurrentPage(1);
+      }
+    } catch (error) {
+      console.error('Error creating material:', error);
+      alert('Failed to create material');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEdit = (record) => {
-    setEditingId(record.id);
-    setEditingData({ name: record.name, rate: record.rate.replace('₹ ', '') });
+    setEditingId(record.MaterialListMId);
+    setEditingData({ 
+      name: record.ProductName, 
+      rate: record.SellingRate ? record.SellingRate.toString() : '' 
+    });
   };
 
-  const handleUpdate = (recordId) => {
-    if (editingData.name.trim() !== '') {
-      const updatedRecords = allRecords.map(record =>
-        record.id === recordId ? { 
-          ...record, 
-          name: editingData.name.toUpperCase(),
-          rate: editingData.rate ? `₹ ${editingData.rate}` : record.rate
-        } : record
-      );
-      setAllRecords(updatedRecords);
-      setFilteredRecords(updatedRecords);
-      setEditingId(null);
-      setEditingData({ name: '', rate: '' });
+  const handleUpdate = async (recordId) => {
+    if (editingData.name.trim() === '') {
+      alert('Product Name is required');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const updateData = {
+        ProductName: editingData.name,
+        SellingRate: editingData.rate || 0
+      };
+
+      const response = await materialApi.updateMaterial(recordId, updateData);
+      
+      if (response.success) {
+        alert('Material updated successfully');
+        setEditingId(null);
+        setEditingData({ name: '', rate: '' });
+        await fetchAllData();
+      }
+    } catch (error) {
+      console.error('Error updating material:', error);
+      alert('Failed to update material');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -181,15 +236,36 @@ const currentRecords = filteredRecords.slice(
     setEditingData({ name: '', rate: '' });
   };
 
-  const handleDelete = (recordId) => {
-    const updatedRecords = allRecords.filter(record => record.id !== recordId);
-    setAllRecords(updatedRecords);
-    setFilteredRecords(updatedRecords);
-    setCurrentPage(1);
+  const handleDelete = async (recordId) => {
+    if (!window.confirm('Are you sure you want to delete this material?')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await materialApi.deleteMaterial(recordId);
+      
+      if (response.success) {
+        alert('Material deleted successfully');
+        await fetchAllData();
+        setCurrentPage(1);
+      }
+    } catch (error) {
+      console.error('Error deleting material:', error);
+      alert('Failed to delete material');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="page-container">
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded shadow-lg">Loading...</div>
+        </div>
+      )}
+
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
@@ -200,8 +276,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">Product Code</label>
                 <input
                   type="text"
-                  value={formData.productCode}
-                  onChange={(e) => setFormData({ ...formData, productCode: e.target.value })}
+                  value={formData.ProductCode}
+                  onChange={(e) => setFormData({ ...formData, ProductCode: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -210,8 +286,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">Product Name</label>
                 <input
                   type="text"
-                  value={formData.productName}
-                  onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
+                  value={formData.ProductName}
+                  onChange={(e) => setFormData({ ...formData, ProductName: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -239,7 +315,7 @@ const currentRecords = filteredRecords.slice(
                         <div
                           key={index}
                           onClick={() => {
-                            setFormData({ ...formData, group: option });
+                            setFormData({ ...formData, MaterialGroupId: option });
                             setGroupSearch(option);
                             setIsGroupOpen(false);
                           }}
@@ -282,7 +358,7 @@ const currentRecords = filteredRecords.slice(
                         <div
                           key={index}
                           onClick={() => {
-                            setFormData({ ...formData, unit: option });
+                            setFormData({ ...formData, UnitId: option });
                             setUnitSearch(option);
                             setIsUnitOpen(false);
                           }}
@@ -308,8 +384,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">Selling Rate</label>
                 <input
                   type="text"
-                  value={formData.sellingRate}
-                  onChange={(e) => setFormData({ ...formData, sellingRate: e.target.value })}
+                  value={formData.SellingRate}
+                  onChange={(e) => setFormData({ ...formData, SellingRate: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -318,8 +394,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">Maximum Stock Quantity</label>
                 <input
                   type="text"
-                  value={formData.maxStock}
-                  onChange={(e) => setFormData({ ...formData, maxStock: e.target.value })}
+                  value={formData.MaxStockQty}
+                  onChange={(e) => setFormData({ ...formData, MaxStockQty: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -328,8 +404,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">Minimum Stock Quantity</label>
                 <input
                   type="text"
-                  value={formData.minStock}
-                  onChange={(e) => setFormData({ ...formData, minStock: e.target.value })}
+                  value={formData.MinStockQty}
+                  onChange={(e) => setFormData({ ...formData, MinStockQty: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -338,8 +414,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">GST %</label>
                 <input
                   type="text"
-                  value={formData.gst}
-                  onChange={(e) => setFormData({ ...formData, gst: e.target.value })}
+                  value={formData.GSTAmount}
+                  onChange={(e) => setFormData({ ...formData, GSTAmount: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -350,8 +426,8 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">HSN Code</label>
                 <input
                   type="text"
-                  value={formData.hsnCode}
-                  onChange={(e) => setFormData({ ...formData, hsnCode: e.target.value })}
+                  value={formData.HSNCode}
+                  onChange={(e) => setFormData({ ...formData, HSNCode: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
@@ -360,18 +436,19 @@ const currentRecords = filteredRecords.slice(
                 <label className="filter-label">Re-Order Level</label>
                 <input
                   type="text"
-                  value={formData.reOrderLevel}
-                  onChange={(e) => setFormData({ ...formData, reOrderLevel: e.target.value })}
+                  value={formData.ReOrderLevel}
+                  onChange={(e) => setFormData({ ...formData, ReOrderLevel: e.target.value })}
                   className="filter-input text-xs"
                 />
               </div>
               
               <div></div>
 
-             <div className="btn-container">
+              <div className="btn-container">
                 <button 
                   onClick={handleSubmit}
                   className="btn-all"
+                  disabled={loading}
                 >
                   <Send size={18} />  Submit
                 </button>
@@ -438,10 +515,14 @@ const currentRecords = filteredRecords.slice(
               <div></div>
 
               <div className="btn-container">
-                  <button onClick={handleSearch} className="btn-all">
-                    <Search size={18} /> Search
-                  </button>
-                </div>
+                <button 
+                  onClick={handleSearch} 
+                  className="btn-all"
+                  disabled={loading}
+                >
+                  <Search size={18} /> Search
+                </button>
+              </div>
             </div>
 
             <div className="border border-gray-400 rounded-md overflow-hidden">
@@ -456,11 +537,11 @@ const currentRecords = filteredRecords.slice(
                 </thead>
                 <tbody>
                   {currentRecords.length > 0 ? (
-                  currentRecords.map((record, idx) => (
-                      <tr key={record.id} className="table-row">
+                    currentRecords.map((record, idx) => (
+                      <tr key={record.MaterialListMId} className="table-row">
                         <td className="table-cell">
                           <button
-                          onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
+                            onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
                             className="bg-transparent border-none cursor-pointer p-0 flex items-center"
                           >
                             {expandedRow === idx ?
@@ -470,7 +551,7 @@ const currentRecords = filteredRecords.slice(
                           </button>
                         </td>
                         <td className="table-cell text-[11px]">
-                          {editingId === record.id ? (
+                          {editingId === record.MaterialListMId ? (
                             <input
                               type="text"
                               value={editingData.name}
@@ -478,11 +559,11 @@ const currentRecords = filteredRecords.slice(
                               className="px-2 py-1 border border-gray-400 rounded text-[11px] outline-none bg-white"
                             />
                           ) : (
-                            record.name
+                            record.ProductName
                           )}
                         </td>
                         <td className="table-cell text-[11px]">
-                          {editingId === record.id ? (
+                          {editingId === record.MaterialListMId ? (
                             <input
                               type="text"
                               value={editingData.rate}
@@ -491,15 +572,16 @@ const currentRecords = filteredRecords.slice(
                               className="w-[100px] px-2 py-1 border border-gray-400 rounded text-[11px] outline-none bg-white"
                             />
                           ) : (
-                            record.rate
+                            record.SellingRate ? `₹ ${record.SellingRate}` : '₹ 0'
                           )}
                         </td>
                         <td className="table-cell-center">
-                          {editingId === record.id ? (
+                          {editingId === record.MaterialListMId ? (
                             <div className="table-actions">
                               <button
-                                onClick={() => handleUpdate(record.id)}
+                                onClick={() => handleUpdate(record.MaterialListMId)}
                                 className="btn-smallbtn text-[11px]"
+                                disabled={loading}
                               >
                                 Update
                               </button>
@@ -514,13 +596,13 @@ const currentRecords = filteredRecords.slice(
                             <div className="table-actions">
                               <Edit2 
                                 size={18} 
-                                className=" cursor-pointer"
+                                className="cursor-pointer"
                                 onClick={() => handleEdit(record)}
                               />
                               <Trash2 
                                 size={18} 
                                 className="text-red-600 cursor-pointer"
-                                onClick={() => handleDelete(record.id)}
+                                onClick={() => handleDelete(record.MaterialListMId)}
                               />
                             </div>
                           )}
