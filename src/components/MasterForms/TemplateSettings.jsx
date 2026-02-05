@@ -1115,13 +1115,7 @@ export default function TemplateSettings() {
               </button>
             </div>
 
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+           
           </div>
         </div> 
       </div>

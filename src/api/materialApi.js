@@ -29,19 +29,9 @@ const materialApi = {
       params: { name }
     });
     return response.data;
-  },
-
-  /* ✅ correct master routes */
-
-  getMaterialGroups: async () => {
-    const response = await axios.get(`${API_BASE_URL}/master/materialgroup`);
-    return response.data;
-  },
-
-  getUnits: async () => {
-    const response = await axios.get(`${API_BASE_URL}/master/unit`);
-    return response.data;
   }
+
+  // ✅ Material operations மட்டும் - master data இல்லை
 
 };
 

@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send,Undo2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import materialApi from "../../api/materialApi.js";
+import { getAllMaterialGroups, getAllUnits } from "../../api/masterApi.js";
 
 export default function MaterialList() {
   const navigate = useNavigate();
@@ -11,7 +12,6 @@ export default function MaterialList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [groupOptions, setGroupOptions] = useState([]);
-  const groupnameOptions = ["Group 1", "Group 2", "Group 3"];
   const [unitOptions, setUnitOptions] = useState([]);
   const [formData, setFormData] = useState({
     ProductCode: '',
@@ -48,35 +48,31 @@ export default function MaterialList() {
   const [hoveredGroup, setHoveredGroup] = useState(null);
   const groupRef = useRef(null);
   
-  // Group name dropdown state
-  const [groupnameSearch, setGroupnameSearch] = useState('');
-  const [isGroupnameOpen, setIsGroupnameOpen] = useState(false);
-  const [hoveredGroupname, setHoveredGroupname] = useState(null);
-  const groupnameRef = useRef(null);
-  
   // Unit dropdown state
   const [unitSearch, setUnitSearch] = useState('');
   const [isUnitOpen, setIsUnitOpen] = useState(false);
   const [hoveredUnit, setHoveredUnit] = useState(null);
   const unitRef = useRef(null);
 
-  const filteredGroups = groupOptions.filter(opt =>
-    opt.toLowerCase().includes(groupSearch.toLowerCase())
-  );
+  // Filter groups based on search
+  const filteredGroups = groupOptions.filter(group => {
+    if (!group) return false;
+    const name = group.MaterialGroupName || group.materialgroupName || group.groupName || group.GroupName || '';
+    return name.toLowerCase().includes(groupSearch.toLowerCase());
+  });
   
-  const filteredGroupsname = groupnameOptions.filter(opt =>
-    opt.toLowerCase().includes(groupnameSearch.toLowerCase())
-  );
-  
-  const filteredUnits = unitOptions.filter(opt =>
-    opt.toLowerCase().includes(unitSearch.toLowerCase())
-  );
+  const filteredUnits = unitOptions.filter(unit => {
+    if (!unit) return false;
+    const unitName = String(unit.UnitId || unit.unitid || '');
+    return unitName.toLowerCase().includes(String(unitSearch).toLowerCase());
+  });
 
-  // Component load ஆகும்போது data fetch பண்ண
+  // ✅ Component load ஆகும்போது data fetch பண்ண
   useEffect(() => {
     fetchAllData();
   }, []);
 
+  // ✅ masterApi-ல இருந்து direct-ஆ fetch பண்றது
   const fetchAllData = async () => {
     try {
       setLoading(true);
@@ -88,16 +84,16 @@ export default function MaterialList() {
         setFilteredRecords(materialsRes.data);
       }
 
-      // Groups fetch
-      const groupsRes = await materialApi.getMaterialGroups();
-      if (groupsRes.success) {
-        setGroupOptions(groupsRes.data.map(g => g.GroupName));
+      // ✅ Groups fetch - masterApi direct use
+      const groupsRes = await getAllMaterialGroups();
+      if (groupsRes && groupsRes.data) {
+        setGroupOptions(groupsRes.data);
       }
 
-      // Units fetch
-      const unitsRes = await materialApi.getUnits();
-      if (unitsRes.success) {
-        setUnitOptions(unitsRes.data.map(u => u.UnitName));
+      // ✅ Units fetch - masterApi direct use
+      const unitsRes = await getAllUnits();
+      if (unitsRes && unitsRes.data) {
+        setUnitOptions(unitsRes.data);
       }
 
     } catch (error) {
@@ -112,9 +108,6 @@ export default function MaterialList() {
     const handleClickOutside = (event) => {
       if (groupRef.current && !groupRef.current.contains(event.target)) {
         setIsGroupOpen(false);
-      }
-      if (groupnameRef.current && !groupnameRef.current.contains(event.target)) {
-        setIsGroupnameOpen(false);
       }
       if (unitRef.current && !unitRef.current.contains(event.target)) {
         setIsUnitOpen(false);
@@ -254,7 +247,6 @@ export default function MaterialList() {
 
   return (
     <div className="page-container">
-
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
@@ -265,11 +257,11 @@ export default function MaterialList() {
                 className="page-back-btn"
                 aria-label="Go back"
               >
-                <Undo2   className="page-back-icon" />
+                <Undo2 className="page-back-icon" />
               </button>
             </div>
 
-
+            {/* Form Section */}
             <div className="filter-grid mb-4">
               <div className="filter-grid-red">
                 <label className="filter-label">Product Code</label>
@@ -291,6 +283,7 @@ export default function MaterialList() {
                 />
               </div>
 
+              {/* ✅ Group Dropdown */}
               <div ref={groupRef} className="filter-grid-red">
                 <label className="filter-label">Group</label>
                 <div className="dropdown-wrapper">
@@ -310,23 +303,27 @@ export default function MaterialList() {
                 {isGroupOpen && (
                   <div className="dropdown-menu">
                     {filteredGroups.length > 0 ? (
-                      filteredGroups.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            setFormData({ ...formData, MaterialGroupId: option });
-                            setGroupSearch(option);
-                            setIsGroupOpen(false);
-                          }}
-                          onMouseEnter={() => setHoveredGroup(option)}
-                          onMouseLeave={() => setHoveredGroup(null)}
-                          className={`dropdown-item-option ${
-                            hoveredGroup === option ? 'dropdown-item-hovered' : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      ))
+                      filteredGroups.map((group, index) => {
+                        const displayName = group.MaterialGroupName || group.materialgroupName || group.groupName || group.GroupName || 'Unknown';
+                        const groupId = group.MaterialGroupMId || group.MaterialGroupId || group.id;
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => {
+                              setFormData({ ...formData, MaterialGroupId: groupId });
+                              setGroupSearch(displayName);
+                              setIsGroupOpen(false);
+                            }}
+                            onMouseEnter={() => setHoveredGroup(displayName)}
+                            onMouseLeave={() => setHoveredGroup(null)}
+                            className={`dropdown-item-option ${
+                              hoveredGroup === displayName ? 'dropdown-item-hovered' : 'dropdown-item-default'
+                            }`}
+                          >
+                            {displayName}
+                          </div>
+                        );
+                      })
                     ) : (
                       <div className="dropdown-no-matches">No matches found</div>
                     )}
@@ -334,6 +331,7 @@ export default function MaterialList() {
                 )}
               </div>
 
+              {/* ✅ Unit Dropdown - FIXED */}
               <div ref={unitRef} className="filter-grid-red">
                 <label className="filter-label">Unit</label>
                 <div className="dropdown-wrapper">
@@ -353,23 +351,28 @@ export default function MaterialList() {
                 {isUnitOpen && (
                   <div className="dropdown-menu">
                     {filteredUnits.length > 0 ? (
-                      filteredUnits.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            setFormData({ ...formData, UnitId: option });
-                            setUnitSearch(option);
-                            setIsUnitOpen(false);
-                          }}
-                          onMouseEnter={() => setHoveredUnit(option)}
-                          onMouseLeave={() => setHoveredUnit(null)}
-                          className={`dropdown-item-option ${
-                            hoveredUnit === option ? 'dropdown-item-hovered' : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      ))
+                      filteredUnits.map((unit, index) => {
+                        // ✅ FIXED: Display unit ID
+                        const displayName = unit.UnitId || unit.unitid || 'Unknown';
+                        const unitId = unit.UnitMId || unit.UnitId || unit.id;
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => {
+                              setFormData({ ...formData, UnitId: unitId });
+                              setUnitSearch(String(displayName));
+                              setIsUnitOpen(false);
+                            }}
+                            onMouseEnter={() => setHoveredUnit(displayName)}
+                            onMouseLeave={() => setHoveredUnit(null)}
+                            className={`dropdown-item-option ${
+                              hoveredUnit === displayName ? 'dropdown-item-hovered' : 'dropdown-item-default'
+                            }`}
+                          >
+                            {displayName}
+                          </div>
+                        );
+                      })
                     ) : (
                       <div className="dropdown-no-matches">No matches found</div>
                     )}
@@ -449,11 +452,12 @@ export default function MaterialList() {
                   className="btn-all"
                   disabled={loading}
                 >
-                  <Send size={18} />  Submit
+                  <Send size={18} /> Submit
                 </button>
               </div>
             </div>
 
+            {/* Record List Section */}
             <h2 className="section-title">Record List</h2>
 
             <div className="filter-grid mb-4">
@@ -467,50 +471,8 @@ export default function MaterialList() {
                   className="filter-input text-xs"
                 />
               </div>
-
-              <div ref={groupnameRef} className="filter-grid-red">
-                <label className="filter-label">Group Name</label>
-                <div className="dropdown-wrapper">
-                  <input
-                    type="text"
-                    value={groupnameSearch}
-                    onChange={(e) => {
-                      setGroupnameSearch(e.target.value);
-                      setIsGroupnameOpen(true);
-                    }}
-                    onFocus={() => setIsGroupnameOpen(true)}
-                    placeholder="Type or select..."
-                    className="dropdown-input text-xs"
-                  />
-                  <ChevronDown size={20} className="dropdown-icon" />
-                </div>
-                {isGroupnameOpen && (
-                  <div className="dropdown-menu">
-                    {filteredGroupsname.length > 0 ? (
-                      filteredGroupsname.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            setGroupName(option);
-                            setGroupnameSearch(option);
-                            setIsGroupnameOpen(false);
-                          }}
-                          onMouseEnter={() => setHoveredGroupname(option)}
-                          onMouseLeave={() => setHoveredGroupname(null)}
-                          className={`dropdown-item-option ${
-                            hoveredGroupname === option ? 'dropdown-item-hovered' : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="dropdown-no-matches">No matches found</div>
-                    )}
-                  </div>
-                )}
-              </div>
               
+              <div></div>
               <div></div>
 
               <div className="btn-container">
@@ -524,6 +486,7 @@ export default function MaterialList() {
               </div>
             </div>
 
+            {/* Table */}
             <div className="border border-gray-400 rounded-md overflow-hidden">
               <table className="data-table">
                 <thead className="table-header">
@@ -648,10 +611,7 @@ export default function MaterialList() {
               <ChevronRight />
             </button>
           </div>
-
-          
         </div>
-        
       </div>
     </div>
   );

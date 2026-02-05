@@ -1,41 +1,60 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown,Send,Undo2 } from 'lucide-react';
+import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  getAllRoleSettings, 
+  createRoleSetting, 
+  updateRoleSetting, 
+  deleteRoleSetting 
+} from '../../api/roleSettingsApi';
 
 export default function UserRoleSettings() {
   const navigate = useNavigate();
 
-  const initialRoles = [
-    { id: 1, name: 'ADMIN', forms: true, add: true, delete: true, view: true, print: true, menu: true, others: true },
-    { id: 2, name: 'RANEESH', forms: false, add: false, delete: false, view: false, print: false, menu: false, others: false },
-    { id: 3, name: 'BALA', forms: false, add: false, delete: false, view: false, print: false, menu: false, others: false },
-    { id: 4, name: 'NAVEEN', forms: false, add: false, delete: false, view: false, print: false, menu: false, others: false }
-  ];
-
-  const rolesList = ['ADMIN', 'RANEESH', 'BALA', 'NAVEEN'];
-
-  const [roles, setRoles] = useState(initialRoles);
-  const [selectedRole, setSelectedRole] = useState('');
+  const [roles, setRoles] = useState([]);
+  const [selectedRole, setSelectedRole] = useState(null);
   const [roleSearch, setRoleSearch] = useState('');
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [hoveredRole, setHoveredRole] = useState(null);
   const [searchText, setSearchText] = useState('');
-  const [submittedRoles, setSubmittedRoles] = useState([]);
   const [displayRoles, setDisplayRoles] = useState([]);
   const [showRecordList, setShowRecordList] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
-  const [editingName, setEditingName] = useState('');
+  const [editingData, setEditingData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 2;
+  const [loading, setLoading] = useState(false);
+  const rowsPerPage = 5;
   
   const roleDropdownRef = useRef(null);
 
-  const filteredRoles = rolesList.filter(role =>
-    role.toLowerCase().includes(roleSearch.toLowerCase())
+  // Fetch all roles on component mount
+  useEffect(() => {
+    fetchAllRoles();
+  }, []);
+
+  const fetchAllRoles = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllRoleSettings();
+      setRoles(data);
+      setDisplayRoles(data);
+      if (data.length > 0) {
+        setShowRecordList(true);
+      }
+    } catch (error) {
+      alert('Failed to fetch roles');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredRoles = roles.filter(role =>
+    role.RoleName?.toLowerCase().includes(roleSearch.toLowerCase())
   );
 
-  const selectedRoleIndex = roles.findIndex(r => r.name === selectedRole);
-  const selectedRoleData = selectedRoleIndex !== -1 ? roles[selectedRoleIndex] : null;
+  const selectedRoleData = selectedRole 
+    ? roles.find(r => r.RoleID === selectedRole.RoleID) 
+    : null;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -57,45 +76,69 @@ export default function UserRoleSettings() {
   /* ROLE INPUT CHANGE */
   const handleRoleInput = (e) => {
     setRoleSearch(e.target.value);
-    setSelectedRole('');
+    setSelectedRole(null);
   };
 
   /* ROLE SELECT */
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
-    setRoleSearch(role);
+    setRoleSearch(role.RoleName);
     setIsRoleDropdownOpen(false);
   };
 
   /* CHECKBOX CHANGE */
   const handlePermissionChange = (field) => {
     if (!selectedRoleData) return;
-    const updatedRoles = [...roles];
-    updatedRoles[selectedRoleIndex][field] = !updatedRoles[selectedRoleIndex][field];
+    
+    const updatedRoles = roles.map(role => {
+      if (role.RoleID === selectedRoleData.RoleID) {
+        return { ...role, [field]: !role[field] };
+      }
+      return role;
+    });
+    
     setRoles(updatedRoles);
   };
 
-  /* SUBMIT */
-  const handleSubmit = () => {
-    if (!selectedRole) {
+  /* SUBMIT - Create or Update */
+  const handleSubmit = async () => {
+    if (!selectedRoleData) {
       alert('Please select a role');
       return;
     }
-    if (!submittedRoles.includes(selectedRole)) {
-      const updated = [...submittedRoles, selectedRole];
-      setSubmittedRoles(updated);
-      setDisplayRoles(updated);
+
+    try {
+      setLoading(true);
+      
+      if (selectedRoleData.RoleID) {
+        // Update existing role
+        await updateRoleSetting(selectedRoleData.RoleID, selectedRoleData);
+        alert('Role updated successfully');
+      } else {
+        // Create new role
+        await createRoleSetting(selectedRoleData);
+        alert('Role created successfully');
+      }
+      
+      // Refresh the list
+      await fetchAllRoles();
+      setSelectedRole(null);
+      setRoleSearch('');
+      
+    } catch (error) {
+      alert('Failed to save role');
+    } finally {
+      setLoading(false);
     }
-    setShowRecordList(true);
   };
 
   /* SEARCH */
   const handleSearch = () => {
     if (searchText.trim() === '') {
-      setDisplayRoles(submittedRoles);
+      setDisplayRoles(roles);
     } else {
-      const filtered = submittedRoles.filter(role =>
-        role.toLowerCase().includes(searchText.toLowerCase())
+      const filtered = roles.filter(role =>
+        role.RoleName?.toLowerCase().includes(searchText.toLowerCase())
       );
       setDisplayRoles(filtered);
     }
@@ -103,39 +146,56 @@ export default function UserRoleSettings() {
   };
 
   /* EDIT */
-  const handleEdit = (roleName) => {
-    setEditingRole(roleName);
-    setEditingName(roleName);
+  const handleEdit = (role) => {
+    setEditingRole(role.RoleID);
+    setEditingData({ ...role });
   };
 
   /* UPDATE */
-  const handleUpdate = () => {
-    if (editingName.trim() !== '') {
-      const updatedSubmitted = submittedRoles.map(r => r === editingRole ? editingName.toUpperCase() : r);
-      setSubmittedRoles(updatedSubmitted);
-      setDisplayRoles(updatedSubmitted);
+  const handleUpdate = async () => {
+    if (!editingData || !editingData.RoleName?.trim()) {
+      alert('Role name cannot be empty');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await updateRoleSetting(editingData.RoleID, editingData);
+      alert('Role updated successfully');
+      await fetchAllRoles();
       setEditingRole(null);
-      setEditingName('');
+      setEditingData(null);
+    } catch (error) {
+      alert('Failed to update role');
+    } finally {
+      setLoading(false);
     }
   };
 
   /* CANCEL EDIT */
   const handleCancelEdit = () => {
     setEditingRole(null);
-    setEditingName('');
+    setEditingData(null);
   };
 
   /* DELETE */
-  const handleDelete = (roleName) => {
-    if (window.confirm(`Are you sure you want to delete ${roleName}?`)) {
-      const updatedSubmitted = submittedRoles.filter(r => r !== roleName);
-      setSubmittedRoles(updatedSubmitted);
-      setDisplayRoles(updatedSubmitted);
-      
-      // Adjust current page if needed
-      const newTotalPages = Math.ceil(updatedSubmitted.length / rowsPerPage);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
+  const handleDelete = async (role) => {
+    if (window.confirm(`Are you sure you want to delete ${role.RoleName}?`)) {
+      try {
+        setLoading(true);
+        await deleteRoleSetting(role.RoleID);
+        alert('Role deleted successfully');
+        await fetchAllRoles();
+        
+        // Adjust current page if needed
+        const newTotalPages = Math.ceil((displayRoles.length - 1) / rowsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(newTotalPages);
+        }
+      } catch (error) {
+        alert('Failed to delete role');
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -145,14 +205,14 @@ export default function UserRoleSettings() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-             <div className="page-header">
+            <div className="page-header">
               <h1 className="page-title">User Role Settings</h1>
               <button 
                 onClick={() => navigate(-1)} 
                 className="page-back-btn"
                 aria-label="Go back"
               >
-                <Undo2   className="page-back-icon" />
+                <Undo2 className="page-back-icon" />
               </button>
             </div>
 
@@ -174,21 +234,21 @@ export default function UserRoleSettings() {
                 {isRoleDropdownOpen && (
                   <div className="dropdown-menu">
                     {filteredRoles.length > 0 ? (
-                      filteredRoles.map((option, index) => (
+                      filteredRoles.map((role) => (
                         <div
-                          key={index}
-                          onClick={() => handleRoleSelect(option)}
-                          onMouseEnter={() => setHoveredRole(option)}
+                          key={role.RoleID}
+                          onClick={() => handleRoleSelect(role)}
+                          onMouseEnter={() => setHoveredRole(role.RoleID)}
                           onMouseLeave={() => setHoveredRole(null)}
                           className={`dropdown-item-option ${
-                            hoveredRole === option
+                            hoveredRole === role.RoleID
                               ? 'dropdown-item-hovered'
-                              : selectedRole === option
+                              : selectedRole?.RoleID === role.RoleID
                               ? 'dropdown-item-selected'
                               : 'dropdown-item-default'
                           }`}
                         >
-                          {option}
+                          {role.RoleName}
                         </div>
                       ))
                     ) : (
@@ -199,8 +259,12 @@ export default function UserRoleSettings() {
               </div>
 
               <div className="btn-container">
-                <button onClick={handleSubmit} className="btn-search">
-                  <Send size={18} />  Submit
+                <button 
+                  onClick={handleSubmit} 
+                  className="btn-search"
+                  disabled={loading}
+                >
+                  <Send size={18} /> {loading ? 'Saving...' : 'Submit'}
                 </button>
               </div>
               <div></div>
@@ -214,29 +278,26 @@ export default function UserRoleSettings() {
                   <thead className="table-header">
                     <tr>
                       <th className="table-th-center">Sl No</th>
-                      <th className="table-th-center">Forms</th>
-                      <th className="table-th-center">Add</th>
-                      <th className="table-th-center">Delete</th>
-                      <th className="table-th-center">View</th>
-                      <th className="table-th-center">Print</th>
-                      <th className="table-th-center">Menu</th>
-                      <th className="table-th-center">Others</th>
+                      <th className="table-th-center">Role Name</th>
+                      <th className="table-th-center">Active</th>
+                      <th className="table-th-center">Description</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="table-row">
-                      <td className="table-cell-center">{selectedRoleData.id}</td>
-                      <td className="table-cell-center">{selectedRoleData.name}</td>
-                      {['add', 'delete', 'view', 'print', 'menu', 'others'].map(key => (
-                        <td key={key} className="table-cell-center">
-                          <input
-                            type="checkbox"
-                            checked={selectedRoleData[key]}
-                            onChange={() => handlePermissionChange(key)}
-                            className="radio-input "
-                          />
-                        </td>
-                      ))}
+                      <td className="table-cell-center">{selectedRoleData.RoleID}</td>
+                      <td className="table-cell-center">{selectedRoleData.RoleName}</td>
+                      <td className="table-cell-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedRoleData.IsActive || false}
+                          onChange={() => handlePermissionChange('IsActive')}
+                          className="radio-input"
+                        />
+                      </td>
+                      <td className="table-cell-center">
+                        {selectedRoleData.Description || '-'}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -256,6 +317,7 @@ export default function UserRoleSettings() {
                       placeholder="Role Name"
                       value={searchText}
                       onChange={(e) => setSearchText(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                       className="filter-input"
                     />
                   </div>
@@ -270,34 +332,44 @@ export default function UserRoleSettings() {
                     <span className="master-table-title">Role Settings Name</span>
                   </div>
                   <div className="master-table-body">
-                    {paginatedData.length === 0 ? (
+                    {loading ? (
+                      <div className="no-data-cell">Loading...</div>
+                    ) : paginatedData.length === 0 ? (
                       <div className="no-data-cell">No records found</div>
                     ) : (
-                      paginatedData.map((role, idx) => (
-                        <div key={role} className="master-table-row">
+                      paginatedData.map((role) => (
+                        <div key={role.RoleID} className="master-table-row">
                           <div className="master-table-content">
                             <ChevronRight size={16} className="text-gray-700" />
-                            {editingRole === role ? (
+                            {editingRole === role.RoleID ? (
                               <input
                                 type="text"
-                                value={editingName}
-                                onChange={(e) => setEditingName(e.target.value)}
+                                value={editingData?.RoleName || ''}
+                                onChange={(e) => setEditingData({
+                                  ...editingData,
+                                  RoleName: e.target.value
+                                })}
                                 className="master-edit-input"
                               />
                             ) : (
-                              <span className="master-name-text">{role}</span>
+                              <span className="master-name-text">{role.RoleName}</span>
                             )}
                           </div>
                           <div className="flex items-center gap-3">
-                            {editingRole === role ? (
+                            {editingRole === role.RoleID ? (
                               <>
-                                <button onClick={handleUpdate} className="btn-smallbtn">
-                                  Update
+                                <button 
+                                  onClick={handleUpdate} 
+                                  className="btn-smallbtn"
+                                  disabled={loading}
+                                >
+                                  {loading ? 'Updating...' : 'Update'}
                                 </button>
                                 <button
                                   onClick={handleCancelEdit}
                                   className="btn-smallbtn"
                                   style={{ backgroundColor: '#6B7280' }}
+                                  disabled={loading}
                                 >
                                   Cancel
                                 </button>
@@ -307,12 +379,14 @@ export default function UserRoleSettings() {
                                 <button
                                   onClick={() => handleEdit(role)}
                                   className="btn-action"
+                                  disabled={loading}
                                 >
-                                  <Edit2 size={18}  />
+                                  <Edit2 size={18} />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(role)}
                                   className="btn-action"
+                                  disabled={loading}
                                 >
                                   <Trash2 size={18} className="text-red-600" />
                                 </button>
@@ -326,48 +400,45 @@ export default function UserRoleSettings() {
                 </div>
               </>
             )}
-          
 
-          {/* Pagination */}
-          {showRecordList && displayRoles.length > rowsPerPage && (
-            <div className="pagination-container">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}
-                className={`pagination-btn ${
-                  currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
-                }`}
-              >
-                <ChevronLeft size={16} />
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            {/* Pagination */}
+            {showRecordList && displayRoles.length > rowsPerPage && (
+              <div className="pagination-container">
                 <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`pagination-page-btn ${
-                    currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  className={`pagination-btn ${
+                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
                   }`}
                 >
-                  {page}
+                  <ChevronLeft size={16} />
                 </button>
-              ))}
 
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => prev + 1)}
-                className={`pagination-btn ${
-                  currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
-                }`}
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          )}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`pagination-page-btn ${
+                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
 
-      
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className={`pagination-btn ${
+                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                  }`}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );
