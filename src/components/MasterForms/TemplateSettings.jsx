@@ -11,6 +11,7 @@ export default function TemplateSettings() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
+  // Initialize with no rows, but set addingRow to true for default row
   const [rows, setRows] = useState([])  
   const totalPages = Math.ceil(rows.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -19,10 +20,10 @@ export default function TemplateSettings() {
 
   const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
-  const [addingRow, setAddingRow] = useState(false);
+  const [addingRow, setAddingRow] = useState(true); // Start with adding mode
   const [insertAfterRowId, setInsertAfterRowId] = useState(null);
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
-  const [newRowPosition, setNewRowPosition] = useState(null);
+  const [newRowPosition, setNewRowPosition] = useState('bottom'); // Default position
 
   // Dropdown states
   const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
@@ -43,9 +44,9 @@ const [specMasters, setSpecMasters] = useState([]);
     group: '', 
     specification: '',
     dimension: '',
-    noOfUnit: '',
-    amount: '',
-    hiddenAmount: ''
+    noOfUnit: 0,
+    amount: 0,
+    hiddenAmount: 0
   });
 
   const [discount, setDiscount] = useState(10000);
@@ -103,19 +104,24 @@ const loadTemplateSettings = async () => {
       setDiscount(t.DisAmount || 0);
       setGstPercentage(18);
 
-      // ❗ Populate rows from backend
-      setRows(
-        (t.Rows || []).map((r, index) => ({
-          id: r.TempGroupId + '-' + index, // unique id
-          slNo: index + 1,
-          group: r.TempGroupName || '',    // use TempGroupName
-          specification: r.TempSpecName || '', 
-          dimension: r.Dimension || '',
-          noOfUnit: r.NoUnit || 0,
-          amount: r.Amount || 0,
-          hiddenAmount: r.HiddenAmount || 0
-        }))
-      );
+      // ❗ Populate rows from backend - only if data exists
+      if (t.Rows && t.Rows.length > 0) {
+        setRows(
+          t.Rows.map((r, index) => ({
+            id: r.TempGroupId + '-' + index, // unique id
+            slNo: index + 1,
+            group: r.TempGroupName || '',    // use TempGroupName
+            specification: r.TempSpecName || '', 
+            dimension: r.Dimension || '',
+            noOfUnit: r.NoUnit || 0,
+            amount: r.Amount || 0,
+            hiddenAmount: r.HiddenAmount || 0
+          }))
+        );
+        // Disable adding mode when data is loaded
+        setAddingRow(false);
+        setNewRowPosition(null);
+      }
 
       setTermsConditions(
         t.TermsAndConditions
@@ -156,9 +162,9 @@ const filteredSpecOptions = specMasters.filter(s =>
     group: '',
     specification: '',
     dimension: '',
-    noOfUnit: '',
-    amount: '',
-    hiddenAmount: ''
+    noOfUnit: 0,
+    amount: 0,
+    hiddenAmount: 0
   });
 
   setGroupSearchTerm('');
@@ -175,9 +181,9 @@ const filteredSpecOptions = specMasters.filter(s =>
     group: '',
     specification: '',
     dimension: '',
-    noOfUnit: '',
-    amount: '',
-    hiddenAmount: ''
+    noOfUnit: 0,
+    amount: 0,
+    hiddenAmount: 0
   });
   setGroupSearchTerm('');
   setSpecSearchTerm('');
@@ -219,9 +225,9 @@ const filteredSpecOptions = specMasters.filter(s =>
       group: '',
       specification: '',
       dimension: '',
-      noOfUnit: '',
-      amount: '',
-      hiddenAmount: ''
+      noOfUnit: 0,
+      amount: 0,
+      hiddenAmount: 0
     });
     setGroupSearchTerm('');
     setSpecSearchTerm('');
@@ -384,8 +390,7 @@ const handleSubmit = async () => {
 
     await templateSettingsApi.createTemplate(payload);
 
-    alert("Template saved successfully ✅");
-    navigate(-1);
+    alert("Template saved successfully ✅"); 
   } catch (err) {
     console.error(err);
     alert("Save failed ❌");
@@ -421,7 +426,7 @@ const handleSubmit = async () => {
             </div>
 
             {/* Table */}
-            <div className="table-container">
+            <div className="table-container" style={{ overflow: 'visible' }}>
               <table className="data-table">
                 <thead className="table-header">
                   <tr>
@@ -464,7 +469,7 @@ const handleSubmit = async () => {
                                 />
                               </div>
                               {groupDropdownOpen && (
-                                <div className="dropdown-menu">
+                                <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredGroupOptions.length > 0 ? (
                                     filteredGroupOptions.map((option, idx) => (
                                     <div
@@ -517,7 +522,7 @@ const handleSubmit = async () => {
                                 />
                               </div>
                               {specDropdownOpen && (
-                                <div className="dropdown-menu max-w-[200px]">
+                                <div className="dropdown-menu max-w-[200px]" style={{ zIndex: 9999 }}>
                                   {filteredSpecOptions.length > 0 ? (
                                     filteredSpecOptions.map((option, idx) => (
                                       <div
@@ -567,7 +572,7 @@ const handleSubmit = async () => {
                             <input
                               type="number"
                               value={editedData.noOfUnit}
-                              onChange={(e) => updateEditedData('noOfUnit', parseFloat(e.target.value))}
+                              onChange={(e) => updateEditedData('noOfUnit', parseFloat(e.target.value) || 0)}
                               className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm"
                             />
                           ) : (
@@ -581,7 +586,7 @@ const handleSubmit = async () => {
                             <input
                               type="number"
                               value={editedData.amount}
-                              onChange={(e) => updateEditedData('amount', parseFloat(e.target.value))}
+                              onChange={(e) => updateEditedData('amount', parseFloat(e.target.value) || 0)}
                               className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
                             />
                           ) : (
@@ -595,7 +600,7 @@ const handleSubmit = async () => {
                             <input
                               type="number"
                               value={editedData.hiddenAmount}
-                              onChange={(e) => updateEditedData('hiddenAmount', parseFloat(e.target.value))}
+                              onChange={(e) => updateEditedData('hiddenAmount', parseFloat(e.target.value) || 0)}
                               className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
                             />
                           ) : (
@@ -716,7 +721,7 @@ const handleSubmit = async () => {
                                 />
                               </div>
                               {groupDropdownOpen && (
-                                <div className="dropdown-menu">
+                                <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredGroupOptions.length > 0 ? (
                                     filteredGroupOptions.map((option, idx) => (
                                       <div
@@ -765,7 +770,7 @@ const handleSubmit = async () => {
                                 />
                               </div>
                               {specDropdownOpen && (
-                                <div className="dropdown-menu">
+                                <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredSpecOptions.length > 0 ? (
                                     filteredSpecOptions.map((option, idx) => (
                                       <div
@@ -890,12 +895,14 @@ const handleSubmit = async () => {
                             />
                           </div>
                           {groupDropdownOpen && (
-                            <div className="dropdown-menu">
+                            <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                               {filteredGroupOptions.length > 0 ? (
                                 filteredGroupOptions.map((option) => (
                                   <div
                                     key={option.TempGroupId}
                                     onClick={() => handleSelectGroup(option.TempGroupName, false)}
+                                    onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
+                                    onMouseLeave={() => setHoveredGroup(null)}
                                     className={`dropdown-item-option ${
                                       hoveredGroup === option.TempGroupName
                                         ? 'dropdown-item-hovered'
@@ -937,7 +944,7 @@ const handleSubmit = async () => {
                             />
                           </div>
                           {specDropdownOpen && (
-                            <div className="dropdown-menu">
+                            <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                               {filteredSpecOptions.length > 0 ? (
                                 filteredSpecOptions.map((option, idx) => (
                                   <div
@@ -1203,15 +1210,7 @@ const handleSubmit = async () => {
                 <span>✓</span>
                 <span>Submit</span>
               </button>
-            </div>
-
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+            </div> 
           </div>
         </div> 
       </div>
