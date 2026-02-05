@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { createLead } from "../../api/leadApi";
+import {
+  getAllLeadOwners,
+  getAllLeadStatuses,
+  getAllLeadSources
+} from "../../api/masterApi";
+
 
 export default function LeadCreationForm(){
   
@@ -28,6 +35,9 @@ export default function LeadCreationForm(){
   ];
 
   const navigate = useNavigate();
+  const [leadOwners, setLeadOwners] = useState([]);
+  const [leadStatuses, setLeadStatuses] = useState([]);
+  const [leadSources, setLeadSources] = useState([]);
   const leadOwnerDropdownRef = useRef(null);
   const leadStatusDropdownRef = useRef(null);
   const leadSourceDropdownRef = useRef(null);
@@ -64,35 +74,39 @@ export default function LeadCreationForm(){
   const [isLeadSourceOpen, setIsLeadSourceOpen] = useState(false);
   const [hoveredLeadSource, setHoveredLeadSource] = useState(null);
 
-  const leadOwnerOptions = [
-    'Sales Team',
-    'Services Team',
-    'Production Team'
-  ];
-  const leadStatusOptions = [
-    'New',
-    'Contacted',
-    'Qualified',
-    'Converted'
-  ];
-  const leadSourceOptions = [
-    'Website',
-    'Referral',
-    'Social Media',
-    'Advertisement'
-  ];
+  useEffect(() => {
+  loadMasters();
+}, []);
 
-  const filteredLeadOwners = leadOwnerOptions.filter(opt =>
-    opt.toLowerCase().includes(leadOwnerSearch.toLowerCase())
-  );
+const loadMasters = async () => {
+  try {
+    const owners = await getAllLeadOwners();
+    const status = await getAllLeadStatuses();
+    const source = await getAllLeadSources();
 
-  const filteredLeadStatuses = leadStatusOptions.filter(opt =>
-    opt.toLowerCase().includes(leadStatusSearch.toLowerCase())
-  );
+    setLeadOwners(owners.data.data || owners.data);
+    setLeadStatuses(status.data.data || status.data);
+    setLeadSources(source.data.data || source.data);
 
-  const filteredLeadSources = leadSourceOptions.filter(opt =>
-    opt.toLowerCase().includes(leadSourceSearch.toLowerCase())
-  );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+  
+  
+
+  const filteredLeadOwners = (leadOwners || []).filter(opt =>
+  opt.LeadOwnerName?.toLowerCase().includes(leadOwnerSearch.toLowerCase())
+);
+
+const filteredLeadStatuses = (leadStatuses || []).filter(opt =>
+  opt.LeadStatusName?.toLowerCase().includes(leadStatusSearch.toLowerCase())
+);
+
+const filteredLeadSources = (leadSources || []).filter(opt =>
+  opt.LeadSourceName?.toLowerCase().includes(leadSourceSearch.toLowerCase())
+);
 
   const handleLeadOwnerInput = (e) => {
     setLeadOwnerSearch(e.target.value);
@@ -100,10 +114,11 @@ export default function LeadCreationForm(){
   };
 
   const handleLeadOwnerSelect = (option) => {
-    setFormData({ ...formData, leadOwner: option });
-    setLeadOwnerSearch(option);
-    setIsLeadOwnerOpen(false);
-  };
+  setFormData({ ...formData, leadOwner: option.LeadOwnerId });
+  setLeadOwnerSearch(option.LeadOwnerName);
+  setIsLeadOwnerOpen(false);
+};
+
 
   const handleLeadStatusInput = (e) => {
     setLeadStatusSearch(e.target.value);
@@ -111,10 +126,11 @@ export default function LeadCreationForm(){
   };
 
   const handleLeadStatusSelect = (option) => {
-    setFormData({ ...formData, leadStatus: option });
-    setLeadStatusSearch(option);
-    setIsLeadStatusOpen(false);
-  };
+  setFormData({ ...formData, leadStatus: option.LeadStatusId });
+  setLeadStatusSearch(option.LeadStatusName);
+  setIsLeadStatusOpen(false);
+};
+
 
   const handleLeadSourceInput = (e) => {
     setLeadSourceSearch(e.target.value);
@@ -122,10 +138,11 @@ export default function LeadCreationForm(){
   };
 
   const handleLeadSourceSelect = (option) => {
-    setFormData({ ...formData, leadSource: option });
-    setLeadSourceSearch(option);
-    setIsLeadSourceOpen(false);
-  };
+  setFormData({ ...formData, leadSource: option.LeadSourceId });
+  setLeadSourceSearch(option.LeadSourceName);
+  setIsLeadSourceOpen(false);
+};
+
 
   const handleChange = (e) => {
     setFormData({
@@ -143,10 +160,60 @@ export default function LeadCreationForm(){
     e.target.style.height = e.target.scrollHeight + 'px';
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    alert('Form submitted successfully!');
-  };
+  const handleSubmit = async () => {
+
+  if (
+    !formData.title ||
+    !formData.company ||
+    !formData.firstName ||
+    !formData.leadName ||
+    !formData.phoneNo ||
+    !formData.website ||
+    !formData.requirements ||
+    !formData.otherRequirements ||
+    !formData.brokerName
+  ) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  try {
+   const payload = {
+  LeadNo: "LD" + Date.now(),
+  Title: formData.title,
+  CompanyName: formData.company,
+  FirstName: formData.firstName,
+  LastName: formData.lastName,
+  LeadName: formData.leadName,
+  Email: formData.email,
+  PhoneNo: formData.phoneNo,
+  MobileNo: formData.mobileNo,
+  Website: formData.website,
+  City: formData.city,
+  Requirements: formData.requirements,
+  OtherRequirements: formData.otherRequirements,
+  BrokerName: formData.brokerName,
+  LeadPriority: formData.leadPriority,
+  Remark: formData.remark,
+
+  LeadOwnerId: formData.leadOwner,
+  LeadStatusId: formData.leadStatus,
+  LeadSourceId: formData.leadSource
+};
+
+
+    await createLead(payload);
+
+    alert("Lead Created Successfully ✅");
+
+    handleClear();
+
+  } catch (error) {
+    alert("Lead Creation Failed ❌");
+  }
+};
+
+
 
   const handleClear = () => {
     setFormData({
@@ -409,7 +476,8 @@ export default function LeadCreationForm(){
                               : 'dropdown-item-default'
                           }`}
                         >
-                          {option}
+                          {option.LeadOwnerName}
+
                         </div>
                       ))
                     ) : (
@@ -500,7 +568,8 @@ export default function LeadCreationForm(){
                               : 'dropdown-item-default'
                           }`}
                         >
-                          {option}
+                          {option.LeadStatusName}
+
                         </div>
                       ))
                     ) : (
@@ -541,7 +610,8 @@ export default function LeadCreationForm(){
                               : 'dropdown-item-default'
                           }`}
                         >
-                          {option}
+                          {option.LeadSourceName}
+
                         </div>
                       ))
                     ) : (

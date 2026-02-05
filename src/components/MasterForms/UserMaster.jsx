@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, ChevronRight, Edit2, Trash2, ChevronLeft ,Send,Undo2} from 'lucide-react';
+import React, { useState , useRef, useEffect } from 'react';
+import { Search, ChevronRight, Edit2, Trash2, ChevronLeft ,Send,Undo2 , ChevronDown ,Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function UserMaster() {
@@ -8,6 +8,20 @@ export default function UserMaster() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 2;
+ const [password, setPassword] = useState("");
+ const [showPassword, setShowPassword] = useState(false);
+const [confirmPassword, setConfirmPassword] = useState("");
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+const roleDropdownRef = useRef(null);
+
+const [roleSearch, setRoleSearch] = useState("");
+const [isRoleOpen, setIsRoleOpen] = useState(false);
+const [hoveredRole, setHoveredRole] = useState(null);
+
+
+ 
+  
 
   const [templateGroups, setTemplateGroups] = useState([
     { id: 1, name: 'ADMIN' }
@@ -71,6 +85,89 @@ export default function UserMaster() {
     setCurrentPage(1);
   };
 
+
+// Department Dropdown States
+const departmentDropdownRef = useRef(null);
+
+const [departmentSearch, setDepartmentSearch] = useState("");
+const [isDepartmentOpen, setIsDepartmentOpen] = useState(false);
+const [hoveredDepartment, setHoveredDepartment] = useState(null);
+
+// Department Options
+const departmentOptions = ["Department1", "Department2", "Department3", "Department4"];
+
+// Filter Departments
+const filteredDepartments = departmentOptions.filter((dept) =>
+  dept.toLowerCase().includes(departmentSearch.toLowerCase())
+);
+
+// Input Handler
+const handleDepartmentInput = (e) => {
+  setDepartmentSearch(e.target.value);
+  setIsDepartmentOpen(true);
+};
+
+// Select Handler
+const handleDepartmentSelect = (dept) => {
+  setDepartmentSearch(dept);
+  setIsDepartmentOpen(false);
+};
+
+// Outside Click Close
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      departmentDropdownRef.current &&
+      !departmentDropdownRef.current.contains(event.target)
+    ) {
+      setIsDepartmentOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+// ✅ Role Options (nee extra add pannalam)
+const roleOptions = ["Admin", "Manager", "Staff", "User"];
+
+// ✅ Filter Roles
+const filteredRoles = roleOptions.filter((role) =>
+  role.toLowerCase().includes(roleSearch.toLowerCase())
+);
+// ✅ Input Handler
+const handleRoleInput = (e) => {
+  setRoleSearch(e.target.value);
+  setIsRoleOpen(true);
+};
+
+// ✅ Select Handler
+const handleRoleSelect = (role) => {
+  setRoleSearch(role);
+  setIsRoleOpen(false);
+};
+
+// ✅ Outside Click Close for Role Dropdown
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      roleDropdownRef.current &&
+      !roleDropdownRef.current.contains(event.target)
+    ) {
+      setIsRoleOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
   return (
     <div className="page-container">
       <div className="content-wrapper">
@@ -99,6 +196,155 @@ export default function UserMaster() {
                     className="filter-input"
                   />
                 </div>
+                
+                {/* ✅ Department Dropdown */}
+<div ref={departmentDropdownRef} className="filter-grid-red">
+  <label className="filter-label">Department</label>
+
+  <div className="dropdown-wrapper">
+    <input
+      type="text"
+      value={departmentSearch}
+      onChange={handleDepartmentInput}
+      onFocus={() => setIsDepartmentOpen(true)}
+      placeholder="Type or select..."
+      className="dropdown-input"
+    />
+
+    <ChevronDown size={20} className="dropdown-icon" />
+  </div>
+
+  {isDepartmentOpen && (
+    <div className="dropdown-menu">
+      {filteredDepartments.length > 0 ? (
+        filteredDepartments.map((option, index) => (
+          <div
+            key={index}
+            onClick={() => handleDepartmentSelect(option)}
+            onMouseEnter={() => setHoveredDepartment(option)}
+            onMouseLeave={() => setHoveredDepartment(null)}
+            className={`dropdown-item-option ${
+              hoveredDepartment === option
+                ? "dropdown-item-hovered"
+                : departmentSearch === option
+                ? "dropdown-item-selected"
+                : "dropdown-item-default"
+            }`}
+          >
+            {option}
+          </div>
+        ))
+      ) : (
+        <div className="dropdown-no-matches">No matches found</div>
+      )}
+    </div>
+  )}
+</div>{/* Password Field */}
+<div className="filter-grid-red">
+  <label className="filter-label">Password</label>
+
+  <div className="dropdown-wrapper" style={{ position: "relative" }}>
+    <input
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter password"
+      className="dropdown-input"
+    />
+
+    {/* Eye Button */}
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+      }}
+    >
+      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+    </button>
+  </div>
+</div>
+{/* Confirm Password Field */}
+<div className="filter-grid-red">
+  <label className="filter-label">Confirm Password</label>
+
+  <div className="dropdown-wrapper" style={{ position: "relative" }}>
+    <input
+      type={showConfirmPassword ? "text" : "password"}
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      placeholder="Enter confirm password"
+      className="dropdown-input"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+      }}
+    >
+      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+    </button>
+  </div>
+</div>
+{/* ✅ Role Settings Dropdown */}
+<div ref={roleDropdownRef} className="filter-grid-red">
+  <label className="filter-label">Role</label>
+
+  <div className="dropdown-wrapper">
+    <input
+      type="text"
+      value={roleSearch}
+      onChange={handleRoleInput}
+      onFocus={() => setIsRoleOpen(true)}
+      placeholder="Type or select..."
+      className="dropdown-input"
+    />
+
+    <ChevronDown size={20} className="dropdown-icon" />
+  </div>
+
+  {isRoleOpen && (
+    <div className="dropdown-menu">
+      {filteredRoles.length > 0 ? (
+        filteredRoles.map((option, index) => (
+          <div
+            key={index}
+            onClick={() => handleRoleSelect(option)}
+            onMouseEnter={() => setHoveredRole(option)}
+            onMouseLeave={() => setHoveredRole(null)}
+            className={`dropdown-item-option ${
+              hoveredRole === option
+                ? "dropdown-item-hovered"
+                : roleSearch === option
+                ? "dropdown-item-selected"
+                : "dropdown-item-default"
+            }`}
+          >
+            {option}
+          </div>
+        ))
+      ) : (
+        <div className="dropdown-no-matches">No matches found</div>
+      )}
+    </div>
+  )}
+</div>
+
+
                 <div className="btn-container">
                   <button onClick={handleSubmit} className="btn-all">
                     <Send size={18} />  Submit
