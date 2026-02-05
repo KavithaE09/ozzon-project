@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ProformaInvoiceSearch() {
@@ -117,8 +117,17 @@ export default function ProformaInvoiceSearch() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Proforma Invoice</h2>
-
+            
+            <div className="page-header">
+              <h1 className="page-title">Proforma Invoice</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
             {/* Filter Section */}
             <div className="filter-section">
               <div className="filter-grid">
@@ -316,13 +325,7 @@ export default function ProformaInvoiceSearch() {
               </div>
             )}
         
-                    {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+             
           </div>
         </div>
       </div>

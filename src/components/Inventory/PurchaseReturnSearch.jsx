@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronLeft, ChevronRight ,Undo2} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PurchaseReturnSearch() {
@@ -137,7 +137,16 @@ export default function PurchaseReturnSearch() {
       <div className="content-wrapper">
         <main className="main-section">
           <div className="content-card">
-            <h1 className="page-title">Purchase Return</h1>
+           <div className="page-header">
+                         <h1 className="page-title">Purchase Return</h1>
+                         <button 
+                           onClick={() => navigate(-1)} 
+                           className="page-back-btn"
+                           aria-label="Go back"
+                         >
+                           <Undo2   className="page-back-icon" />
+                         </button>
+                       </div>
 
             {/* Filter Section */}
             <div className="filter-section">
@@ -341,12 +350,7 @@ export default function PurchaseReturnSearch() {
             </div>
           )}
 
-          <button
-            onClick={() => navigate(-1)}
-            className="btn-back"
-          >
-            ← Back
-          </button>
+        
         </main>
       </div>
     </div>

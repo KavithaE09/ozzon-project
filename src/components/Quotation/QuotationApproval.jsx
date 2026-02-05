@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Printer, CheckCircle, XCircle, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Printer, CheckCircle, XCircle, ChevronDown, ChevronLeft, ChevronRight,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function QuotationApproval() {
@@ -138,7 +138,16 @@ export default function QuotationApproval() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h3 className="page-title">Quotation Approval</h3>
+            <div className="page-header">
+                          <h1 className="page-title">Quotation Approval</h1>
+                          <button 
+                            onClick={() => navigate(-1)} 
+                            className="page-back-btn"
+                            aria-label="Go back"
+                          >
+                            <Undo2   className="page-back-icon" />
+                          </button>
+                        </div>
 
             {/* FILTER ROW */}
             <div className="filter-grid">
@@ -318,10 +327,7 @@ export default function QuotationApproval() {
             </div>
           )}
 
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
+         
         </div>
       </div>
     </div>

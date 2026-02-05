@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, ChevronDown, Printer, Edit2, Trash2, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Menu, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, ChevronDown, Printer, Edit2, Trash2, ChevronLeft, ChevronRight, ArrowUp, ArrowDown,Undo2, Menu, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AssignTask() {
@@ -394,7 +394,16 @@ export default function AssignTask() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Assign Task</h2>
+            <div className="page-header">
+              <h1 className="page-title">Assign Task</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
             <h4 className="section-title" style={{ marginLeft: '20px' }}>Accepted Job List</h4>
             
             {/* Job Orders Table */}
@@ -1348,10 +1357,7 @@ export default function AssignTask() {
 
               {/* Footer Buttons */}
               <div className="footer-container">
-                <button onClick={() => navigate(-1)} className="btn-back">
-                  <span>←</span>
-                  <span>Back</span>
-                </button>
+              
 
                 <button onClick={handleAcceptJob} className="btn-search">
                   <span>✓</span>

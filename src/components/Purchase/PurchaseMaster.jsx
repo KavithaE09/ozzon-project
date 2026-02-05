@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Search, Edit2, Trash2, ChevronLeft } from 'lucide-react';
+import { ChevronRight, Search, Edit2, Trash2, ChevronLeft ,Undo2} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PurchaseMaster() {
@@ -78,8 +78,16 @@ export default function PurchaseMaster() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            {/* Purchase Master Section */}
-            <h2 className="page-title">Purchase Order</h2>
+           <div className="page-header">
+              <h1 className="page-title">Purchase Order</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
             
             <div className="filter-section">
               <div className="filter-grid">
@@ -202,13 +210,7 @@ export default function PurchaseMaster() {
               </div>
             )}
             
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
-            </div>
+           
           </div>
         </div>
       </div>

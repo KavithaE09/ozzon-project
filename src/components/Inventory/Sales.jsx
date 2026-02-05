@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown,Send } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ArrowUp, ArrowDown,Send,Undo2 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
@@ -143,7 +143,16 @@ export default function Sales() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Sales</h2>
+           <div className="page-header">
+                         <h1 className="page-title">Sales</h1>
+                         <button 
+                           onClick={() => navigate(-1)} 
+                           className="page-back-btn"
+                           aria-label="Go back"
+                         >
+                           <Undo2   className="page-back-icon" />
+                         </button>
+                       </div>
 
             {/* ── TOP: Form fields + Info box ──────────────────── */}
             {/* mobile: column | md+: row */}
@@ -304,10 +313,7 @@ export default function Sales() {
 
             {/* ── SUBMIT + BACK ────────────────────────────────── */}
             <div className="flex justify-between mt-7">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
-              </button>
+             
               <button className="btn-search">
                <Send size={18} /> Submit
               </button>

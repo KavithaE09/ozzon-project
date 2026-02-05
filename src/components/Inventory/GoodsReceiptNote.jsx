@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Edit2, Printer,Send } from "lucide-react";
+import { Plus, Trash2, Edit2, Printer,Send,Undo2 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 export default function GoodsReceiptNotes() {
@@ -59,7 +59,16 @@ export default function GoodsReceiptNotes() {
       <div className="content-wrapper">
         <main className="main-section">
           <div className="content-card">
-            <h1 className="page-title">G.R.N (Goods Receipt Note)</h1>
+             <div className="page-header">
+                     <h1 className="page-title">Goods Receipt Note</h1>
+                     <button 
+                       onClick={() => navigate(-1)} 
+                       className="page-back-btn"
+                       aria-label="Go back"
+                     >
+                       <Undo2   className="page-back-icon" />
+                     </button>
+                   </div>
 
             {/* PO LIST */}
             <div className="master-table-container mb-4">
@@ -226,13 +235,7 @@ export default function GoodsReceiptNotes() {
             </div>
           </div>
 
-          {/* Back Button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="btn-back"
-          >
-            ← Back
-          </button>
+         
         </main>
       </div>
     </div>

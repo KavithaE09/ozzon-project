@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Printer, ChevronDown } from 'lucide-react';
+import { Search, Printer, ChevronDown,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdvanceReceipt() {
@@ -95,7 +95,16 @@ export default function AdvanceReceipt() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Advance Receipt</h2>
+            <div className="page-header">
+              <h1 className="page-title">Advance Receipt</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
             
             {/* Filter Section */}
             <div className="filter-section">
@@ -230,13 +239,7 @@ export default function AdvanceReceipt() {
               </div>
             )}
 
-                      {/* Back Button */}
-          <div className="footer-container">
-            <button onClick={() => navigate(-1)} className="btn-back">
-              <span>←</span>
-              <span>Back</span>
-            </button>
-          </div>
+        
           </div>
         </div>
       </div>

@@ -10,11 +10,9 @@ export default function MaterialList() {
   const [groupName, setGroupName] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-
   const [groupOptions, setGroupOptions] = useState([]);
   const groupnameOptions = ["Group 1", "Group 2", "Group 3"];
   const [unitOptions, setUnitOptions] = useState([]);
-  
   const [formData, setFormData] = useState({
     ProductCode: '',
     ProductName: '',
@@ -27,13 +25,10 @@ export default function MaterialList() {
     HSNCode: '',
     ReOrderLevel: ''
   });
-
   const [allRecords, setAllRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
-
   const [editingId, setEditingId] = useState(null);
   const [editingData, setEditingData] = useState({ name: '', rate: '' });
-  
   const rowsPerPage = 2;
   const totalPages = Math.max(
     1,
@@ -42,7 +37,6 @@ export default function MaterialList() {
 
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
-
   const currentRecords = filteredRecords.slice(
     indexOfFirst,
     indexOfLast

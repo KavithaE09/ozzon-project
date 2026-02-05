@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, ChevronLeft, ChevronRight,Send } from 'lucide-react';
+import { Edit2, Trash2, ChevronLeft, ChevronRight,Send,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ContainerMaster() {
@@ -156,7 +156,16 @@ export default function ContainerMaster() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Container Status Master</h2>
+           <div className="page-header">
+              <h1 className="page-title">Container Status Master</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
             
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', gap: '40px', marginBottom: '24px' }}>
               {/* Container Status Name Input */}
@@ -391,10 +400,7 @@ export default function ContainerMaster() {
             </div>
           )}
 
-          <button onClick={() => navigate(-1)} className="btn-back">
-            <span>←</span>
-            <span>Back</span>
-          </button>
+        
         </div>
         </div>
       </div>

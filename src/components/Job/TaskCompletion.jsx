@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, X, ChevronDown, Printer, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Menu, ArrowUp, ArrowDown, CheckCircle, XCircle,Send } from 'lucide-react';
+import { Check, X, ChevronDown, Printer, Plus, Edit2, Trash2,Undo2, ChevronLeft, ChevronRight, Menu, ArrowUp, ArrowDown, CheckCircle, XCircle,Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function TaskCompletion() {
@@ -392,7 +392,16 @@ export default function TaskCompletion() {
   return (
     <div style={{ height: '100vh', backgroundColor: '#F3E8E8', padding: '24px', overflowY: 'auto' }}>
       <div className="content-card">
-        <h2 className="page-title">Task Completion</h2>
+       <div className="page-header">
+                     <h1 className="page-title">Task Completion</h1>
+                     <button 
+                       onClick={() => navigate(-1)} 
+                       className="page-back-btn"
+                       aria-label="Go back"
+                     >
+                       <Undo2   className="page-back-icon" />
+                     </button>
+                   </div>
         <h4 className="text-xl font-bold ml-5 mb-6 text-gray-800">Accepted Job List</h4>
 
         {/* Job Orders Table */}
