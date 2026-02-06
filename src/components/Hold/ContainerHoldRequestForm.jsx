@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ContainerHoldRequestForm() {
@@ -97,7 +97,16 @@ export default function ContainerHoldRequestForm() {
       <div className="content-wrapper">
         <main className="main-section">
           <div className="content-card">
-            <h1 className="page-title">Container Hold Request</h1>
+               <div className="page-header">
+              <h1 className="page-title">Container Hold Request</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Form Fields - First Row */}
             <div className="filter-grid mb-6">
@@ -285,17 +294,7 @@ export default function ContainerHoldRequestForm() {
               </button>
             </div>
 
-            {/* Footer */}
-            <div className="footer-container mt-6">
-              <button
-                onClick={() => navigate(-1)}
-                className="btn-back"
-                title="Go Back"
-                aria-label="Go Back"
-              >
-                ← Back
-              </button>
-            </div>
+            
           </div>
         </main>
       </div>

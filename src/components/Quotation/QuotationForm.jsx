@@ -1082,7 +1082,16 @@ export default function QuotationForm() {
       <div className="content-wrapper">
         <div className="main-section">
           <div className="content-card">
-            <h2 className="page-title">Quotation Form</h2>
+               <div className="page-header">
+                          <h1 className="page-title">Quotation Form</h1>
+                          <button 
+                            onClick={() => navigate(-1)} 
+                            className="page-back-btn"
+                            aria-label="Go back"
+                          >
+                            <Undo2   className="page-back-icon" />
+                          </button>
+                        </div>
 
             {/* Form Fields */}
             <div className="filter-grid">
@@ -1471,14 +1480,6 @@ export default function QuotationForm() {
               </button>
               <button onClick={handleSubmit} className="btn-smallbtn">
                 <Send /> Submit
-              </button>
-            </div>
-
-            {/* Back Button */}
-            <div className="footer-container">
-              <button onClick={() => navigate(-1)} className="btn-back">
-                <span>←</span>
-                <span>Back</span>
               </button>
             </div>
           </div>

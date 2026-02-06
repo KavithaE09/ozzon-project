@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ContainerBlockRequestForm = () => {
@@ -89,7 +89,16 @@ const ContainerBlockRequestForm = () => {
       <div className="content-wrapper">
         <main className="main-section">
           <div className="content-card">
-            <h1 className="page-title">Container Block Request</h1>
+               <div className="page-header">
+              <h1 className="page-title">Container Block Request</h1>
+              <button 
+                onClick={() => navigate(-1)} 
+                className="page-back-btn"
+                aria-label="Go back"
+              >
+                <Undo2   className="page-back-icon" />
+              </button>
+            </div>
 
             {/* Row 1 - 4 Fields */}
             <div className="filter-grid mb-6">
@@ -226,13 +235,7 @@ const ContainerBlockRequestForm = () => {
             </div>
           </div>
 
-          {/* Back Button */}
-          <button 
-            onClick={() => navigate(-1)}
-            className="btn-back"
-          >
-            ← Back
-          </button>
+          
         </main>
       </div>
     </div>

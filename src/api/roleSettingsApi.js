@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// Get all role settings
 export const getAllRoleSettings = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/rolesettings`);
@@ -13,7 +12,6 @@ export const getAllRoleSettings = async () => {
   }
 };
 
-// Get role setting by ID
 export const getRoleSettingById = async (id) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/rolesettings/${id}`);
@@ -24,7 +22,6 @@ export const getRoleSettingById = async (id) => {
   }
 };
 
-// Create new role setting
 export const createRoleSetting = async (roleData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/rolesettings`, roleData);
@@ -35,7 +32,6 @@ export const createRoleSetting = async (roleData) => {
   }
 };
 
-// Update role setting
 export const updateRoleSetting = async (id, roleData) => {
   try {
     const response = await axios.put(`${API_BASE_URL}/rolesettings/${id}`, roleData);
@@ -46,7 +42,6 @@ export const updateRoleSetting = async (id, roleData) => {
   }
 };
 
-// Delete role setting
 export const deleteRoleSetting = async (id) => {
   try {
     const response = await axios.delete(`${API_BASE_URL}/rolesettings/${id}`);

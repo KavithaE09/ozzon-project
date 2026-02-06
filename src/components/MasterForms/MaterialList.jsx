@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send, Undo2, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import materialApi from "../../api/materialApi.js";
 import { getAllMaterialGroups, getAllUnits } from "../../api/masterApi.js";
@@ -500,13 +500,7 @@ export default function MaterialList() {
               <div></div>
 
               <div className="btn-container">
-                 <button 
-                  onClick={handleClear}
-                  className="btn-all"
-                  style={{ marginLeft: '10px', backgroundColor: '#6b7280' }}
-                >
-                 <X/> Clear
-                </button>
+                 
                 <button 
                   onClick={handleSubmit}
                   className="btn-all"

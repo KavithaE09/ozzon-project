@@ -31,7 +31,7 @@ const materialApi = {
     return response.data;
   }
 
-  // ✅ Material operations மட்டும் - master data இல்லை
+  
 
 };
 

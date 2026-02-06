@@ -213,7 +213,6 @@
   border-bottom: none;
   position: relative;
 }
-
 .page-back-btn {
   display: flex;
   align-items: center;
@@ -221,53 +220,57 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: transparent;
+  /* ✅ Background visible by default */
+  background-color: rgba(166, 49, 40, 0.1);
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #6B7280;
+  /* ✅ Color visible by default */
+  color: #A63128;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   order: 2;
 }
-
 .page-back-btn::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0;
-  height: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background-color: rgba(166, 49, 40, 0.1);
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease;
+  background-color: rgba(166, 49, 40, 0.2);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
 }
 
 .page-back-btn:hover::before {
-  width: 100%;
-  height: 100%;
+  transform: translate(-50%, -50%) scale(1.3);
+  opacity: 0;
 }
 
 .page-back-btn:hover {
-  color: #A63128;
-  transform: translateX(-4px);
+  background-color: rgba(166, 49, 40, 0.15);
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 4px 12px rgba(166, 49, 40, 0.3);
 }
-
 .page-back-btn:active {
-  transform: translateX(-6px) scale(0.95);
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(166, 49, 40, 0.2);
 }
 
 .dark .page-back-btn {
-  color: #9CA3AF;
-}
-
-.dark .page-back-btn::before {
   background-color: rgba(59, 130, 246, 0.1);
+  color: #3B82F6;
+}
+.dark .page-back-btn::before {
+  background-color: rgba(59, 130, 246, 0.2);
 }
 
 .dark .page-back-btn:hover {
-  color: #3B82F6;
+  background-color: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .page-back-icon {
@@ -275,13 +278,11 @@
   height: 24px;
   position: relative;
   z-index: 1;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .page-back-btn:hover .page-back-icon {
-  transform: translateX(-2px);
+  transform: translateX(-3px);
 }
-
 .page-title {
   font-size: 18px;
   font-weight: bold;
@@ -293,9 +294,7 @@
   color: #E5E7EB;
 }
 
-/* ─────────────────────────────────────────── */
-/* SECTION TITLE                               */
-/* ─────────────────────────────────────────── */
+
 .section-title {
   font-size: 16px;
   font-weight: 600;
