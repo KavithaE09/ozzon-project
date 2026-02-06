@@ -42,7 +42,7 @@ import ProformaInvoiceApproval from "./components/ProformaInvoice/ProformaInvoic
 import UnitMaster from "./components/MasterForms/UnitMaster";
 import PurchaseMaster from "./components/Purchase/PurchaseMaster";
 import ContainerStatus from "./components/MasterForms/ContainerStatus";
-
+import Form from "./components/MasterForms/Form"
 import Grade from "./components/MasterForms/Grade";
 import Group from "./components/MasterForms/Group";
 import GroupUnder from "./components/MasterForms/GroupUnder";
@@ -137,7 +137,7 @@ export default function App() {
         <Route path="Settings" element={<Settings />} />
         <Route path="SizeType" element={<SizeType />} />
         <Route path="Supervisor" element={<Supervisor />} />
-
+        <Route path="Form" element={<Form />} />
         <Route path="Yard" element={<Yard />} />
         <Route path="master/ledgermasterform" element={<LedgerMasterForm />} />
         <Route path="accounts/ledgermasterform" element={<LedgerMasterForm />} />

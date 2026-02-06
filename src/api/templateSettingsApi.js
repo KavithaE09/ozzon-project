@@ -48,6 +48,12 @@ const templateSettingsApi = {
     return response.data;
   },
 
+getAllTemplateSpecifications: async () => {
+  const response = await axios.get(`${API_BASE_URL}/template-specifications`);
+  return response.data;
+},
+
+
 };
 
-export default templateSettingsApi;
+export default templateSettingsApi; 
