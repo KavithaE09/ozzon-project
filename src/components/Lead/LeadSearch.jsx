@@ -5,13 +5,13 @@ import {
   getAllLeads,
   deleteLead 
 } from "../../api/leadApi";
-import { useParams } from "react-router-dom";
+
 
 
 
 export default function LeadSearch() {
   const navigate = useNavigate();
-  const { id } = useParams();
+ 
 
   const [isSearched, setIsSearched] = useState(false);
   const [fromDate, setFromDate] = useState('');
@@ -47,7 +47,13 @@ export default function LeadSearch() {
   });
 
   // Customer names list (sorted alphabetically)
-  const customerOptions = ['Sasi', 'Varshini','Raneesh','Leyo','Kavitha','kumar'].sort();
+ const customerOptions = [
+  ...new Set(
+    allLeads
+      .map(l => `${l.FirstName} ${l.LastName}`)
+      .filter(Boolean)
+  )
+].sort();
 
   // All invoice data
 
@@ -59,11 +65,16 @@ export default function LeadSearch() {
 const fetchLeads = async () => {
   try {
     const res = await getAllLeads();
-    setAllLeads(res.data.data || res.data);
+    const data = res.data.data || res.data;
+
+    setAllLeads(data);
+    setFilteredData([]);   
+    setIsSearched(false);
   } catch (err) {
     console.log(err);
   }
 };
+
 
 
   // Close dropdown when clicking outside
@@ -83,34 +94,39 @@ const fetchLeads = async () => {
     option.toLowerCase().startsWith(searchTerm.toLowerCase())
    );
 
-   const handleSearch = () => {
-    let results = [...allInvoiceData];
-
-    // Customer Name filter
-    if (customerName) {
-      results = results.filter(
-        item => item.customerName.toLowerCase() === customerName.toLowerCase()
-      );
-    }
-
-    setFilteredData(results);
-    setIsSearched(true);
-    setCurrentPage(1);
-  };
-
-  const handleSelectCustomer = () => {
-    let results = [...allLeads];
+ const handleSearch = () => {
+  let results = [...allLeads];
 
   if (customerName) {
-    results = results.filter(
-      item => item.LeadName?.toLowerCase() === customerName.toLowerCase()
-    );
-  }
+  results = results.filter(
+    item =>
+      `${item.FirstName} ${item.LastName}`.toLowerCase() ===
+      customerName.toLowerCase()
+  );
+}
 
   setFilteredData(results);
   setIsSearched(true);
   setCurrentPage(1);
 };
+
+const handleSelectCustomer = (name) => {
+  setCustomerName(name);
+  setSearchTerm(name);
+  setIsDropdownOpen(false);
+
+  let results = [...allLeads];
+
+  results = results.filter(
+  item =>
+    `${item.FirstName} ${item.LastName}`.toLowerCase() ===
+    name.toLowerCase()
+);
+
+  
+};
+
+
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -121,11 +137,12 @@ const fetchLeads = async () => {
 };
 
   const handlePrint = (index, e) => {
-    e.stopPropagation();
-    const actualIndex = indexOfFirstRow + index;
-    const row = filteredData[actualIndex];
-    alert(`Print Lead: ${row.leadNo}`);
-  };
+  e.stopPropagation();
+  const actualIndex = indexOfFirstRow + index;
+  const row = filteredData[actualIndex];
+
+  navigate(`/layout/lead/lead/${row.LeadId}?print=true`);
+};
 
   const handleDelete = async (id) => {
   if (!window.confirm("Delete this lead?")) return;
@@ -262,8 +279,8 @@ const fetchLeads = async () => {
                         <tr key={index} className="table-row">
                           <td className="table-cell">{indexOfFirstRow + index + 1}</td>
                           <td className="table-cell">{row.LeadNo}</td>
-                          <td className="table-cell">{row.leadDate}</td>
-                          <td className="table-cell">{row.LeadName}</td>
+                          <td className="table-cell">{row.LeadDate}</td>
+                          <td className="table-cell">{row.FirstName} {row.LastName}</td>
                           <td className="table-cell">{row.LeadOwnerId}</td>
                           <td className="table-cell">{row.Remark}</td>
                           <td className="table-cell">

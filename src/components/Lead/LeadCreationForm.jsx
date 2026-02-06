@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown,Send,Undo2 } from 'lucide-react';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useLocation, useParams,useNavigate } from 'react-router-dom';
 import { 
   createLead,
   getAllLeads,
@@ -43,6 +43,7 @@ export default function LeadCreationForm(){
 
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const [leadOwners, setLeadOwners] = useState([]);
   const [leadStatuses, setLeadStatuses] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
@@ -91,6 +92,18 @@ export default function LeadCreationForm(){
 }, []);
 
 useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const shouldPrint = params.get("print");
+
+  if (shouldPrint === "true") {
+    setTimeout(() => {
+      window.print();
+    }, 1000);   
+  }
+}, [location]);
+
+
+useEffect(() => {
   if (id) {
     loadLead();
   }
@@ -99,7 +112,7 @@ useEffect(() => {
 const loadLead = async () => {
   try {
     const res = await getLeadById(id);
-    const lead = res.data;
+    const lead = res.data.data || res.data;
 
     setEditId(lead.LeadId);
 
@@ -542,8 +555,11 @@ const handleDelete = async (id) => {
 
             
             {/* Form Grid - Responsive */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6">
-              {/* Lead Owner Dropdown */}
+                  <div className="lead-form-container">
+                  
+            
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6">
+{/* Lead Owner Dropdown */}
               <div ref={leadOwnerDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Owner</label>
                 <div className="dropdown-wrapper">
@@ -584,58 +600,127 @@ const handleDelete = async (id) => {
                   </div>
                 )}
               </div>
+{/* ================= COMPANY ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Company</label>
+  <input
+    type="text"
+    name="company"
+    value={formData.company}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Company : {formData.company}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Company</label>
-                <input type="text" name="company" value={formData.company} onChange={handleChange} placeholder="Logic-Tech" className="filter-input" />
-              </div>
+{/* ================= FIRST NAME ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">First Name</label>
+  <input
+    type="text"
+    name="firstName"
+    value={formData.firstName}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">First Name : {formData.firstName}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Raneesh" className="filter-input" />
-              </div>
+{/* ================= LAST NAME ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Last Name</label>
+  <input
+    type="text"
+    name="lastName"
+    value={formData.lastName}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Last Name : {formData.lastName}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Kumar" className="filter-input" />
-              </div>
+{/* ================= LEAD NAME ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Lead Name</label>
+  <input
+    type="text"
+    name="leadName"
+    value={formData.leadName}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Lead Name : {formData.leadName}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Lead Name</label>
-                <input type="text" name="leadName" value={formData.leadName} onChange={handleChange} placeholder="Ranee" className="filter-input" />
-              </div>
+{/* ================= TITLE ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Title</label>
+  <input
+    type="text"
+    name="title"
+    value={formData.title}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Title : {formData.title}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Figma-Design" className="filter-input" />
-              </div>
+{/* ================= EMAIL ================= */}
+<div className="filter-grid-blue">
+  <label className="filter-label">Email</label>
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Email : {formData.email}</div>
+</div>
 
-              <div className="filter-grid-blue">
-                <label className="filter-label">Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Nathan@gmail.com" className="filter-input" />
-              </div>
+{/* ================= PHONE NO ================= */}
+<div className="filter-grid-blue">
+  <label className="filter-label">Phone No</label>
+  <input
+    type="text"
+    name="phoneNo"
+    value={formData.phoneNo}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Phone No : {formData.phoneNo}</div>
+</div>
 
-              <div className="filter-grid-blue">
-                <label className="filter-label">Phone No</label>
-                <input type="text" name="phoneNo" value={formData.phoneNo} onChange={handleChange} placeholder="2481-7764" className="filter-input" />
-              </div>
+{/* ================= MOBILE NO ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Mobile No</label>
+  <input
+    type="text"
+    name="mobileNo"
+    value={formData.mobileNo}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Mobile No : {formData.mobileNo}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Mobile No</label>
-                <input type="text" name="mobileNo" value={formData.mobileNo} onChange={handleChange} placeholder="9638527410" className="filter-input" />
-              </div>
-
-              <div className="filter-grid-blue">
+<div className="filter-grid-blue">
                 <label className="filter-label">Website</label>
                 <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="WWW.com" className="filter-input" />
               </div>
-
-              <div className="filter-grid-red">
-                <label className="filter-label">City</label>
-                <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Tirupatpur" className="filter-input" />
-              </div>
-
-              {/* Lead Status Dropdown */}
+{/* ================= CITY ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">City</label>
+  <input
+    type="text"
+    name="city"
+    value={formData.city}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">City : {formData.city}</div>
+</div>
+{/* Lead Status Dropdown */}
               <div ref={leadStatusDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Status</label>
                 <div className="dropdown-wrapper">
@@ -676,8 +761,7 @@ const handleDelete = async (id) => {
                   </div>
                 )}
               </div>
-
-              {/* Lead Source Dropdown */}
+               {/* Lead Source Dropdown */}
               <div ref={leadSourceDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Source</label>
                 <div className="dropdown-wrapper">
@@ -718,34 +802,57 @@ const handleDelete = async (id) => {
                   </div>
                 )}
               </div>
+{/* ================= REQUIREMENTS ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Requirements</label>
+  <input
+    type="text"
+    name="requirements"
+    value={formData.requirements}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Requirements : {formData.requirements}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Requirements</label>
-                <input type="text" name="requirements" value={formData.requirements} onChange={handleChange} placeholder="House Model" className="filter-input" />
-              </div>
-
-              <div className="filter-grid-blue">
-                <label className="filter-label">Other Requirements</label>
-                <input type="text" name="otherRequirements" value={formData.otherRequirements} onChange={handleChange} placeholder="Reffer Container" className="filter-input" />
-              </div>
-
-              <div className="filter-grid-red">
+{/* ================= OTHER REQUIREMENTS ================= */}
+<div className="filter-grid-blue">
+  <label className="filter-label">Other Requirements</label>
+  <input
+    type="text"
+    name="otherRequirements"
+    value={formData.otherRequirements}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">
+    Other Requirements : {formData.otherRequirements}
+  </div>
+</div> 
+<div className="filter-grid-red">
                 <label className="filter-label">Lead Priority</label>
                 <input type="text" name="leadPriority" value={formData.leadPriority} onChange={handleChange} placeholder="Warm" className="filter-input" />
               </div>
-
               <div className="filter-grid-red">
                 <label className="filter-label">Broker Name</label>
                 <input type="text" name="brokerName" value={formData.brokerName} onChange={handleChange} placeholder="Broker Name" className="filter-input" />
               </div>
 
-              {/* Remark field - full width on mobile, spans 3 cols on larger screens */}
-              <div className="filter-grid-blue col-span-1 sm:col-span-2 lg:col-span-3">
-                <label className="filter-label">Remark</label>
-                <input type="text" name="remark" value={formData.remark} onChange={handleChange} placeholder="Enter remark" className="filter-input" />
-              </div>
-            </div>
+{/* ================= REMARK ================= */}
+<div className="filter-grid-blue col-span-1 sm:col-span-2 lg:col-span-3">
+  <label className="filter-label">Remark</label>
+  <input
+    type="text"
+    name="remark"
+    value={formData.remark}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Remark : {formData.remark}</div>
+</div>
 
+</div>
+</div>
             {/* Action Buttons - Responsive */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 px-4 sm:px-6 mt-8">
               <button onClick={handleClear} className="btn-back sm:ml-auto order-2 sm:order-1">
@@ -753,9 +860,9 @@ const handleDelete = async (id) => {
                 <span>Clear</span>
               </button> 
               
-              <button onClick={handleSubmit} className="btn-all order-1 sm:order-2">
-               <Send size={18} />  Submit
-              </button>
+              <button onClick={handleSubmit} className="btn-all">
+              <Send size={18}/> {editId ? "Update" : "Submit"}
+            </button>
             </div>
 
             {/* Tables Section - Responsive */}

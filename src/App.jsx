@@ -85,6 +85,7 @@ export default function App() {
           </h1>  </div>} />
         <Route path="lead" element={<LeadSearch />} />
         <Route path="lead/lead" element={<LeadCreationForm />} />
+        <Route path="lead/lead/:id" element={<LeadCreationForm />} />
         <Route path="lead/hold" element={<ContainerHoldRequestForm />} />
         <Route path="lead/quotation" element={<QuotationSearchForm />} />
         <Route path="quotation" element={<QuotationSearchForm />} />
