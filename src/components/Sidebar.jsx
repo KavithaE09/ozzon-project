@@ -371,7 +371,7 @@ export default function Sidebar({ open, onNavigate }) {
               <SubButton label="Lead Source Master" icon={<TrendingUp size={18} />} active={active === "LeadSourceMaster"} isDark={isDark} onClick={() => handleClick("LeadSourceMaster")} />
               <SubButton label="Size Type" icon={<Ruler size={18} />} active={active === "SizeType"} isDark={isDark} onClick={() => handleClick("SizeType")} />
               <SubButton label="Template Group" icon={<FolderOpen size={18} />} active={active === "TemplateGroup"} isDark={isDark} onClick={() => handleClick("TemplateGroup")} />
-              <SubButton label="Template Specification" icon={<FileText size={18} />} active={active === "TemplateSpecification"} isDark={isDark} onClick={() => handleClick("TemplateSpecification")} />
+              <SubButton label="Template Specification" icon={<FileText size={18} style={{marginLeft: "-7px"}} />} active={active === "TemplateSpecification"} isDark={isDark} onClick={() => handleClick("TemplateSpecification")} />
               <SubButton label="Template Settings" icon={<SettingsIcon size={18} />} active={active === "TemplateSettings"} isDark={isDark} onClick={() => handleClick("TemplateSettings")} />
               <SubButton label="Material Group" icon={<Layers size={18} />} active={active === "MaterialGroup"} isDark={isDark} onClick={() => handleClick("MaterialGroup")} />
               <SubButton label="Material List" icon={<Package size={18} />} active={active === "MaterialList"} isDark={isDark} onClick={() => handleClick("MaterialList")} />
