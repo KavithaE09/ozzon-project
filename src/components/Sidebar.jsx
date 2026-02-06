@@ -573,7 +573,7 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen, isDark 
       return "#374151";
     } else {
       if (active) return "#feecec";
-      if (hover) return "#8B2820"; // Darker red on hover
+      if (hover) return "#a82218"; // Darker red on hover
       return "";
     }
   };
@@ -602,7 +602,7 @@ function MainButton({ label, icon, active, onClick, hasArrow, arrowOpen, isDark 
         cursor: "pointer",
         opacity: active ? 1 : 0.85,
       }}
-      className="btn-hover-lift flex items-center justify-between rounded-[12px] font-poppins font-semibold text-[14px]"
+      className="btn-hover-lift flex items-center justify-between rounded-[12px] font-poppins font-semibold text-[15px]"
     >
       <div className="flex items-center gap-[12px]">
         {icon}
@@ -632,7 +632,7 @@ function SubButton({ label, icon, active, onClick, isDark }) {
       return "#334155";
     } else {
       if (active) return "#feecec";
-      if (hover) return "#8B2820"; // Darker red on hover
+      if (hover) return "#a82218"; // Darker red on hover
       return "";
     }
   };
@@ -663,7 +663,7 @@ function SubButton({ label, icon, active, onClick, isDark }) {
         flexShrink: 0,
         cursor: "pointer",
       }}
-      className="btn-hover-lift flex items-center gap-[10px] rounded-[10px] font-poppins text-[12px]"
+      className="btn-hover-lift flex items-center gap-[10px] rounded-[10px] font-poppins text-[12.5px]"
     > 
       {icon}
       {label}
