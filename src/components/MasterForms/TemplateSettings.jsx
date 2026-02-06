@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import templateSettingsApi from "../../api/templateSettingsApi";
+
+
 
 export default function TemplateSettings() {
   const navigate = useNavigate();
@@ -8,11 +11,8 @@ export default function TemplateSettings() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  const [rows, setRows] = useState([
-    { id: 1, slNo: 1, group: 'Door', specification: '(7 X 3 )FT Size Metal safety door with UPVC door SS hinges, lock and canopy above door', dimension: "20*8*8.6", noOfUnit: 1, amount: 10000.00, hiddenAmount: 10000.00 },
-    { id: 2, slNo: 2, group: 'Window', specification: 'UPVC sliding window with mesh', dimension: '20*8*8.6', noOfUnit: 2, amount: 500000, hiddenAmount: 500000 },
-    { id: 3, slNo: 3, group: 'Flooring', specification: 'Vitrified tiles 2x2 feet', dimension: '20*8*8.6', noOfUnit: 1, amount: 100000, hiddenAmount: 100000 },
-  ]) 
+  // Initialize with no rows, but set addingRow to true for default row
+  const [rows, setRows] = useState([])  
   const totalPages = Math.ceil(rows.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -20,10 +20,10 @@ export default function TemplateSettings() {
 
   const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
-  const [addingRow, setAddingRow] = useState(false);
+  const [addingRow, setAddingRow] = useState(true); // Start with adding mode
   const [insertAfterRowId, setInsertAfterRowId] = useState(null);
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
-  const [newRowPosition, setNewRowPosition] = useState(null);
+  const [newRowPosition, setNewRowPosition] = useState('bottom'); // Default position
 
   // Dropdown states
   const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
@@ -36,63 +36,116 @@ export default function TemplateSettings() {
   const groupDropdownRef = useRef(null);
   const specDropdownRef = useRef(null);
 
-  const groupMasters = ['Door', 'Window', 'Flooring', 'Roofing', 'Electrical'].sort();
-  const specMasters = [
-    '(7 X 3 )FT Size Metal safety door with UPVC door SS hinges, lock and canopy above door',
-    'UPVC sliding window with mesh',
-    'Vitrified tiles 2x2 feet',
-    'MS sheet roofing with insulation'
-  ].sort();
+const [groupMasters, setGroupMasters] = useState([]);
+const [specMasters, setSpecMasters] = useState([]);
+
 
   const [newRowData, setNewRowData] = useState({
     group: '', 
     specification: '',
     dimension: '',
-    noOfUnit: '',
-    amount: '',
-    hiddenAmount: ''
+    noOfUnit: 0,
+    amount: 0,
+    hiddenAmount: 0
   });
 
   const [discount, setDiscount] = useState(10000);
   const [gstPercentage, setGstPercentage] = useState(18);
 
   // Terms and Conditions State
-  const [termsConditions, setTermsConditions] = useState([
-    '1. This rate is valid for 2 weeks from the quotation date',
-    '2. Delivery: Fabrication will take a minimum of 21 days to complete.',
-    '3. Payment Terms: 50% advance & balance 40% on completion and before loading',
-    '4. Transportation & Unloading: To be arranged by the customer at site.',
-    '5. Warranty: Seller has a buy-back policy once the container or cabin duration expires.',
-    '6. Warranty: Six months from the date of delivery. Warranty excludes physical damage, misuse and unauthorised alterations.',
-    '7. Transit Insurance: Transit insurance can be arranged on request and will be billed separately, subject to customer acceptance.'
-  ]);
+  const [termsConditions, setTermsConditions] = useState([]);
   const [isEditingTerms, setIsEditingTerms] = useState(false);
   const [editingTermIndex, setEditingTermIndex] = useState(null);
   const [editTermText, setEditTermText] = useState('');
 
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (groupDropdownRef.current && !groupDropdownRef.current.contains(event.target)) {
-        setGroupDropdownOpen(false);
+useEffect(() => {
+  loadMasters();
+  loadTemplateSettings();
+}, []);
+
+const loadMasters = async () => {
+  try {
+    const res = await templateSettingsApi.getTempGroups();
+    console.log("Raw backend response:", res);
+
+    // Convert object with numeric keys to array
+    const groupsArray = Array.isArray(res) ? res : Object.values(res);
+    setGroupMasters(groupsArray);
+
+    console.log("groupMasters after setState:", groupsArray);
+  } catch (err) {
+    console.error("Error loading groups:", err);
+  }
+};
+
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (groupDropdownRef.current && !groupDropdownRef.current.contains(event.target)) {
+      setGroupDropdownOpen(false);
+    }
+    if (specDropdownRef.current && !specDropdownRef.current.contains(event.target)) {
+      setSpecDropdownOpen(false);
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
+
+
+const loadTemplateSettings = async () => {
+  try {
+    const res = await templateSettingsApi.getAllTemplates();
+
+    if (res.success && res.data.length > 0) {
+      const t = res.data[0];
+
+      setTemplateName(t.TempName);
+      setDiscount(t.DisAmount || 0);
+      setGstPercentage(18);
+
+      // ❗ Populate rows from backend - only if data exists
+      if (t.Rows && t.Rows.length > 0) {
+        setRows(
+          t.Rows.map((r, index) => ({
+            id: r.TempGroupId + '-' + index, // unique id
+            slNo: index + 1,
+            group: r.TempGroupName || '',    // use TempGroupName
+            specification: r.TempSpecName || '', 
+            dimension: r.Dimension || '',
+            noOfUnit: r.NoUnit || 0,
+            amount: r.Amount || 0,
+            hiddenAmount: r.HiddenAmount || 0
+          }))
+        );
+        // Disable adding mode when data is loaded
+        setAddingRow(false);
+        setNewRowPosition(null);
       }
-      if (specDropdownRef.current && !specDropdownRef.current.contains(event.target)) {
-        setSpecDropdownOpen(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+      setTermsConditions(
+        t.TermsAndConditions
+          ? t.TermsAndConditions.split("\n")
+          : []
+      );
+    }
+  } catch (err) {
+    console.error("Template load failed", err);
+  }
+};
 
-  // Filter options based on search term
-  const filteredGroupOptions = groupMasters.filter(option =>
-    option.toLowerCase().includes(groupSearchTerm.toLowerCase())
-  );
 
-  const filteredSpecOptions = specMasters.filter(option =>
-    option.toLowerCase().includes(specSearchTerm.toLowerCase())
-  );
+
+const filteredGroupOptions = groupMasters.filter(g =>
+  !groupSearchTerm || g.TempGroupName.toLowerCase().includes(groupSearchTerm.trim().toLowerCase())
+);
+
+
+
+const filteredSpecOptions = specMasters.filter(s =>
+  (s || '').toLowerCase().includes((specSearchTerm || '').trim().toLowerCase())
+);
+
 
   // Recalculate serial numbers
   const recalculateSerialNumbers = (rowsArray) => {
@@ -103,48 +156,53 @@ export default function TemplateSettings() {
   };
 
   const handleAddButtonClick = () => {
-    setAddingRow(true);
-    setNewRowPosition('bottom');
-    setNewRowData({
-      group: '',
-      specification: '',
-      dimension: '',
-      noOfUnit: '',
-      amount: '',
-      hiddenAmount: ''
-    });
-    setGroupSearchTerm('');
-    setSpecSearchTerm('');
-  };
+  setAddingRow(true);
+  setNewRowPosition('bottom');
+  setNewRowData({
+    group: '',
+    specification: '',
+    dimension: '',
+    noOfUnit: 0,
+    amount: 0,
+    hiddenAmount: 0
+  });
 
-  const handleInsertRow = (afterRowId) => {
-    setAddingRow(true);
-    setNewRowPosition(afterRowId);
-    setOpenMenuIndex(null);
-    setNewRowData({
-      group: '',
-      specification: '',
-      dimension: '',
-      noOfUnit: '',
-      amount: '',
-      hiddenAmount: ''
-    });
-    setGroupSearchTerm('');
-    setSpecSearchTerm('');
-  };
+  setGroupSearchTerm('');
+  setSpecSearchTerm('');
+
+  setOpenMenuIndex(null);
+};
+
+ const handleInsertRow = (afterRowId) => {
+  setAddingRow(true);
+  setNewRowPosition(afterRowId);
+  setOpenMenuIndex(null);
+  setNewRowData({
+    group: '',
+    specification: '',
+    dimension: '',
+    noOfUnit: 0,
+    amount: 0,
+    hiddenAmount: 0
+  });
+  setGroupSearchTerm('');
+  setSpecSearchTerm('');
+
+  setOpenMenuIndex(null);
+};
+
 
   const handleSaveNewRow = () => {
     const row = {
-      id: Date.now(),
-      slNo: 0,
-      group: newRowData.group,
-      specification: newRowData.specification,
-      dimension: newRowData.dimension,
-      noOfUnit: parseFloat(newRowData.noOfUnit) || 0,
-      amount: parseFloat(newRowData.amount) || 0,
-      hiddenAmount: parseFloat(newRowData.hiddenAmount) || 0
-    };
-
+    id: Date.now(),
+    slNo: 0,
+    group: newRowData.group.trim(),
+    specification: newRowData.specification.trim(),
+    dimension: newRowData.dimension.trim(),
+    noOfUnit: parseFloat(newRowData.noOfUnit) || 0,
+    amount: parseFloat(newRowData.amount) || 0,
+    hiddenAmount: parseFloat(newRowData.hiddenAmount) || 0
+  };
     let newRows;
     if (newRowPosition === 'bottom') {
       newRows = [...rows, row];
@@ -167,9 +225,9 @@ export default function TemplateSettings() {
       group: '',
       specification: '',
       dimension: '',
-      noOfUnit: '',
-      amount: '',
-      hiddenAmount: ''
+      noOfUnit: 0,
+      amount: 0,
+      hiddenAmount: 0
     });
     setGroupSearchTerm('');
     setSpecSearchTerm('');
@@ -184,18 +242,21 @@ export default function TemplateSettings() {
     setEditedData({ ...row });
     setGroupSearchTerm(row.group);
     setSpecSearchTerm(row.specification);
+    
     setOpenMenuIndex(null);
   };
 
   const handleSaveEdit = () => {
-    setRows(prevRows => 
-      prevRows.map(row => 
-        row.id === editingRow ? { ...editedData } : row
-      )
-    );
-    setEditingRow(null);
-    setEditedData({});
-  };
+  setRows(prevRows =>
+    prevRows.map(row =>
+      row.id === editingRow
+        ? { ...editedData, group: editedData.group.trim(), specification: editedData.specification.trim() }
+        : row
+    )
+  );
+  setEditingRow(null);
+  setEditedData({});
+};
 
   const handleCancelEdit = () => {
     setEditingRow(null);
@@ -233,24 +294,21 @@ export default function TemplateSettings() {
     setOpenMenuIndex(null);
   };
 
-  const handleSubmit = () => {
-    alert('Form submitted successfully!');
-  };
-
   const updateEditedData = (field, value) => {
     setEditedData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSelectGroup = (option, isEdit = false) => {
-    if (isEdit) {
-      updateEditedData('group', option);
-      setGroupSearchTerm(option);
-    } else {
-      setNewRowData({ ...newRowData, group: option });
-      setGroupSearchTerm(option);
-    }
-    setGroupDropdownOpen(false);
-  };
+ const handleSelectGroup = (option, isEdit = false) => {
+  if (isEdit) {
+    updateEditedData('group', option);  // update row data
+    setGroupSearchTerm(option);         // update input value
+  } else {
+    setNewRowData({ ...newRowData, group: option });
+    setGroupSearchTerm(option);
+  }
+  setGroupDropdownOpen(false);  // close dropdown
+};
+
 
   const handleSelectSpec = (option, isEdit = false) => {
     if (isEdit) {
@@ -309,6 +367,37 @@ export default function TemplateSettings() {
   const calculateNetAmount = () => {
     return calculateTaxableValue() + calculateGST();
   };
+const handleSubmit = async () => {
+  try {
+    const payload = {
+      TempName: templateName,
+      TotalAmount: calculateTotal(),
+      DisAmount: discount,
+      TaxableValue: calculateTaxableValue(),
+      GSTAmount: calculateGST(),
+      NetAmount: calculateNetAmount(),
+      TermsAndConditions: termsConditions, // 👈 ARRAY (backend joins)
+
+      rows: rows.map(r => ({
+        TempGroupId: groupMasters.find(g => g.TempGroupName === r.group)?.TempGroupId || null,
+        TempSpecId: null, // spec later
+        Dimension: r.dimension,
+        NoUnit: r.noOfUnit,
+        Amount: r.amount,
+        HiddenAmount: r.hiddenAmount
+      }))
+    };
+
+    await templateSettingsApi.createTemplate(payload);
+
+    alert("Template saved successfully ✅"); 
+  } catch (err) {
+    console.error(err);
+    alert("Save failed ❌");
+  }
+};
+
+
 
   return (
     <div className="page-container">
@@ -337,7 +426,7 @@ export default function TemplateSettings() {
             </div>
 
             {/* Table */}
-            <div className="table-container">
+            <div className="table-container" style={{ overflow: 'visible' }}>
               <table className="data-table">
                 <thead className="table-header">
                   <tr>
@@ -362,42 +451,44 @@ export default function TemplateSettings() {
                           {editingRow === row.id ? (
                             <div ref={groupDropdownRef} className="relative">
                               <div className="relative">
-                                <input
-                                  type="text"
-                                  value={groupSearchTerm}
-                                  onChange={(e) => {
-                                    setGroupSearchTerm(e.target.value);
-                                    setGroupDropdownOpen(true);
-                                  }}
-                                  onFocus={() => setGroupDropdownOpen(true)}
-                                  placeholder="Type or select..."
-                                  className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
-                                />
+                               <input
+                                type="text"
+                                value={editingRow === row.id ? groupSearchTerm : row.group}
+                                onChange={(e) => {
+                                  setGroupSearchTerm(e.target.value);
+                                  setGroupDropdownOpen(true); // show filtered options
+                                }}
+                                onFocus={() => setGroupDropdownOpen(true)}
+                                placeholder="Type or select..."
+                                className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                              />
+
                                 <ChevronDown 
                                   size={16} 
                                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                                 />
                               </div>
                               {groupDropdownOpen && (
-                                <div className="dropdown-menu">
+                                <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredGroupOptions.length > 0 ? (
                                     filteredGroupOptions.map((option, idx) => (
-                                      <div
-                                        key={idx}
-                                        onClick={() => handleSelectGroup(option, true)}
-                                        onMouseEnter={() => setHoveredGroup(option)}
-                                        onMouseLeave={() => setHoveredGroup(null)}
-                                        className={`dropdown-item-option ${
-                                          hoveredGroup === option
-                                             ? 'dropdown-item-hovered' 
-                                             : editedData.group === option 
-                                             ? 'dropdown-item-selected' 
-                                             : 'dropdown-item-default'
-                                        }`}
-                                      >
-                                        {option}
-                                      </div>
-                                    ))
+                                    <div
+                                      key={option.TempGroupId}
+                                      onClick={() => handleSelectGroup(option.TempGroupName, true)}
+                                      onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
+                                      onMouseLeave={() => setHoveredGroup(null)}
+                                      className={`dropdown-item-option ${
+                                        hoveredGroup === option.TempGroupName
+                                          ? 'dropdown-item-hovered'
+                                          : editedData.group === option.TempGroupName
+                                          ? 'dropdown-item-selected'
+                                          : 'dropdown-item-default'
+                                      }`}
+                                    >
+                                      {option.TempGroupName}
+                                    </div>
+                                  ))
+
                                   ) : (
                                     <div className="dropdown-no-matches">No matches found</div>
                                   )}
@@ -431,7 +522,7 @@ export default function TemplateSettings() {
                                 />
                               </div>
                               {specDropdownOpen && (
-                                <div className="dropdown-menu max-w-[200px]">
+                                <div className="dropdown-menu max-w-[200px]" style={{ zIndex: 9999 }}>
                                   {filteredSpecOptions.length > 0 ? (
                                     filteredSpecOptions.map((option, idx) => (
                                       <div
@@ -481,7 +572,7 @@ export default function TemplateSettings() {
                             <input
                               type="number"
                               value={editedData.noOfUnit}
-                              onChange={(e) => updateEditedData('noOfUnit', parseFloat(e.target.value))}
+                              onChange={(e) => updateEditedData('noOfUnit', parseFloat(e.target.value) || 0)}
                               className="w-20 px-2 py-1.5 border border-gray-300 rounded text-sm"
                             />
                           ) : (
@@ -495,7 +586,7 @@ export default function TemplateSettings() {
                             <input
                               type="number"
                               value={editedData.amount}
-                              onChange={(e) => updateEditedData('amount', parseFloat(e.target.value))}
+                              onChange={(e) => updateEditedData('amount', parseFloat(e.target.value) || 0)}
                               className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
                             />
                           ) : (
@@ -509,7 +600,7 @@ export default function TemplateSettings() {
                             <input
                               type="number"
                               value={editedData.hiddenAmount}
-                              onChange={(e) => updateEditedData('hiddenAmount', parseFloat(e.target.value))}
+                              onChange={(e) => updateEditedData('hiddenAmount', parseFloat(e.target.value) || 0)}
                               className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
                             />
                           ) : (
@@ -630,23 +721,24 @@ export default function TemplateSettings() {
                                 />
                               </div>
                               {groupDropdownOpen && (
-                                <div className="dropdown-menu">
+                                <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredGroupOptions.length > 0 ? (
                                     filteredGroupOptions.map((option, idx) => (
                                       <div
-                                        key={idx}
-                                        onClick={() => handleSelectGroup(option, false)}
-                                        onMouseEnter={() => setHoveredGroup(option)}
+                                       key={option.TempGroupId} 
+                                        onClick={() => handleSelectGroup(option.TempGroupName, false)}
+                                        onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
                                         onMouseLeave={() => setHoveredGroup(null)}
                                         className={`dropdown-item-option ${
-                                          hoveredGroup === option
-                                             ? 'dropdown-item-hovered' 
-                                             : newRowData.group === option 
-                                             ? 'dropdown-item-selected' 
-                                             : 'dropdown-item-default'
+                                            hoveredGroup === option.TempGroupName
+                                              ? 'dropdown-item-hovered'
+                                              : newRowData.group === option.TempGroupName
+                                              ? 'dropdown-item-selected'
+                                              : 'dropdown-item-default'
+
                                         }`}
                                       >
-                                        {option}
+                                        {option.TempGroupName}
                                       </div>
                                     ))
                                   ) : (
@@ -678,7 +770,7 @@ export default function TemplateSettings() {
                                 />
                               </div>
                               {specDropdownOpen && (
-                                <div className="dropdown-menu">
+                                <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredSpecOptions.length > 0 ? (
                                     filteredSpecOptions.map((option, idx) => (
                                       <div
@@ -789,7 +881,11 @@ export default function TemplateSettings() {
                                 setGroupSearchTerm(e.target.value);
                                 setGroupDropdownOpen(true);
                               }}
-                              onFocus={() => setGroupDropdownOpen(true)}
+                              onFocus={(e) => {
+                                  e.stopPropagation();
+                                  setGroupDropdownOpen(true);
+                                }}
+
                               placeholder="Type or select..."
                               className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
                             />
@@ -799,28 +895,29 @@ export default function TemplateSettings() {
                             />
                           </div>
                           {groupDropdownOpen && (
-                            <div className="dropdown-menu">
+                            <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                               {filteredGroupOptions.length > 0 ? (
-                                filteredGroupOptions.map((option, idx) => (
+                                filteredGroupOptions.map((option) => (
                                   <div
-                                    key={idx}
-                                    onClick={() => handleSelectGroup(option, false)}
-                                    onMouseEnter={() => setHoveredGroup(option)}
+                                    key={option.TempGroupId}
+                                    onClick={() => handleSelectGroup(option.TempGroupName, false)}
+                                    onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
                                     onMouseLeave={() => setHoveredGroup(null)}
                                     className={`dropdown-item-option ${
-                                      hoveredGroup === option
-                                        ? 'dropdown-item-hovered' 
-                                        : newRowData.group === option 
-                                        ? 'dropdown-item-selected' 
+                                      hoveredGroup === option.TempGroupName
+                                        ? 'dropdown-item-hovered'
+                                        : newRowData.group === option.TempGroupName
+                                        ? 'dropdown-item-selected'
                                         : 'dropdown-item-default'
                                     }`}
                                   >
-                                    {option}
+                                    {option.TempGroupName}
                                   </div>
                                 ))
                               ) : (
                                 <div className="dropdown-no-matches">No matches found</div>
                               )}
+
                             </div>
                           )}
                         </div>
@@ -847,7 +944,7 @@ export default function TemplateSettings() {
                             />
                           </div>
                           {specDropdownOpen && (
-                            <div className="dropdown-menu">
+                            <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                               {filteredSpecOptions.length > 0 ? (
                                 filteredSpecOptions.map((option, idx) => (
                                   <div
@@ -1116,9 +1213,10 @@ export default function TemplateSettings() {
             </div>
 
            
+            </div> 
           </div>
         </div> 
       </div>
-    </div>
+    
   );
 }
