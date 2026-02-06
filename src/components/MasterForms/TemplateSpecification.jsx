@@ -15,8 +15,13 @@ import tempSpecApi from '../../api/tempSpecApi';
 export default function TemplateSpecification() {
   const navigate = useNavigate();
 
-  const [templateGroupName, setTemplateGroupName] = useState('');
-  const [templateSpecificationName, setTemplateSpecificationName] = useState('');
+  // ✅ Initialize from localStorage
+  const [templateGroupName, setTemplateGroupName] = useState(() => {
+    return localStorage.getItem('templateGroupName') || '';
+  });
+  const [templateSpecificationName, setTemplateSpecificationName] = useState(() => {
+    return localStorage.getItem('templateSpecificationName') || '';
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 2;
@@ -30,6 +35,15 @@ export default function TemplateSpecification() {
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentRows = filteredSpecs.slice(indexOfFirst, indexOfLast);
+
+  // ✅ Save to localStorage whenever values change
+  useEffect(() => {
+    localStorage.setItem('templateGroupName', templateGroupName);
+  }, [templateGroupName]);
+
+  useEffect(() => {
+    localStorage.setItem('templateSpecificationName', templateSpecificationName);
+  }, [templateSpecificationName]);
 
   /* =========================
      FETCH TEMPLATE GROUPS
@@ -115,9 +129,11 @@ export default function TemplateSpecification() {
       // ✅ Refresh the list
       await fetchTemplateSpecs();
 
-      // ✅ Clear form
+      // ✅ Clear form AND localStorage
       setTemplateGroupName('');
       setTemplateSpecificationName('');
+      localStorage.removeItem('templateGroupName');
+      localStorage.removeItem('templateSpecificationName');
       setCurrentPage(1);
 
     } catch (err) {
@@ -247,6 +263,7 @@ export default function TemplateSpecification() {
                   <button onClick={handleSubmit} className="btn-all">
                     <Send size={18} /> {editingId ? 'Update' : 'Submit'}
                   </button>
+                
                 </div>
 
               </div>
@@ -276,10 +293,14 @@ export default function TemplateSpecification() {
             </div>
 
             <div className="master-table-container">
-              <div className="master-table-header">
-                <span className="master-table-title">
+              <div className="master-table-header" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <span className="master-table-title" style={{ flex: 1 }}>
+                  Template Group Name
+                </span>
+                <span className="master-table-title" style={{ flex: 1 }}>
                   Template Specification Name
                 </span>
+                <span style={{ width: '100px' }}></span> {/* Space for action buttons */}
               </div>
 
               <div className="master-table-body">
@@ -289,13 +310,25 @@ export default function TemplateSpecification() {
                     console.log("Object keys:", Object.keys(spec)); // Show all keys
                     console.log("All values:", spec); // Show full object
                     
+                    // Find the template group name
+                    const templateGroup = templateGroups.find(
+                      g => g.TempGroupId === (spec.TempGroupId || spec.templateGroupId || spec.TemplateGroupId)
+                    );
+                    
                     return (
                       <div
                         key={spec.TemplateSpecId || spec.TempSpecId || spec.id || spec.Id || index}
                         className="master-table-row"
+                        style={{ display: 'flex', alignItems: 'center', gap: '20px' }}
                       >
-                        <div className="master-table-content">
+                        <div className="master-table-content" style={{ flex: 1 }}>
                           <ChevronRight size={16} />
+                          <span className="master-name-text">
+                            {templateGroup?.TempGroupName || 'N/A'}
+                          </span>
+                        </div>
+                        
+                        <div className="master-table-content" style={{ flex: 1, paddingLeft: '0' }}>
                           <span className="master-name-text">
                             {/* ✅ Try multiple possible field names */}
                             {spec.TempSpecName || 
@@ -305,6 +338,7 @@ export default function TemplateSpecification() {
                              'No Name'}
                           </span>
                         </div>
+                        
                         <div className="table-actions">
                           <button
                             onClick={() => {
@@ -346,7 +380,7 @@ export default function TemplateSpecification() {
                             }}
                             className="btn-action"
                           >
-                            <Trash2 size={18} />
+                             <Trash2 size={18} className="text-red-600" />
                           </button>
                         </div>
                       </div>
