@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send, Undo2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Edit2, Trash2, ChevronLeft, Send, Undo2, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import materialApi from "../../api/materialApi.js";
 import { getAllMaterialGroups, getAllUnits } from "../../api/masterApi.js";
@@ -13,18 +13,27 @@ export default function MaterialList() {
   const [loading, setLoading] = useState(false);
   const [groupOptions, setGroupOptions] = useState([]);
   const [unitOptions, setUnitOptions] = useState([]);
-  const [formData, setFormData] = useState({
-    ProductCode: '',
-    ProductName: '',
-    MaterialGroupId: '',
-    UnitId: '',
-    SellingRate: '',
-    MaxStockQty: '',
-    MinStockQty: '',
-    GSTAmount: '',
-    HSNCode: '',
-    ReOrderLevel: ''
+  
+  // ✅ Initialize formData from localStorage
+  const [formData, setFormData] = useState(() => {
+    const savedData = localStorage.getItem('materialFormData');
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+    return {
+      ProductCode: '',
+      ProductName: '',
+      MaterialGroupId: '',
+      UnitId: '',
+      SellingRate: '',
+      MaxStockQty: '',
+      MinStockQty: '',
+      GSTAmount: '',
+      HSNCode: '',
+      ReOrderLevel: ''
+    };
   });
+
   const [allRecords, setAllRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -42,17 +51,36 @@ export default function MaterialList() {
     indexOfLast
   );
 
-  // Group dropdown state
-  const [groupSearch, setGroupSearch] = useState('');
+  // Group dropdown state - ✅ Initialize from localStorage
+  const [groupSearch, setGroupSearch] = useState(() => {
+    return localStorage.getItem('materialGroupSearch') || '';
+  });
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [hoveredGroup, setHoveredGroup] = useState(null);
   const groupRef = useRef(null);
   
-  // Unit dropdown state
-  const [unitSearch, setUnitSearch] = useState('');
+  // Unit dropdown state - ✅ Initialize from localStorage
+  const [unitSearch, setUnitSearch] = useState(() => {
+    return localStorage.getItem('materialUnitSearch') || '';
+  });
   const [isUnitOpen, setIsUnitOpen] = useState(false);
   const [hoveredUnit, setHoveredUnit] = useState(null);
   const unitRef = useRef(null);
+
+  // ✅ Save formData to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('materialFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // ✅ Save groupSearch to localStorage
+  useEffect(() => {
+    localStorage.setItem('materialGroupSearch', groupSearch);
+  }, [groupSearch]);
+
+  // ✅ Save unitSearch to localStorage
+  useEffect(() => {
+    localStorage.setItem('materialUnitSearch', unitSearch);
+  }, [unitSearch]);
 
   // Filter groups based on search
   const filteredGroups = groupOptions.filter(group => {
@@ -153,8 +181,8 @@ export default function MaterialList() {
       if (response.success) {
         alert('Material created successfully');
         
-        // Reset form
-        setFormData({
+        // ✅ Reset form AND clear localStorage
+        const emptyForm = {
           ProductCode: '',
           ProductName: '',
           MaterialGroupId: '',
@@ -165,9 +193,13 @@ export default function MaterialList() {
           GSTAmount: '',
           HSNCode: '',
           ReOrderLevel: ''
-        });
+        };
+        setFormData(emptyForm);
         setGroupSearch('');
         setUnitSearch('');
+        localStorage.removeItem('materialFormData');
+        localStorage.removeItem('materialGroupSearch');
+        localStorage.removeItem('materialUnitSearch');
         
         // Refresh data
         await fetchAllData();
@@ -179,6 +211,28 @@ export default function MaterialList() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ Clear button handler
+  const handleClear = () => {
+    const emptyForm = {
+      ProductCode: '',
+      ProductName: '',
+      MaterialGroupId: '',
+      UnitId: '',
+      SellingRate: '',
+      MaxStockQty: '',
+      MinStockQty: '',
+      GSTAmount: '',
+      HSNCode: '',
+      ReOrderLevel: ''
+    };
+    setFormData(emptyForm);
+    setGroupSearch('');
+    setUnitSearch('');
+    localStorage.removeItem('materialFormData');
+    localStorage.removeItem('materialGroupSearch');
+    localStorage.removeItem('materialUnitSearch');
   };
 
   const handleEdit = (record) => {
@@ -331,7 +385,7 @@ export default function MaterialList() {
                 )}
               </div>
 
-              {/* ✅ Unit Dropdown - FIXED */}
+              {/* ✅ Unit Dropdown */}
               <div ref={unitRef} className="filter-grid-red">
                 <label className="filter-label">Unit</label>
                 <div className="dropdown-wrapper">
@@ -352,7 +406,6 @@ export default function MaterialList() {
                   <div className="dropdown-menu">
                     {filteredUnits.length > 0 ? (
                       filteredUnits.map((unit, index) => {
-                        // ✅ FIXED: Display unit ID
                         const displayName = unit.UnitId || unit.unitid || 'Unknown';
                         const unitId = unit.UnitMId || unit.UnitId || unit.id;
                         return (
@@ -447,6 +500,13 @@ export default function MaterialList() {
               <div></div>
 
               <div className="btn-container">
+                 <button 
+                  onClick={handleClear}
+                  className="btn-all"
+                  style={{ marginLeft: '10px', backgroundColor: '#6b7280' }}
+                >
+                 <X/> Clear
+                </button>
                 <button 
                   onClick={handleSubmit}
                   className="btn-all"
@@ -454,6 +514,7 @@ export default function MaterialList() {
                 >
                   <Send size={18} /> Submit
                 </button>
+               
               </div>
             </div>
 

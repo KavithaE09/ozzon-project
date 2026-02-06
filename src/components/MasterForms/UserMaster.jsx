@@ -6,23 +6,37 @@ import { getAllDepartments, getAllRoles } from "../../api/masterApi.js";
 
 export default function UserMaster() {
   const navigate = useNavigate();
-  const [groupName, setGroupName] = useState('');
+  
+  // ✅ Initialize from localStorage
+  const [groupName, setGroupName] = useState(() => {
+    return localStorage.getItem('userMasterUsername') || '';
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 2;
-  const [password, setPassword] = useState("");
+  
+  const [password, setPassword] = useState(() => {
+    return localStorage.getItem('userMasterPassword') || '';
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
+  
+  const [confirmPassword, setConfirmPassword] = useState(() => {
+    return localStorage.getItem('userMasterConfirmPassword') || '';
+  });
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const roleDropdownRef = useRef(null);
   const departmentDropdownRef = useRef(null);
 
-  const [roleSearch, setRoleSearch] = useState("");
+  const [roleSearch, setRoleSearch] = useState(() => {
+    return localStorage.getItem('userMasterRoleSearch') || '';
+  });
   const [isRoleOpen, setIsRoleOpen] = useState(false);
   const [hoveredRole, setHoveredRole] = useState(null);
   
-  const [departmentSearch, setDepartmentSearch] = useState("");
+  const [departmentSearch, setDepartmentSearch] = useState(() => {
+    return localStorage.getItem('userMasterDepartmentSearch') || '';
+  });
   const [isDepartmentOpen, setIsDepartmentOpen] = useState(false);
   const [hoveredDepartment, setHoveredDepartment] = useState(null);
   
@@ -31,9 +45,15 @@ export default function UserMaster() {
 
   const [editingId, setEditingId] = useState(null);
   
-  // ✅ State for storing selected IDs
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
-  const [selectedRoleId, setSelectedRoleId] = useState(null);
+  // ✅ State for storing selected IDs - Initialize from localStorage
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState(() => {
+    const saved = localStorage.getItem('userMasterDepartmentId');
+    return saved ? Number(saved) : null;
+  });
+  const [selectedRoleId, setSelectedRoleId] = useState(() => {
+    const saved = localStorage.getItem('userMasterRoleId');
+    return saved ? Number(saved) : null;
+  });
   
   // API states
   const [loading, setLoading] = useState(false);
@@ -45,6 +65,39 @@ export default function UserMaster() {
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentGroups = filteredGroups.slice(indexOfFirst, indexOfLast);
+
+  // ✅ Save to localStorage whenever values change
+  useEffect(() => {
+    localStorage.setItem('userMasterUsername', groupName);
+  }, [groupName]);
+
+  useEffect(() => {
+    localStorage.setItem('userMasterPassword', password);
+  }, [password]);
+
+  useEffect(() => {
+    localStorage.setItem('userMasterConfirmPassword', confirmPassword);
+  }, [confirmPassword]);
+
+  useEffect(() => {
+    localStorage.setItem('userMasterDepartmentSearch', departmentSearch);
+  }, [departmentSearch]);
+
+  useEffect(() => {
+    if (selectedDepartmentId) {
+      localStorage.setItem('userMasterDepartmentId', selectedDepartmentId.toString());
+    }
+  }, [selectedDepartmentId]);
+
+  useEffect(() => {
+    localStorage.setItem('userMasterRoleSearch', roleSearch);
+  }, [roleSearch]);
+
+  useEffect(() => {
+    if (selectedRoleId) {
+      localStorage.setItem('userMasterRoleId', selectedRoleId.toString());
+    }
+  }, [selectedRoleId]);
 
   // ✅ Component mount - fetch all data
   useEffect(() => {
@@ -185,6 +238,20 @@ export default function UserMaster() {
     setEditingId(null);
     setError('');
     setCurrentPage(1);
+    
+    // ✅ Clear localStorage
+    localStorage.removeItem('userMasterUsername');
+    localStorage.removeItem('userMasterPassword');
+    localStorage.removeItem('userMasterConfirmPassword');
+    localStorage.removeItem('userMasterDepartmentSearch');
+    localStorage.removeItem('userMasterDepartmentId');
+    localStorage.removeItem('userMasterRoleSearch');
+    localStorage.removeItem('userMasterRoleId');
+  };
+
+  // ✅ Clear button handler
+  const handleClear = () => {
+    resetForm();
   };
 
   const handleSearch = async () => {
@@ -455,6 +522,7 @@ export default function UserMaster() {
                   <button onClick={handleSubmit} className="btn-all" disabled={loading}>
                     <Send size={18} /> {loading ? 'Processing...' : editingId ? 'Update' : 'Submit'}
                   </button>
+                 
                 </div>
               </div>
             </div>
