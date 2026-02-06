@@ -13,8 +13,6 @@ export default function MaterialList() {
   const [loading, setLoading] = useState(false);
   const [groupOptions, setGroupOptions] = useState([]);
   const [unitOptions, setUnitOptions] = useState([]);
-  
-  // ✅ Initialize formData from localStorage
   const [formData, setFormData] = useState(() => {
     const savedData = localStorage.getItem('materialFormData');
     if (savedData) {
@@ -50,16 +48,12 @@ export default function MaterialList() {
     indexOfFirst,
     indexOfLast
   );
-
-  // Group dropdown state - ✅ Initialize from localStorage
   const [groupSearch, setGroupSearch] = useState(() => {
     return localStorage.getItem('materialGroupSearch') || '';
   });
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [hoveredGroup, setHoveredGroup] = useState(null);
   const groupRef = useRef(null);
-  
-  // Unit dropdown state - ✅ Initialize from localStorage
   const [unitSearch, setUnitSearch] = useState(() => {
     return localStorage.getItem('materialUnitSearch') || '';
   });
@@ -67,22 +61,15 @@ export default function MaterialList() {
   const [hoveredUnit, setHoveredUnit] = useState(null);
   const unitRef = useRef(null);
 
-  // ✅ Save formData to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('materialFormData', JSON.stringify(formData));
   }, [formData]);
-
-  // ✅ Save groupSearch to localStorage
   useEffect(() => {
     localStorage.setItem('materialGroupSearch', groupSearch);
   }, [groupSearch]);
-
-  // ✅ Save unitSearch to localStorage
   useEffect(() => {
     localStorage.setItem('materialUnitSearch', unitSearch);
   }, [unitSearch]);
-
-  // Filter groups based on search
   const filteredGroups = groupOptions.filter(group => {
     if (!group) return false;
     const name = group.MaterialGroupName || group.materialgroupName || group.groupName || group.GroupName || '';
@@ -95,30 +82,22 @@ export default function MaterialList() {
     return unitName.toLowerCase().includes(String(unitSearch).toLowerCase());
   });
 
-  // ✅ Component load ஆகும்போது data fetch பண்ண
   useEffect(() => {
     fetchAllData();
   }, []);
-
-  // ✅ masterApi-ல இருந்து direct-ஆ fetch பண்றது
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      
-      // Materials fetch
+    
       const materialsRes = await materialApi.getAllMaterials();
       if (materialsRes.success) {
         setAllRecords(materialsRes.data);
         setFilteredRecords(materialsRes.data);
       }
-
-      // ✅ Groups fetch - masterApi direct use
       const groupsRes = await getAllMaterialGroups();
       if (groupsRes && groupsRes.data) {
         setGroupOptions(groupsRes.data);
       }
-
-      // ✅ Units fetch - masterApi direct use
       const unitsRes = await getAllUnits();
       if (unitsRes && unitsRes.data) {
         setUnitOptions(unitsRes.data);
@@ -181,7 +160,6 @@ export default function MaterialList() {
       if (response.success) {
         alert('Material created successfully');
         
-        // ✅ Reset form AND clear localStorage
         const emptyForm = {
           ProductCode: '',
           ProductName: '',
@@ -201,7 +179,7 @@ export default function MaterialList() {
         localStorage.removeItem('materialGroupSearch');
         localStorage.removeItem('materialUnitSearch');
         
-        // Refresh data
+  
         await fetchAllData();
         setCurrentPage(1);
       }
@@ -213,7 +191,6 @@ export default function MaterialList() {
     }
   };
 
-  // ✅ Clear button handler
   const handleClear = () => {
     const emptyForm = {
       ProductCode: '',
@@ -337,7 +314,6 @@ export default function MaterialList() {
                 />
               </div>
 
-              {/* ✅ Group Dropdown */}
               <div ref={groupRef} className="filter-grid-red">
                 <label className="filter-label">Group</label>
                 <div className="dropdown-wrapper">
@@ -385,7 +361,7 @@ export default function MaterialList() {
                 )}
               </div>
 
-              {/* ✅ Unit Dropdown */}
+          
               <div ref={unitRef} className="filter-grid-red">
                 <label className="filter-label">Unit</label>
                 <div className="dropdown-wrapper">
@@ -512,7 +488,7 @@ export default function MaterialList() {
               </div>
             </div>
 
-            {/* Record List Section */}
+    
             <h2 className="section-title">Record List</h2>
 
             <div className="filter-grid mb-4">
@@ -541,7 +517,7 @@ export default function MaterialList() {
               </div>
             </div>
 
-            {/* Table */}
+            
             <div className="border border-gray-400 rounded-md overflow-hidden">
               <table className="data-table">
                 <thead className="table-header">

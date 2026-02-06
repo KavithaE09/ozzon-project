@@ -2,52 +2,105 @@ import axios from 'axios';
 import { BASE_URL } from "./baseurl";
 const API_BASE_URL = `${BASE_URL}/rolesettings`;
 
+// ✅ Get all role settings - backend includes Role model
 export const getAllRoleSettings = async () => {
   try {
+    console.log('📡 Fetching all role settings...');
     const response = await axios.get(`${API_BASE_URL}/rolesettings`);
+    console.log('📡 Role settings response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching role settings:', error);
+    console.error('❌ Error fetching role settings:', error);
+    console.error('❌ Error details:', error.response?.data);
     throw error;
   }
 };
 
+// ✅ Get role setting by RoleSettingsId
 export const getRoleSettingById = async (id) => {
   try {
+    console.log('📡 Fetching role setting by ID:', id);
     const response = await axios.get(`${API_BASE_URL}/rolesettings/${id}`);
+    console.log('📡 Role setting response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching role setting:', error);
+    console.error('❌ Error fetching role setting:', error);
+    console.error('❌ Error details:', error.response?.data);
     throw error;
   }
 };
 
+// ✅ Create new role setting - Transform frontend data to backend format
 export const createRoleSetting = async (roleData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/rolesettings`, roleData);
+    console.log('📡 Creating role setting with frontend data:', roleData);
+    
+    // ✅ Transform frontend data to backend expected format
+    const backendPayload = {
+      RoleId: roleData.roleId,
+      CanAdd: roleData.isActive || false,
+      CanDelete: roleData.canDelete || false,
+      CanView: roleData.canView || false,
+      CanPrint: roleData.canPrint || false,
+      CanMenu: roleData.canMenu || false,
+      CanOther: roleData.canOther || false
+    };
+    
+    console.log('📡 Transformed backend payload:', backendPayload);
+    const response = await axios.post(`${API_BASE_URL}/rolesettings`, backendPayload);
+    console.log('✅ Create response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error creating role setting:', error);
+    console.error('❌ Error creating role setting:', error);
+    console.error('❌ Error details:', error.response?.data);
     throw error;
   }
 };
 
-export const updateRoleSetting = async (id, roleData) => {
+// ✅ Update role setting - Uses RoleSettingsId (PRIMARY KEY)
+export const updateRoleSetting = async (roleSettingsId, roleData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/rolesettings/${id}`, roleData);
+    console.log('📡 Updating role setting with RoleSettingsId:', roleSettingsId);
+    console.log('📡 Frontend data:', roleData);
+    
+    // ✅ Transform to backend format - only send the Can* fields
+    const backendPayload = {
+      CanAdd: roleData.CanAdd !== undefined ? roleData.CanAdd : roleData.isActive || false,
+      CanDelete: roleData.CanDelete !== undefined ? roleData.CanDelete : roleData.canDelete || false,
+      CanView: roleData.CanView !== undefined ? roleData.CanView : roleData.canView || false,
+      CanPrint: roleData.CanPrint !== undefined ? roleData.CanPrint : roleData.canPrint || false,
+      CanMenu: roleData.CanMenu !== undefined ? roleData.CanMenu : roleData.canMenu || false,
+      CanOther: roleData.CanOther !== undefined ? roleData.CanOther : roleData.canOther || false
+    };
+    
+    console.log('📡 Transformed backend payload:', backendPayload);
+    console.log('📡 Update URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    
+    const response = await axios.put(`${API_BASE_URL}/rolesettings/${roleSettingsId}`, backendPayload);
+    console.log('✅ Update response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error updating role setting:', error);
+    console.error('❌ Error updating role setting:', error);
+    console.error('❌ Error details:', error.response?.data);
+    console.error('❌ Request URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
     throw error;
   }
 };
 
-export const deleteRoleSetting = async (id) => {
+// ✅ Delete role setting - Uses RoleSettingsId (PRIMARY KEY)
+export const deleteRoleSetting = async (roleSettingsId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/rolesettings/${id}`);
+    console.log('📡 Deleting role setting with RoleSettingsId:', roleSettingsId);
+    console.log('📡 Delete URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    
+    const response = await axios.delete(`${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    console.log('✅ Delete response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error deleting role setting:', error);
+    console.error('❌ Error deleting role setting:', error);
+    console.error('❌ Error details:', error.response?.data);
+    console.error('❌ Request URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    console.error('❌ Status:', error.response?.status);
     throw error;
   }
 };
