@@ -1,9 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Printer, Edit2, Trash2, Search, Plus, ChevronDown, ChevronRight, ChevronLeft, ArrowLeft,Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  getAllLeads,
+  deleteLead 
+} from "../../api/leadApi";
+import { useParams } from "react-router-dom";
+
+
 
 export default function LeadSearch() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
   const [isSearched, setIsSearched] = useState(false);
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -14,6 +23,8 @@ export default function LeadSearch() {
   const [hoveredOption, setHoveredOption] = useState(null);
   const dropdownRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allLeads, setAllLeads] = useState([]);
+
   const rowsPerPage = 5;
 
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -39,14 +50,21 @@ export default function LeadSearch() {
   const customerOptions = ['Sasi', 'Varshini','Raneesh','Leyo','Kavitha','kumar'].sort();
 
   // All invoice data
-  const allInvoiceData = [
-    { slNo: 1, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'Sasi', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
-    { slNo: 2, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'Varshini', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
-    { slNo: 3, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'Raneesh', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
-    { slNo: 4, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'leyo', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
-    { slNo: 5, leadNo: 'L-1', leadDate: '01-01-2026', customerName: 'kavitha', salesPerson: 'Christine Brooks', totalCost: '₹ 10,00,000' },
-    { slNo: 7, leadNo: 'L-2', leadDate: '01-01-2026', customerName: 'kumar', salesPerson: 'Christine Brooks', totalCost: '₹ 15,00,000' },
-  ];
+
+
+  useEffect(() => {
+  fetchLeads();
+}, []);
+
+const fetchLeads = async () => {
+  try {
+    const res = await getAllLeads();
+    setAllLeads(res.data.data || res.data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -80,11 +98,19 @@ export default function LeadSearch() {
     setCurrentPage(1);
   };
 
-  const handleSelectCustomer = (option) => {
-    setCustomerName(option);
-    setSearchTerm(option);
-    setIsDropdownOpen(false);
-  };
+  const handleSelectCustomer = () => {
+    let results = [...allLeads];
+
+  if (customerName) {
+    results = results.filter(
+      item => item.LeadName?.toLowerCase() === customerName.toLowerCase()
+    );
+  }
+
+  setFilteredData(results);
+  setIsSearched(true);
+  setCurrentPage(1);
+};
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -101,15 +127,17 @@ export default function LeadSearch() {
     alert(`Print Lead: ${row.leadNo}`);
   };
 
-  const handleDelete = (index, e) => {
-    e.stopPropagation();
-    const actualIndex = indexOfFirstRow + index;
+  const handleDelete = async (id) => {
+  if (!window.confirm("Delete this lead?")) return;
 
-    if (window.confirm('Are you sure you want to delete this lead?')) {
-      const updatedData = filteredData.filter((_, i) => i !== actualIndex);
-      setFilteredData(updatedData);
-    }
-  };
+  try {
+    await deleteLead(id);
+    alert("Lead Deleted");
+    fetchLeads();
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   return (
     <div className="page-container">
@@ -233,11 +261,11 @@ export default function LeadSearch() {
                       paginatedData.map((row, index) => (
                         <tr key={index} className="table-row">
                           <td className="table-cell">{indexOfFirstRow + index + 1}</td>
-                          <td className="table-cell">{row.leadNo}</td>
+                          <td className="table-cell">{row.LeadNo}</td>
                           <td className="table-cell">{row.leadDate}</td>
-                          <td className="table-cell">{row.customerName}</td>
-                          <td className="table-cell">{row.salesPerson}</td>
-                          <td className="table-cell">{row.totalCost}</td>
+                          <td className="table-cell">{row.LeadName}</td>
+                          <td className="table-cell">{row.LeadOwnerId}</td>
+                          <td className="table-cell">{row.Remark}</td>
                           <td className="table-cell">
                             <button
                               onClick={() => navigate("/layout/lead/hold")}
@@ -264,14 +292,16 @@ export default function LeadSearch() {
                                 <Printer size={18}className="print-primary"/>
                               </button>
                             <button
-                                onClick={() => navigate("/layout/lead/lead")}
+                                onClick={() => navigate(`/layout/lead/lead/${row.LeadId}`)}
+
                                 className="btn-action"
                                 title="Edit"
                               >
                                  <Edit2 size={18} />
                               </button>
                               <button
-                                onClick={(e) => handleDelete(index, e)}
+                                onClick={() => handleDelete(row.LeadId)}
+
                                 className="btn-action"
                                 title="Delete"
                               >

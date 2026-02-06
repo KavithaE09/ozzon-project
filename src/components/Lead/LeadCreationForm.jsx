@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown,Send,Undo2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { createLead } from "../../api/leadApi";
+import { useParams,useNavigate } from 'react-router-dom';
+import { 
+  createLead,
+  getAllLeads,
+  getLeadById,
+  updateLead,
+  deleteLead
+} from "../../api/leadApi";
+
 import {
   getAllLeadOwners,
   getAllLeadStatuses,
@@ -35,12 +42,16 @@ export default function LeadCreationForm(){
   ];
 
   const navigate = useNavigate();
+  const { id } = useParams();
   const [leadOwners, setLeadOwners] = useState([]);
   const [leadStatuses, setLeadStatuses] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
   const leadOwnerDropdownRef = useRef(null);
   const leadStatusDropdownRef = useRef(null);
   const leadSourceDropdownRef = useRef(null);
+  const [leads, setLeads] = useState([]);
+  const [editId, setEditId] = useState(null);
+
 
   const [formData, setFormData] = useState({
     leadOwner: '',
@@ -74,9 +85,49 @@ export default function LeadCreationForm(){
   const [isLeadSourceOpen, setIsLeadSourceOpen] = useState(false);
   const [hoveredLeadSource, setHoveredLeadSource] = useState(null);
 
-  useEffect(() => {
+ useEffect(() => {
   loadMasters();
+  fetchLeads();
 }, []);
+
+useEffect(() => {
+  if (id) {
+    loadLead();
+  }
+}, [id]);
+
+const loadLead = async () => {
+  try {
+    const res = await getLeadById(id);
+    const lead = res.data;
+
+    setEditId(lead.LeadId);
+
+    setFormData({
+      leadOwner: lead.LeadOwnerId,
+      company: lead.CompanyName,
+      firstName: lead.FirstName,
+      lastName: lead.LastName,
+      leadName: lead.LeadName,
+      title: lead.Title,
+      email: lead.Email,
+      phoneNo: lead.PhoneNo,
+      mobileNo: lead.MobileNo,
+      website: lead.Website,
+      city: lead.City,
+      leadStatus: lead.LeadStatusId,
+      leadSource: lead.LeadSourceId,
+      requirements: lead.Requirements,
+      otherRequirements: lead.OtherRequirements,
+      leadPriority: lead.LeadPriority,
+      brokerName: lead.BrokerName,
+      remark: lead.Remark,
+      description: ""
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const loadMasters = async () => {
   try {
@@ -117,6 +168,14 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
   setFormData({ ...formData, leadOwner: option.LeadOwnerId });
   setLeadOwnerSearch(option.LeadOwnerName);
   setIsLeadOwnerOpen(false);
+};
+const fetchLeads = async () => {
+  try {
+    const res = await getAllLeads();
+    setLeads(res.data);
+  } catch (err) {
+    console.log("Fetch Leads Error:", err);
+  }
 };
 
 
@@ -166,50 +225,87 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
     !formData.title ||
     !formData.company ||
     !formData.firstName ||
-    !formData.leadName ||
-    !formData.phoneNo ||
-    !formData.website ||
-    !formData.requirements ||
-    !formData.otherRequirements ||
-    !formData.brokerName
+    !formData.leadName
   ) {
     alert("Please fill all required fields");
     return;
   }
 
   try {
-   const payload = {
-  LeadNo: "LD" + Date.now(),
-  Title: formData.title,
-  CompanyName: formData.company,
-  FirstName: formData.firstName,
-  LastName: formData.lastName,
-  LeadName: formData.leadName,
-  Email: formData.email,
-  PhoneNo: formData.phoneNo,
-  MobileNo: formData.mobileNo,
-  Website: formData.website,
-  City: formData.city,
-  Requirements: formData.requirements,
-  OtherRequirements: formData.otherRequirements,
-  BrokerName: formData.brokerName,
-  LeadPriority: formData.leadPriority,
-  Remark: formData.remark,
+    const payload = {
+      LeadNo: editId ? undefined : "LD" + Date.now(),
+      Title: formData.title,
+      CompanyName: formData.company,
+      FirstName: formData.firstName,
+      LastName: formData.lastName,
+      LeadName: formData.leadName,
+      Email: formData.email,
+      PhoneNo: formData.phoneNo,
+      MobileNo: formData.mobileNo,
+      Website: formData.website,
+      City: formData.city,
+      Requirements: formData.requirements,
+      OtherRequirements: formData.otherRequirements,
+      BrokerName: formData.brokerName,
+      LeadPriority: formData.leadPriority,
+      Remark: formData.remark,
+      LeadOwnerId: formData.leadOwner,
+      LeadStatusId: formData.leadStatus,
+      LeadSourceId: formData.leadSource
+    };
 
-  LeadOwnerId: formData.leadOwner,
-  LeadStatusId: formData.leadStatus,
-  LeadSourceId: formData.leadSource
-};
-
-
-    await createLead(payload);
-
-    alert("Lead Created Successfully ✅");
+    if (editId) {
+      await updateLead(editId, payload);
+      alert("Lead Updated Successfully ");
+    } else {
+      await createLead(payload);
+      alert("Lead Created Successfully ");
+    }
 
     handleClear();
+    fetchLeads();
 
   } catch (error) {
-    alert("Lead Creation Failed ❌");
+    console.log(error);
+    alert("Operation Failed ");
+  }
+};
+
+const handleEdit = (lead) => {
+  setEditId(lead.id);
+
+  setFormData({
+    leadOwner: lead.LeadOwnerId,
+    company: lead.CompanyName,
+    firstName: lead.FirstName,
+    lastName: lead.LastName,
+    leadName: lead.LeadName,
+    title: lead.Title,
+    email: lead.Email,
+    phoneNo: lead.PhoneNo,
+    mobileNo: lead.MobileNo,
+    website: lead.Website,
+    city: lead.City,
+    leadStatus: lead.LeadStatusId,
+    leadSource: lead.LeadSourceId,
+    requirements: lead.Requirements,
+    otherRequirements: lead.OtherRequirements,
+    leadPriority: lead.LeadPriority,
+    brokerName: lead.BrokerName,
+    remark: lead.Remark,
+    description: ""
+  });
+};
+
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this lead?")) return;
+
+  try {
+    await deleteLead(id);
+    alert("Lead Deleted");
+    fetchLeads();
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -240,6 +336,8 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
     setLeadOwnerSearch('');
     setLeadStatusSearch('');
     setLeadSourceSearch('');
+    setEditId(null);
+
   };
 
   const handleBack = () => {

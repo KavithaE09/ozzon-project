@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API_BASE = "http://localhost:5000/api/master";
+import { BASE_URL } from "./baseurl";
+const API_BASE = `${BASE_URL}/master`;
 export const getAllDepartments = () => axios.get(`${API_BASE}/department`);
 export const getDepartmentById = (id) => axios.get(`${API_BASE}/department/${id}`);
 export const createDepartment = (data) => axios.post(`${API_BASE}/department`, data);
