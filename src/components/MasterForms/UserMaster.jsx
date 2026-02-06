@@ -249,10 +249,7 @@ export default function UserMaster() {
     localStorage.removeItem('userMasterRoleId');
   };
 
-  // ✅ Clear button handler
-  const handleClear = () => {
-    resetForm();
-  };
+  
 
   const handleSearch = async () => {
     try {
