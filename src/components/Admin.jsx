@@ -3,6 +3,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import ozzonlogo from '../assets/ozzonlogo.jpeg';
 import { useNavigate } from 'react-router-dom';
 import userloginimg from '../assets/userloginimg.jpeg';
+import { loginUser } from "../api/authApi";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -11,15 +12,30 @@ export default function Admin() {
   const [rememberPassword, setRememberPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (email === "admin" && password === "123456") {
-      navigate("/Layout");
+  try {
+    console.log("Sending login request...");
+
+    const res = await loginUser({
+      username: email,
+      password: password
+    });
+
+    console.log("API RESPONSE:", res.data);
+
+    if (res.data.message === "Login successful") {
+      navigate("/layout");
     } else {
-      alert("Invalid demo credentials");
+      alert(res.data.message);
     }
-  };
+
+  } catch (err) {
+    console.log("LOGIN ERROR:", err);
+    alert("Invalid Username or Password");
+  }
+};
 
   const handleForgotPassword = () => {
     navigate("/ForgetPassword");
