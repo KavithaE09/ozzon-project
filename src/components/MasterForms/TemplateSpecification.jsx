@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Search,
   ChevronRight,
@@ -6,7 +6,8 @@ import {
   Trash2,
   ChevronLeft,
   Send,
-  Undo2
+  Undo2,
+  ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getAllTempGroups } from "../../api/masterApi.js";
@@ -14,11 +15,19 @@ import tempSpecApi from '../../api/tempSpecApi';
 
 export default function TemplateSpecification() {
   const navigate = useNavigate();
+  const templateGroupDropdownRef = useRef(null);
 
-  // ✅ Initialize from localStorage
-  const [templateGroupName, setTemplateGroupName] = useState(() => {
-    return localStorage.getItem('templateGroupName') || '';
+  // ✅ Searchable dropdown states
+  const [templateGroupSearch, setTemplateGroupSearch] = useState(() => {
+    return localStorage.getItem('templateGroupSearch') || '';
   });
+  const [selectedTemplateGroupId, setSelectedTemplateGroupId] = useState(() => {
+    const saved = localStorage.getItem('selectedTemplateGroupId');
+    return saved ? Number(saved) : null;
+  });
+  const [isTemplateGroupOpen, setIsTemplateGroupOpen] = useState(false);
+  const [hoveredTemplateGroup, setHoveredTemplateGroup] = useState(null);
+  
   const [templateSpecificationName, setTemplateSpecificationName] = useState(() => {
     return localStorage.getItem('templateSpecificationName') || '';
   });
@@ -38,12 +47,37 @@ export default function TemplateSpecification() {
 
   // ✅ Save to localStorage whenever values change
   useEffect(() => {
-    localStorage.setItem('templateGroupName', templateGroupName);
-  }, [templateGroupName]);
+    localStorage.setItem('templateGroupSearch', templateGroupSearch);
+  }, [templateGroupSearch]);
+
+  useEffect(() => {
+    if (selectedTemplateGroupId) {
+      localStorage.setItem('selectedTemplateGroupId', selectedTemplateGroupId.toString());
+    }
+  }, [selectedTemplateGroupId]);
 
   useEffect(() => {
     localStorage.setItem('templateSpecificationName', templateSpecificationName);
   }, [templateSpecificationName]);
+
+  // ✅ Filter template groups based on search
+  const filteredTemplateGroups = templateGroups.filter((group) => {
+    if (!group) return false;
+    const groupName = group.TempGroupName || group.templateGroupName || group.name || '';
+    return String(groupName).toLowerCase().includes(templateGroupSearch.toLowerCase());
+  });
+
+  // ✅ Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (templateGroupDropdownRef.current && !templateGroupDropdownRef.current.contains(event.target)) {
+        setIsTemplateGroupOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   /* =========================
      FETCH TEMPLATE GROUPS
@@ -66,8 +100,8 @@ export default function TemplateSpecification() {
   const fetchTemplateSpecs = async () => {
     try {
       const res = await tempSpecApi.getAll();
-      console.log("Full API Response:", res); // Debug log
-      console.log("res.data:", res.data); // Debug log
+      console.log("Full API Response:", res);
+      console.log("res.data:", res.data);
 
       // ✅ Handle multiple possible response structures
       let list = [];
@@ -77,15 +111,14 @@ export default function TemplateSpecification() {
       } else if (Array.isArray(res?.data)) {
         list = res.data;
       } else if (res?.data && typeof res.data === 'object') {
-        // If data is an object with a nested array
         const possibleArrays = Object.values(res.data).filter(val => Array.isArray(val));
         if (possibleArrays.length > 0) {
           list = possibleArrays[0];
         }
       }
 
-      console.log("Processed list:", list); // Debug log
-      console.log("First item:", list[0]); // Debug log - see structure of first item
+      console.log("Processed list:", list);
+      console.log("First item:", list[0]);
       
       setTemplateSpecs(list);
       setFilteredSpecs(list);
@@ -104,18 +137,18 @@ export default function TemplateSpecification() {
      SUBMIT
   ========================= */
   const handleSubmit = async () => {
-    if (!templateGroupName || !templateSpecificationName.trim()) {
+    if (!selectedTemplateGroupId || !templateSpecificationName.trim()) {
       alert("Please fill all fields");
       return;
     }
 
     try {
       const payload = {
-        templateGroupId: Number(templateGroupName),
+        templateGroupId: Number(selectedTemplateGroupId),
         templateSpecificationName: templateSpecificationName.trim().toUpperCase()
       };
 
-      console.log("Submitting:", payload); // Debug log
+      console.log("Submitting:", payload);
 
       if (editingId) {
         await tempSpecApi.update(editingId, payload);
@@ -130,9 +163,11 @@ export default function TemplateSpecification() {
       await fetchTemplateSpecs();
 
       // ✅ Clear form AND localStorage
-      setTemplateGroupName('');
+      setTemplateGroupSearch('');
+      setSelectedTemplateGroupId(null);
       setTemplateSpecificationName('');
-      localStorage.removeItem('templateGroupName');
+      localStorage.removeItem('templateGroupSearch');
+      localStorage.removeItem('selectedTemplateGroupId');
       localStorage.removeItem('templateSpecificationName');
       setCurrentPage(1);
 
@@ -165,7 +200,7 @@ export default function TemplateSpecification() {
      EDIT
   ========================= */
   const handleEdit = (spec) => {
-    console.log("Editing spec:", spec); // Debug log
+    console.log("Editing spec:", spec);
     console.log("Available fields:", Object.keys(spec));
     
     const id = spec.TemplateSpecId || 
@@ -175,6 +210,15 @@ export default function TemplateSpecification() {
                spec.templateSpecificationId ||
                spec.TemplateSpecificationId;
     
+    const groupId = spec.TempGroupId || 
+                    spec.templateGroupId || 
+                    spec.TemplateGroupId;
+    
+    // Find the group name for display
+    const templateGroup = templateGroups.find(
+      g => g.TempGroupId === groupId
+    );
+    
     setEditingId(id);
     setTemplateSpecificationName(
       spec.TempSpecName || 
@@ -182,12 +226,9 @@ export default function TemplateSpecification() {
       spec.name || 
       ''
     );
-    setTemplateGroupName(
-      spec.TempGroupId || 
-      spec.templateGroupId || 
-      spec.TemplateGroupId ||
-      ''
-    );
+    setTemplateGroupSearch(templateGroup?.TempGroupName || '');
+    setSelectedTemplateGroupId(groupId);
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -198,7 +239,7 @@ export default function TemplateSpecification() {
     if (!window.confirm("Are you sure you want to delete?")) return;
 
     try {
-      console.log("Deleting ID:", id); // Debug log
+      console.log("Deleting ID:", id);
       await tempSpecApi.remove(id);
       alert("Deleted successfully!");
       await fetchTemplateSpecs();
@@ -225,23 +266,55 @@ export default function TemplateSpecification() {
             <div className="filter-section">
               <div className="filter-grid">
 
-                <div className="filter-grid-red">
+                {/* ✅ Searchable Template Group Dropdown */}
+                <div ref={templateGroupDropdownRef} className="filter-grid-red">
                   <label className="filter-label">Template Group Name</label>
-                  <select
-                    value={templateGroupName}
-                    onChange={(e) => setTemplateGroupName(e.target.value)}
-                    className="filter-input"
-                  >
-                    <option value="">Select Template Group</option>
-                    {templateGroups.map((group) => (
-                      <option
-                        key={group.TempGroupId}
-                        value={group.TempGroupId}
-                      >
-                        {group.TempGroupName}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="dropdown-wrapper">
+                    <input
+                      type="text"
+                      value={templateGroupSearch}
+                      onChange={(e) => {
+                        setTemplateGroupSearch(e.target.value);
+                        setIsTemplateGroupOpen(true);
+                      }}
+                      onFocus={() => setIsTemplateGroupOpen(true)}
+                      placeholder="Type or select..."
+                      className="dropdown-input"
+                    />
+                    <ChevronDown size={20} className="dropdown-icon" />
+                  </div>
+                  {isTemplateGroupOpen && (
+                    <div className="dropdown-menu">
+                      {filteredTemplateGroups.length > 0 ? (
+                        filteredTemplateGroups.map((group, index) => {
+                          const displayName = group.TempGroupName || group.templateGroupName || group.name || 'Unknown';
+                          const groupId = group.TempGroupId || group.templateGroupId || group.id;
+                          
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => {
+                                setTemplateGroupSearch(displayName);
+                                setSelectedTemplateGroupId(groupId);
+                                setIsTemplateGroupOpen(false);
+                              }}
+                              onMouseEnter={() => setHoveredTemplateGroup(displayName)}
+                              onMouseLeave={() => setHoveredTemplateGroup(null)}
+                              className={`dropdown-item-option ${
+                                hoveredTemplateGroup === displayName
+                                  ? "dropdown-item-hovered"
+                                  : "dropdown-item-default"
+                              }`}
+                            >
+                              {displayName}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="dropdown-no-matches">No matches found</div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="filter-grid-red">
@@ -263,7 +336,6 @@ export default function TemplateSpecification() {
                   <button onClick={handleSubmit} className="btn-all">
                     <Send size={18} /> {editingId ? 'Update' : 'Submit'}
                   </button>
-                
                 </div>
 
               </div>
@@ -300,17 +372,16 @@ export default function TemplateSpecification() {
                 <span className="master-table-title" style={{ flex: 1 }}>
                   Template Specification Name
                 </span>
-                <span style={{ width: '100px' }}></span> {/* Space for action buttons */}
+                <span style={{ width: '100px' }}></span>
               </div>
 
               <div className="master-table-body">
                 {currentRows.length > 0 ? (
                   currentRows.map((spec, index) => {
-                    console.log("Rendering spec:", spec); // Debug each row
-                    console.log("Object keys:", Object.keys(spec)); // Show all keys
-                    console.log("All values:", spec); // Show full object
+                    console.log("Rendering spec:", spec);
+                    console.log("Object keys:", Object.keys(spec));
+                    console.log("All values:", spec);
                     
-                    // Find the template group name
                     const templateGroup = templateGroups.find(
                       g => g.TempGroupId === (spec.TempGroupId || spec.templateGroupId || spec.TemplateGroupId)
                     );
@@ -330,7 +401,6 @@ export default function TemplateSpecification() {
                         
                         <div className="master-table-content" style={{ flex: 1, paddingLeft: '0' }}>
                           <span className="master-name-text">
-                            {/* ✅ Try multiple possible field names */}
                             {spec.TempSpecName || 
                              spec.templateSpecificationName || 
                              spec.name || 
@@ -351,7 +421,6 @@ export default function TemplateSpecification() {
                           </button>
                           <button
                             onClick={() => {
-                              // ✅ Try ALL possible ID field names
                               const id = spec.TemplateSpecId || 
                                         spec.TempSpecId || 
                                         spec.id || 
@@ -361,14 +430,6 @@ export default function TemplateSpecification() {
                               
                               console.log("Delete clicked - ID:", id);
                               console.log("Full spec object:", spec);
-                              console.log("Trying fields:", {
-                                TemplateSpecId: spec.TemplateSpecId,
-                                TempSpecId: spec.TempSpecId,
-                                id: spec.id,
-                                Id: spec.Id,
-                                templateSpecificationId: spec.templateSpecificationId,
-                                TemplateSpecificationId: spec.TemplateSpecificationId
-                              });
                               
                               if (!id) {
                                 alert("Cannot find ID in object. Check console for details.");
@@ -380,7 +441,7 @@ export default function TemplateSpecification() {
                             }}
                             className="btn-action"
                           >
-                             <Trash2 size={18} className="text-red-600" />
+                            <Trash2 size={18} className="text-red-600" />
                           </button>
                         </div>
                       </div>

@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import containerPurchaseApi from '../../api/containerPurchaseApi';
+import { getAllSizeTypes, getAllGrades, getAllYards } from '../../api/masterApi';
+import ledgerApi from '../../api/ledgerApi';
 
 export default function ContainerPurchase() {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
   const partyNameDropdownRef = useRef(null);
   const sizeTypeDropdownRef = useRef(null);
   const gradeDropdownRef = useRef(null);
@@ -18,73 +23,166 @@ export default function ContainerPurchase() {
     return `${year}-${month}-${day}`;
   };
 
-  const [formData, setFormData] = useState({
-    containerNo: '',
-    partyName: '',
-    sizeType: '',
-    grade: '',
-    liner: '',
-    yard: '',
-    mfgDate: getTodayDate(),
-    inDate: getTodayDate(),
-    amount: '',
-    remark: '',
-    images: [],
-    imagePreviews: []
+  const [formData, setFormData] = useState(() => {
+    const savedData = localStorage.getItem('containerPurchaseFormData');
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+    return {
+      containerNo: '',
+      partyCode: null,
+      sizeTypeId: null,
+      gradeId: null,
+      liner: '',
+      yardId: null,
+      mfgDate: getTodayDate(),
+      inDate: getTodayDate(),
+      amount: '',
+      remark: '',
+      photoPath: '',
+      images: [],
+      imagePreviews: []
+    };
   });
 
-  const [partyNameSearch, setPartyNameSearch] = useState('');
+  // Dropdown options from API
+  const [partyOptions, setPartyOptions] = useState([]);
+  const [sizeTypeOptions, setSizeTypeOptions] = useState([]);
+  const [gradeOptions, setGradeOptions] = useState([]);
+  const [yardOptions, setYardOptions] = useState([]);
+
+  // Dropdown search states
+  const [partyNameSearch, setPartyNameSearch] = useState(() => {
+    return localStorage.getItem('containerPartyNameSearch') || '';
+  });
   const [isPartyNameOpen, setIsPartyNameOpen] = useState(false);
   const [hoveredPartyName, setHoveredPartyName] = useState(null);
 
-  const [sizeTypeSearch, setSizeTypeSearch] = useState('');
+  const [sizeTypeSearch, setSizeTypeSearch] = useState(() => {
+    return localStorage.getItem('containerSizeTypeSearch') || '';
+  });
   const [isSizeTypeOpen, setIsSizeTypeOpen] = useState(false);
   const [hoveredSizeType, setHoveredSizeType] = useState(null);
 
-  const [gradeSearch, setGradeSearch] = useState('');
+  const [gradeSearch, setGradeSearch] = useState(() => {
+    return localStorage.getItem('containerGradeSearch') || '';
+  });
   const [isGradeOpen, setIsGradeOpen] = useState(false);
   const [hoveredGrade, setHoveredGrade] = useState(null);
 
-  const [yardSearch, setYardSearch] = useState('');
+  const [yardSearch, setYardSearch] = useState(() => {
+    return localStorage.getItem('containerYardSearch') || '';
+  });
   const [isYardOpen, setIsYardOpen] = useState(false);
   const [hoveredYard, setHoveredYard] = useState(null);
 
-  const partyNameOptions = [
-    'Kavitha',
-    'Raneesh Kumar',
-    'Nathan Electronics',
-    'Logic-Tech Solutions',
-    'Global Traders'
-  ];
+  // ✅ Fetch all dropdown data on component mount
+  useEffect(() => {
+    fetchAllDropdownData();
+  }, []);
 
-  const sizeTypeOptions = ['20', '40', '60', '80'];
-  const gradeOptions = ['A', 'B', 'C'];
-  const yardOptions = ['Global', 'Local'];
+  // ✅ Save formData to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('containerPurchaseFormData', JSON.stringify(formData));
+  }, [formData]);
 
-  const filteredPartyNames = partyNameOptions.filter(opt =>
-    opt.toLowerCase().includes(partyNameSearch.toLowerCase())
-  );
+  // ✅ Save search states to localStorage
+  useEffect(() => {
+    localStorage.setItem('containerPartyNameSearch', partyNameSearch);
+  }, [partyNameSearch]);
 
-  const filteredSizeTypes = sizeTypeOptions.filter(opt =>
-    opt.toLowerCase().includes(sizeTypeSearch.toLowerCase())
-  );
+  useEffect(() => {
+    localStorage.setItem('containerSizeTypeSearch', sizeTypeSearch);
+  }, [sizeTypeSearch]);
 
-  const filteredGrades = gradeOptions.filter(opt =>
-    opt.toLowerCase().includes(gradeSearch.toLowerCase())
-  );
+  useEffect(() => {
+    localStorage.setItem('containerGradeSearch', gradeSearch);
+  }, [gradeSearch]);
 
-  const filteredYards = yardOptions.filter(opt =>
-    opt.toLowerCase().includes(yardSearch.toLowerCase())
-  );
+  useEffect(() => {
+    localStorage.setItem('containerYardSearch', yardSearch);
+  }, [yardSearch]);
 
+  const fetchAllDropdownData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch Party Names from Ledger
+      const ledgerRes = await ledgerApi.getAllLedgers();
+      if (ledgerRes.success) {
+        setPartyOptions(ledgerRes.data);
+      }
+
+      // ✅ FIX: Fetch Size Types - response.data.data structure
+      const sizeTypeRes = await getAllSizeTypes();
+      console.log('Size Type Response:', sizeTypeRes); // Debug
+      if (sizeTypeRes && sizeTypeRes.data) {
+        // Check if response has nested data property
+        const sizeData = sizeTypeRes.data.data || sizeTypeRes.data;
+        setSizeTypeOptions(sizeData);
+      }
+
+      // ✅ FIX: Fetch Grades - response.data.data structure
+      const gradeRes = await getAllGrades();
+      console.log('Grade Response:', gradeRes); // Debug
+      if (gradeRes && gradeRes.data) {
+        const gradeData = gradeRes.data.data || gradeRes.data;
+        setGradeOptions(gradeData);
+      }
+
+      // ✅ FIX: Fetch Yards - response.data.data structure
+      const yardRes = await getAllYards();
+      console.log('Yard Response:', yardRes); // Debug
+      if (yardRes && yardRes.data) {
+        const yardData = yardRes.data.data || yardRes.data;
+        setYardOptions(yardData);
+      }
+
+    } catch (error) {
+      console.error('Error fetching dropdown data:', error);
+      alert('Failed to load dropdown data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ FIX: Filter functions with proper null checks
+  const filteredPartyNames = partyOptions.filter(party => {
+    if (!party) return false;
+    const partyName = party.PartyName || party.partyName || '';
+    return partyName.toLowerCase().includes(partyNameSearch.toLowerCase());
+  });
+
+  const filteredSizeTypes = sizeTypeOptions.filter(size => {
+    if (!size) return false;
+    const sizeTypeName = size.SizeType || size.sizeType || '';
+    return sizeTypeName.toLowerCase().includes(sizeTypeSearch.toLowerCase());
+  });
+
+  const filteredGrades = gradeOptions.filter(grade => {
+    if (!grade) return false;
+    const gradeName = grade.Grade || grade.grade || '';
+    return gradeName.toLowerCase().includes(gradeSearch.toLowerCase());
+  });
+
+  const filteredYards = yardOptions.filter(yard => {
+    if (!yard) return false;
+    const yardName = yard.Yard || yard.yard || '';
+    return yardName.toLowerCase().includes(yardSearch.toLowerCase());
+  });
+
+  // ✅ Dropdown handlers
   const handlePartyNameInput = (e) => {
     setPartyNameSearch(e.target.value);
     setIsPartyNameOpen(true);
   };
 
-  const handlePartyNameSelect = (option) => {
-    setFormData({ ...formData, partyName: option });
-    setPartyNameSearch(option);
+  const handlePartyNameSelect = (party) => {
+    const partyCode = party.PartyCode || party.partyCode;
+    const partyName = party.PartyName || party.partyName;
+    
+    setFormData({ ...formData, partyCode: partyCode });
+    setPartyNameSearch(partyName);
     setIsPartyNameOpen(false);
   };
 
@@ -93,9 +191,12 @@ export default function ContainerPurchase() {
     setIsSizeTypeOpen(true);
   };
 
-  const handleSizeTypeSelect = (option) => {
-    setFormData({ ...formData, sizeType: option });
-    setSizeTypeSearch(option);
+  const handleSizeTypeSelect = (sizeType) => {
+    const sizeTypeId = sizeType.SizeTypeId || sizeType.sizeTypeId;
+    const sizeTypeName = sizeType.SizeType || sizeType.sizeType;
+    
+    setFormData({ ...formData, sizeTypeId: sizeTypeId });
+    setSizeTypeSearch(sizeTypeName);
     setIsSizeTypeOpen(false);
   };
 
@@ -104,9 +205,12 @@ export default function ContainerPurchase() {
     setIsGradeOpen(true);
   };
 
-  const handleGradeSelect = (option) => {
-    setFormData({ ...formData, grade: option });
-    setGradeSearch(option);
+  const handleGradeSelect = (grade) => {
+    const gradeId = grade.GradeId || grade.gradeId;
+    const gradeName = grade.Grade || grade.grade;
+    
+    setFormData({ ...formData, gradeId: gradeId });
+    setGradeSearch(gradeName);
     setIsGradeOpen(false);
   };
 
@@ -115,9 +219,12 @@ export default function ContainerPurchase() {
     setIsYardOpen(true);
   };
 
-  const handleYardSelect = (option) => {
-    setFormData({ ...formData, yard: option });
-    setYardSearch(option);
+  const handleYardSelect = (yard) => {
+    const yardId = yard.YardId || yard.yardId;
+    const yardName = yard.Yard || yard.yard;
+    
+    setFormData({ ...formData, yardId: yardId });
+    setYardSearch(yardName);
     setIsYardOpen(false);
   };
 
@@ -128,9 +235,102 @@ export default function ContainerPurchase() {
     });
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    // Add your submit logic here
+  // ✅ Clear handler
+  const handleClear = () => {
+    const emptyForm = {
+      containerNo: '',
+      partyCode: null,
+      sizeTypeId: null,
+      gradeId: null,
+      liner: '',
+      yardId: null,
+      mfgDate: getTodayDate(),
+      inDate: getTodayDate(),
+      amount: '',
+      remark: '',
+      photoPath: '',
+      images: [],
+      imagePreviews: []
+    };
+    setFormData(emptyForm);
+    setPartyNameSearch('');
+    setSizeTypeSearch('');
+    setGradeSearch('');
+    setYardSearch('');
+    
+    // Clear localStorage
+    localStorage.removeItem('containerPurchaseFormData');
+    localStorage.removeItem('containerPartyNameSearch');
+    localStorage.removeItem('containerSizeTypeSearch');
+    localStorage.removeItem('containerGradeSearch');
+    localStorage.removeItem('containerYardSearch');
+  };
+
+  // ✅ Submit handler
+  const handleSubmit = async () => {
+    try {
+      if (!formData.containerNo.trim()) {
+        alert('Container No is required');
+        return;
+      }
+
+      setLoading(true);
+
+      const submitData = {
+        containerNo: formData.containerNo,
+        partyCode: formData.partyCode,
+        sizeTypeId: formData.sizeTypeId,
+        gradeId: formData.gradeId,
+        liner: formData.liner,
+        yardId: formData.yardId,
+        mfgDate: formData.mfgDate,
+        inDate: formData.inDate,
+        amount: formData.amount || 0,
+        remark: formData.remark,
+        photoPath: formData.photoPath || '',
+      };
+
+      const response = await containerPurchaseApi.createPurchase(submitData);
+
+      if (response.success) {
+        alert('Container Purchase created successfully!');
+        
+        // Reset form
+        const emptyForm = {
+          containerNo: '',
+          partyCode: null,
+          sizeTypeId: null,
+          gradeId: null,
+          liner: '',
+          yardId: null,
+          mfgDate: getTodayDate(),
+          inDate: getTodayDate(),
+          amount: '',
+          remark: '',
+          photoPath: '',
+          images: [],
+          imagePreviews: []
+        };
+        setFormData(emptyForm);
+        
+        setPartyNameSearch('');
+        setSizeTypeSearch('');
+        setGradeSearch('');
+        setYardSearch('');
+
+        // ✅ Clear localStorage
+        localStorage.removeItem('containerPurchaseFormData');
+        localStorage.removeItem('containerPartyNameSearch');
+        localStorage.removeItem('containerSizeTypeSearch');
+        localStorage.removeItem('containerGradeSearch');
+        localStorage.removeItem('containerYardSearch');
+      }
+    } catch (error) {
+      console.error('Error creating container purchase:', error);
+      alert('Failed to create container purchase');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const removeImage = (index) => {
@@ -152,11 +352,11 @@ export default function ContainerPurchase() {
       ...formData,
       remark: e.target.value
     });
-    // Auto-resize textarea
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
   };
 
+  // ✅ Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (partyNameDropdownRef.current && !partyNameDropdownRef.current.contains(e.target)) {
@@ -176,7 +376,6 @@ export default function ContainerPurchase() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
 
   return (
     <div className="page-container">
@@ -184,7 +383,6 @@ export default function ContainerPurchase() {
         <div className="main-section">
           <div className="content-card">
             
-            {/* 🆕 Page Header with Back Button */}
             <div className="page-header">
               <h1 className="page-title">Container Purchase</h1>
               <button 
@@ -192,7 +390,7 @@ export default function ContainerPurchase() {
                 className="page-back-btn"
                 aria-label="Go back"
               >
-                <Undo2   className="page-back-icon" />
+                <Undo2 className="page-back-icon" />
               </button>
             </div>
 
@@ -208,6 +406,7 @@ export default function ContainerPurchase() {
                     onChange={handleChange}
                     placeholder="456123"
                     className="filter-input"
+                    disabled={loading}
                   />
                 </div>
 
@@ -222,29 +421,31 @@ export default function ContainerPurchase() {
                       onFocus={() => setIsPartyNameOpen(true)}
                       placeholder="Type or select..."
                       className="dropdown-input"
+                      disabled={loading}
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
                   {isPartyNameOpen && (
                     <div className="dropdown-menu">
                       {filteredPartyNames.length > 0 ? (
-                        filteredPartyNames.map((option, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handlePartyNameSelect(option)}
-                            onMouseEnter={() => setHoveredPartyName(option)}
-                            onMouseLeave={() => setHoveredPartyName(null)}
-                            className={`dropdown-item-option ${
-                              hoveredPartyName === option
-                                ? 'dropdown-item-hovered'
-                                : formData.partyName === option
-                                ? 'dropdown-item-selected'
-                                : 'dropdown-item-default'
-                            }`}
-                          >
-                            {option}
-                          </div>
-                        ))
+                        filteredPartyNames.map((party, index) => {
+                          const displayName = party.PartyName || party.partyName || 'Unknown';
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => handlePartyNameSelect(party)}
+                              onMouseEnter={() => setHoveredPartyName(displayName)}
+                              onMouseLeave={() => setHoveredPartyName(null)}
+                              className={`dropdown-item-option ${
+                                hoveredPartyName === displayName
+                                  ? 'dropdown-item-hovered'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {displayName}
+                            </div>
+                          );
+                        })
                       ) : (
                         <div className="dropdown-no-matches">No matches found</div>
                       )}
@@ -263,29 +464,31 @@ export default function ContainerPurchase() {
                       onFocus={() => setIsSizeTypeOpen(true)}
                       placeholder="Type or select..."
                       className="dropdown-input"
+                      disabled={loading}
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
                   {isSizeTypeOpen && (
                     <div className="dropdown-menu">
                       {filteredSizeTypes.length > 0 ? (
-                        filteredSizeTypes.map((option, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handleSizeTypeSelect(option)}
-                            onMouseEnter={() => setHoveredSizeType(option)}
-                            onMouseLeave={() => setHoveredSizeType(null)}
-                            className={`dropdown-item-option ${
-                              hoveredSizeType === option
-                                ? 'dropdown-item-hovered'
-                                : formData.sizeType === option
-                                ? 'dropdown-item-selected'
-                                : 'dropdown-item-default'
-                            }`}
-                          >
-                            {option}
-                          </div>
-                        ))
+                        filteredSizeTypes.map((sizeType, index) => {
+                          const displayName = sizeType.SizeType || sizeType.sizeType || 'Unknown';
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => handleSizeTypeSelect(sizeType)}
+                              onMouseEnter={() => setHoveredSizeType(displayName)}
+                              onMouseLeave={() => setHoveredSizeType(null)}
+                              className={`dropdown-item-option ${
+                                hoveredSizeType === displayName
+                                  ? 'dropdown-item-hovered'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {displayName}
+                            </div>
+                          );
+                        })
                       ) : (
                         <div className="dropdown-no-matches">No matches found</div>
                       )}
@@ -304,29 +507,31 @@ export default function ContainerPurchase() {
                       onFocus={() => setIsGradeOpen(true)}
                       placeholder="Type or select..."
                       className="dropdown-input"
+                      disabled={loading}
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
                   {isGradeOpen && (
                     <div className="dropdown-menu">
                       {filteredGrades.length > 0 ? (
-                        filteredGrades.map((option, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handleGradeSelect(option)}
-                            onMouseEnter={() => setHoveredGrade(option)}
-                            onMouseLeave={() => setHoveredGrade(null)}
-                            className={`dropdown-item-option ${
-                              hoveredGrade === option
-                                ? 'dropdown-item-hovered'
-                                : formData.grade === option
-                                ? 'dropdown-item-selected'
-                                : 'dropdown-item-default'
-                            }`}
-                          >
-                            {option}
-                          </div>
-                        ))
+                        filteredGrades.map((grade, index) => {
+                          const displayName = grade.Grade || grade.grade || 'Unknown';
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => handleGradeSelect(grade)}
+                              onMouseEnter={() => setHoveredGrade(displayName)}
+                              onMouseLeave={() => setHoveredGrade(null)}
+                              className={`dropdown-item-option ${
+                                hoveredGrade === displayName
+                                  ? 'dropdown-item-hovered'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {displayName}
+                            </div>
+                          );
+                        })
                       ) : (
                         <div className="dropdown-no-matches">No matches found</div>
                       )}
@@ -344,6 +549,7 @@ export default function ContainerPurchase() {
                     onChange={handleChange}
                     placeholder="1000"
                     className="filter-input"
+                    disabled={loading}
                   />
                 </div>
 
@@ -358,29 +564,31 @@ export default function ContainerPurchase() {
                       onFocus={() => setIsYardOpen(true)}
                       placeholder="Type or select..."
                       className="dropdown-input"
+                      disabled={loading}
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
                   {isYardOpen && (
                     <div className="dropdown-menu">
                       {filteredYards.length > 0 ? (
-                        filteredYards.map((option, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handleYardSelect(option)}
-                            onMouseEnter={() => setHoveredYard(option)}
-                            onMouseLeave={() => setHoveredYard(null)}
-                            className={`dropdown-item-option ${
-                              hoveredYard === option
-                                ? 'dropdown-item-hovered'
-                                : formData.yard === option
-                                ? 'dropdown-item-selected'
-                                : 'dropdown-item-default'
-                            }`}
-                          >
-                            {option}
-                          </div>
-                        ))
+                        filteredYards.map((yard, index) => {
+                          const displayName = yard.Yard || yard.yard || 'Unknown';
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => handleYardSelect(yard)}
+                              onMouseEnter={() => setHoveredYard(displayName)}
+                              onMouseLeave={() => setHoveredYard(null)}
+                              className={`dropdown-item-option ${
+                                hoveredYard === displayName
+                                  ? 'dropdown-item-hovered'
+                                  : 'dropdown-item-default'
+                              }`}
+                            >
+                              {displayName}
+                            </div>
+                          );
+                        })
                       ) : (
                         <div className="dropdown-no-matches">No matches found</div>
                       )}
@@ -397,6 +605,7 @@ export default function ContainerPurchase() {
                     value={formData.mfgDate}
                     onChange={handleChange}
                     className="filter-input"
+                    disabled={loading}
                   />
                 </div>
 
@@ -409,6 +618,7 @@ export default function ContainerPurchase() {
                     value={formData.inDate}
                     onChange={handleChange}
                     className="filter-input"
+                    disabled={loading}
                   />
                 </div>
 
@@ -422,6 +632,7 @@ export default function ContainerPurchase() {
                     onChange={handleChange}
                     placeholder="10000"
                     className="filter-input"
+                    disabled={loading}
                   />
                 </div>
 
@@ -434,6 +645,7 @@ export default function ContainerPurchase() {
                     onChange={handleRemarkChange}
                     rows="1"
                     className="multiline-field"
+                    disabled={loading}
                   />
                 </div>
 
@@ -455,6 +667,7 @@ export default function ContainerPurchase() {
                       e.target.value = null;
                     }}
                     className="file-input"
+                    disabled={loading}
                   />
 
                   {formData.imagePreviews && formData.imagePreviews.length > 0 && (
@@ -470,6 +683,7 @@ export default function ContainerPurchase() {
                           <button
                             onClick={() => removeImage(index)}
                             className="image-remove-btn"
+                            disabled={loading}
                           >
                             ✕
                           </button>
@@ -506,12 +720,25 @@ export default function ContainerPurchase() {
               </div>
             )}
 
-            {/* Footer Buttons - Only Submit button now */}
+            {/* Footer Buttons */}
             <div className="footer-container">
-              <div></div> {/* Empty div for spacing */}
-              <button onClick={handleSubmit} className="btn-all">
-                <Send size={18} />  Submit
-              </button>
+              <div></div>
+              <div className="btn-container">
+                <button 
+                  onClick={handleClear} 
+                  className="px-4 py-2 bg-gray-600 text-white border-none rounded cursor-pointer font-medium flex items-center gap-2 hover:bg-gray-700"
+                  disabled={loading}
+                >
+                  Clear
+                </button>
+                <button 
+                  onClick={handleSubmit} 
+                  className="btn-all"
+                  disabled={loading}
+                >
+                  <Send size={18} /> {loading ? 'Submitting...' : 'Submit'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -85,7 +85,7 @@ export default function Layout() {
 if (page === "LedgerMasterForm_Accounts")
   navigate("/layout/accounts/ledgermasterform");
 
-           
+            if (page === "Form") navigate("/layout/form");
             if (page === "Giver") navigate("/layout/giver");
             if (page === "Grade") navigate("/layout/grade");
             if (page === "Group") navigate("/layout/group");
