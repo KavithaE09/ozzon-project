@@ -1,4 +1,4 @@
-import { Home, Building2, List, ClipboardList, ChevronRight, CheckCircle, BarChart3, ShoppingCart, BriefcaseBusiness, Users, Shield, UserCog,Building, Target, Activity, TrendingUp, FileText, Settings as SettingsIcon, Package, Layers, Ruler, Briefcase, UserCheck, MapPin, Award, FileSpreadsheet,FolderOpen, TrendingDown, Box, ClipboardCheck, Truck, FileCheck, Archive, RotateCcw, Send, ArrowDownToLine, DollarSign, Receipt, PenTool, RefreshCcw, Container
+import { Home, Building2, List, ClipboardList, ChevronRight, CheckCircle, BarChart3, ShoppingCart, BriefcaseBusiness, Users, Shield, UserCog,Building, Target, Activity, TrendingUp, FileText, Settings as SettingsIcon, Package, Layers, Ruler, Briefcase, UserCheck, MapPin, Award, FileSpreadsheet,FolderOpen, TrendingDown, Box, ClipboardCheck, Truck, FileCheck, Archive, RotateCcw, Send, ArrowDownToLine, DollarSign, Receipt, PenTool, RefreshCcw, Container,Form
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -206,6 +206,10 @@ export default function Sidebar({ open, onNavigate }) {
       setActive("Receiver");
       setFormsOpen(true);
     }
+    else if (path.includes("/form")) {
+      setActive("Form");
+      setFormsOpen(true);
+    }
 
     // Sales routes
     else if (path.includes("/lead")) {
@@ -382,6 +386,7 @@ export default function Sidebar({ open, onNavigate }) {
               <SubButton label="Yard" icon={<MapPin size={18} />} active={active === "Yard"} isDark={isDark} onClick={() => handleClick("Yard")} />
               <SubButton label="Grade" icon={<Award size={18} />} active={active === "Grade"} isDark={isDark} onClick={() => handleClick("Grade")} />
               <SubButton label="Settings" icon={<SettingsIcon size={18} />} active={active === "Settings"} isDark={isDark} onClick={() => handleClick("Settings")} />
+               <SubButton label="Form" icon={<Form size={18} />} active={active === "Form"} isDark={isDark} onClick={() => handleClick("Form")} />
             </>
           )}
 

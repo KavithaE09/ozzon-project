@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown,Undo2 } from 'lucide-react';
+import { Menu, ChevronDown, Plus, Edit2, Trash2, XCircle, ChevronRight, ChevronLeft, CheckCircle, ArrowUp, ArrowDown, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import templateSettingsApi from "../../api/templateSettingsApi";
-
+import templateSettingsApi from "../../api/templateSettingsApi";  
 
 
 export default function TemplateSettings() {
@@ -11,8 +10,7 @@ export default function TemplateSettings() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  // Initialize with no rows, but set addingRow to true for default row
-  const [rows, setRows] = useState([])  
+  const [rows, setRows] = useState([])   
   const totalPages = Math.ceil(rows.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -20,10 +18,9 @@ export default function TemplateSettings() {
 
   const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
-  const [addingRow, setAddingRow] = useState(true); // Start with adding mode
-  const [insertAfterRowId, setInsertAfterRowId] = useState(null);
-  const [openMenuIndex, setOpenMenuIndex] = useState(null);
-  const [newRowPosition, setNewRowPosition] = useState('bottom'); // Default position
+  const [addingRow, setAddingRow] = useState(true);
+  const [newRowPosition, setNewRowPosition] = useState('bottom');
+  const [openMenuIndex, setOpenMenuIndex] = useState(null); 
 
   // Dropdown states
   const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
@@ -36,12 +33,12 @@ export default function TemplateSettings() {
   const groupDropdownRef = useRef(null);
   const specDropdownRef = useRef(null);
 
-const [groupMasters, setGroupMasters] = useState([]);
-const [specMasters, setSpecMasters] = useState([]);
-
+  const [groupMasters, setGroupMasters] = useState([]);
+  const [specMasters, setSpecMasters] = useState([]);
 
   const [newRowData, setNewRowData] = useState({
     group: '', 
+    groupId: null, // 🔹 NEW: Track selected group ID
     specification: '',
     dimension: '',
     noOfUnit: 0,
@@ -58,96 +55,193 @@ const [specMasters, setSpecMasters] = useState([]);
   const [editingTermIndex, setEditingTermIndex] = useState(null);
   const [editTermText, setEditTermText] = useState('');
 
-useEffect(() => {
-  loadMasters();
-  loadTemplateSettings();
-}, []);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-const loadMasters = async () => {
-  try {
-    const res = await templateSettingsApi.getTempGroups();
-    console.log("Raw backend response:", res);
+  useEffect(() => {
+    loadMasters();
+    loadTemplateSettings();
+  }, []);
 
-    // Convert object with numeric keys to array
-    const groupsArray = Array.isArray(res) ? res : Object.values(res);
-    setGroupMasters(groupsArray);
+  // Save state to localStorage
+  useEffect(() => {
+    if (!isDataLoaded) return;
 
-    console.log("groupMasters after setState:", groupsArray);
-  } catch (err) {
-    console.error("Error loading groups:", err);
-  }
-};
+    const stateToSave = {
+      rows,
+      templateName,
+      discount,
+      gstPercentage,
+      termsConditions,
+      addingRow,
+      newRowPosition,
+      newRowData,
+      editingRow,
+      editedData,
+      groupSearchTerm,
+      specSearchTerm
+    };
+    
+    console.log(" Saving to localStorage:", stateToSave);
+    localStorage.setItem('templateSettingsState', JSON.stringify(stateToSave));
+  }, [rows, templateName, discount, gstPercentage, termsConditions, addingRow, newRowPosition, newRowData, editingRow, editedData, groupSearchTerm, specSearchTerm, isDataLoaded]);
 
-
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (groupDropdownRef.current && !groupDropdownRef.current.contains(event.target)) {
-      setGroupDropdownOpen(false);
-    }
-    if (specDropdownRef.current && !specDropdownRef.current.contains(event.target)) {
-      setSpecDropdownOpen(false);
-    }
-  };
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
-
-
-const loadTemplateSettings = async () => {
-  try {
-    const res = await templateSettingsApi.getAllTemplates();
-
-    if (res.success && res.data.length > 0) {
-      const t = res.data[0];
-
-      setTemplateName(t.TempName);
-      setDiscount(t.DisAmount || 0);
-      setGstPercentage(18);
-
-      // ❗ Populate rows from backend - only if data exists
-      if (t.Rows && t.Rows.length > 0) {
-        setRows(
-          t.Rows.map((r, index) => ({
-            id: r.TempGroupId + '-' + index, // unique id
-            slNo: index + 1,
-            group: r.TempGroupName || '',    // use TempGroupName
-            specification: r.TempSpecName || '', 
-            dimension: r.Dimension || '',
-            noOfUnit: r.NoUnit || 0,
-            amount: r.Amount || 0,
-            hiddenAmount: r.HiddenAmount || 0
-          }))
-        );
-        // Disable adding mode when data is loaded
-        setAddingRow(false);
-        setNewRowPosition(null);
+  const loadMasters = async () => {
+    try {
+      // Load Groups
+      const resGroups = await templateSettingsApi.getTempGroups();
+      console.log(" Raw groups response:", resGroups);
+      const groupsArray = resGroups?.data || resGroups; 
+      setGroupMasters(groupsArray);
+      console.log(" groupMasters after setState:", groupsArray); 
+      // Load Specs
+      const resSpecs = await templateSettingsApi.getAllTemplateSpecifications();
+      console.log("Raw specs response:", resSpecs);
+      const specArray = resSpecs?.data || resSpecs;
+      setSpecMasters(specArray);
+      console.log(" specMasters after setState:", specArray);
+      
+      if (specArray && specArray.length > 0) {
+        console.log(" First spec item:", specArray[0]);
+        console.log(" Property check:", specArray[0].templateSpecificationName);
       }
 
-      setTermsConditions(
-        t.TermsAndConditions
-          ? t.TermsAndConditions.split("\n")
-          : []
+    } catch (err) {
+      console.error(" Error loading masters:", err);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (groupDropdownRef.current && !groupDropdownRef.current.contains(event.target)) {
+        setGroupDropdownOpen(false);
+      }
+      if (specDropdownRef.current && !specDropdownRef.current.contains(event.target)) {
+        setSpecDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const loadTemplateSettings = async () => {
+    try {
+      const savedState = localStorage.getItem('templateSettingsState');
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        console.log(" Restoring from localStorage:", parsed);
+        
+        setRows(parsed.rows || []);
+        setTemplateName(parsed.templateName || 'Office Container');
+        setDiscount(parsed.discount || 10000);
+        setGstPercentage(parsed.gstPercentage || 18);
+        setTermsConditions(parsed.termsConditions || []);
+        setAddingRow(parsed.addingRow !== undefined ? parsed.addingRow : true);
+        setNewRowPosition(parsed.newRowPosition || 'bottom');
+        setNewRowData(parsed.newRowData || {
+          group: '', 
+          groupId: null,
+          specification: '',
+          dimension: '',
+          noOfUnit: 0,
+          amount: 0,
+          hiddenAmount: 0
+        });
+        setEditingRow(parsed.editingRow || null);
+        setEditedData(parsed.editedData || {});
+        setGroupSearchTerm(parsed.groupSearchTerm || '');
+        setSpecSearchTerm(parsed.specSearchTerm || '');
+        
+        setIsDataLoaded(true);
+        return;
+      }
+
+      const res = await templateSettingsApi.getAllTemplates();
+
+      if (res.success && res.data.length > 0) {
+        const t = res.data[0];
+
+        setTemplateName(t.TempName);
+        setDiscount(t.DisAmount || 0);
+        setGstPercentage(18);
+
+        if (t.Rows && t.Rows.length > 0) {
+          setRows(
+            t.Rows.map((r, index) => ({
+              id: r.TempGroupId + '-' + index,
+              slNo: index + 1,
+              group: r.TempGroupName || '',
+              groupId: r.TempGroupId || null,
+              specification: r.TemplateSpecificationsName || '', 
+              dimension: r.Dimension || '',
+              noOfUnit: r.NoUnit || 0,
+              amount: r.Amount || 0,
+              hiddenAmount: r.HiddenAmount || 0
+            }))
+          );
+          setAddingRow(false);
+          setNewRowPosition(null);
+        }
+
+        setTermsConditions(
+          t.TermsAndConditions
+            ? t.TermsAndConditions.split("\n")
+            : []
+        );
+      }
+      
+      setIsDataLoaded(true);
+    } catch (err) {
+      console.error("Template load failed", err);
+      setIsDataLoaded(true);
+    }
+  };
+
+  const filteredGroupOptions = groupMasters.filter(g => {
+    if (!g || !g.TempGroupName) return false;
+    if (groupSearchTerm.trim() === '') return true;
+    return g.TempGroupName.toLowerCase().includes(groupSearchTerm.trim().toLowerCase());
+  });
+ 
+  //  NEW: Filter specs based on selected group (for new rows)
+  const getFilteredSpecsForNewRow = () => {
+    let specs = specMasters;
+    
+    // Filter by selected group if one is selected
+    if (newRowData.groupId) {
+      specs = specs.filter(s => s.templateGroupId === newRowData.groupId);
+      console.log(` Filtering specs for group ID ${newRowData.groupId}:`, specs);
+    }
+    
+    // Filter by search term
+    if (specSearchTerm.trim() !== '') {
+      specs = specs.filter(s => 
+        s.templateSpecificationName?.toLowerCase().includes(specSearchTerm.trim().toLowerCase())
       );
     }
-  } catch (err) {
-    console.error("Template load failed", err);
-  }
-};
+    
+    return specs;
+  };
 
+  //  NEW: Filter specs based on selected group (for editing rows)
+  const getFilteredSpecsForEditRow = () => {
+    let specs = specMasters;
+    
+    // Filter by selected group if one is selected
+    if (editedData.groupId) {
+      specs = specs.filter(s => s.templateGroupId === editedData.groupId);
+      console.log(`🔍 Filtering specs for group ID ${editedData.groupId}:`, specs);
+    }
+    
+    // Filter by search term
+    if (specSearchTerm.trim() !== '') {
+      specs = specs.filter(s => 
+        s.templateSpecificationName?.toLowerCase().includes(specSearchTerm.trim().toLowerCase())
+      );
+    }
+    
+    return specs;
+  };
 
-
-const filteredGroupOptions = groupMasters.filter(g =>
-  !groupSearchTerm || g.TempGroupName.toLowerCase().includes(groupSearchTerm.trim().toLowerCase())
-);
-
-
-
-const filteredSpecOptions = specMasters.filter(s =>
-  (s || '').toLowerCase().includes((specSearchTerm || '').trim().toLowerCase())
-);
-
-
-  // Recalculate serial numbers
   const recalculateSerialNumbers = (rowsArray) => {
     return rowsArray.map((row, index) => ({
       ...row,
@@ -155,54 +249,70 @@ const filteredSpecOptions = specMasters.filter(s =>
     }));
   };
 
-  const handleAddButtonClick = () => {
-  setAddingRow(true);
-  setNewRowPosition('bottom');
-  setNewRowData({
-    group: '',
-    specification: '',
-    dimension: '',
-    noOfUnit: 0,
-    amount: 0,
-    hiddenAmount: 0
-  });
+  const handleInsertRow = (afterRowId) => {
+    setAddingRow(true);
+    setNewRowPosition(afterRowId);
+    setOpenMenuIndex(null);
+    setNewRowData({
+      group: '',
+      groupId: null,
+      specification: '',
+      dimension: '',
+      noOfUnit: 0,
+      amount: 0,
+      hiddenAmount: 0
+    });
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
+  };
 
-  setGroupSearchTerm('');
-  setSpecSearchTerm('');
-
-  setOpenMenuIndex(null);
-};
-
- const handleInsertRow = (afterRowId) => {
-  setAddingRow(true);
-  setNewRowPosition(afterRowId);
-  setOpenMenuIndex(null);
-  setNewRowData({
-    group: '',
-    specification: '',
-    dimension: '',
-    noOfUnit: 0,
-    amount: 0,
-    hiddenAmount: 0
-  });
-  setGroupSearchTerm('');
-  setSpecSearchTerm('');
-
-  setOpenMenuIndex(null);
-};
-
+  //  NEW: Validation before saving
+  const validateRowData = (rowData) => {
+    const errors = [];
+    
+    if (!rowData.group || rowData.group.trim() === '') {
+      errors.push('Template Group');
+    }
+    if (!rowData.specification || rowData.specification.trim() === '') {
+      errors.push('Template Specification');
+    }
+    if (!rowData.dimension || rowData.dimension.trim() === '') {
+      errors.push('Dimension');
+    }
+    if (!rowData.noOfUnit || parseFloat(rowData.noOfUnit) <= 0) {
+      errors.push('No. of Unit (must be greater than 0)');
+    }
+    if (!rowData.amount || parseFloat(rowData.amount) <= 0) {
+      errors.push('Amount (must be greater than 0)');
+    }
+    if (rowData.hiddenAmount === '' || rowData.hiddenAmount === null || rowData.hiddenAmount === undefined) {
+      errors.push('Hidden Amount');
+    }
+    
+    return errors;
+  };
 
   const handleSaveNewRow = () => {
+    //  Validate all fields
+    const errors = validateRowData(newRowData);
+    
+    if (errors.length > 0) {
+      alert(` Please fill in the following required fields:\n\n${errors.join('\n')}`);
+      return;
+    }
+
     const row = {
-    id: Date.now(),
-    slNo: 0,
-    group: newRowData.group.trim(),
-    specification: newRowData.specification.trim(),
-    dimension: newRowData.dimension.trim(),
-    noOfUnit: parseFloat(newRowData.noOfUnit) || 0,
-    amount: parseFloat(newRowData.amount) || 0,
-    hiddenAmount: parseFloat(newRowData.hiddenAmount) || 0
-  };
+      id: Date.now(),
+      slNo: 0,
+      group: newRowData.group.trim(),
+      groupId: newRowData.groupId,
+      specification: newRowData.specification.trim(),
+      dimension: newRowData.dimension.trim(),
+      noOfUnit: parseFloat(newRowData.noOfUnit) || 0,
+      amount: parseFloat(newRowData.amount) || 0,
+      hiddenAmount: parseFloat(newRowData.hiddenAmount) || 0
+    };
+    
     let newRows;
     if (newRowPosition === 'bottom') {
       newRows = [...rows, row];
@@ -223,6 +333,7 @@ const filteredSpecOptions = specMasters.filter(s =>
     setNewRowPosition(null);
     setNewRowData({ 
       group: '',
+      groupId: null,
       specification: '',
       dimension: '',
       noOfUnit: 0,
@@ -241,22 +352,36 @@ const filteredSpecOptions = specMasters.filter(s =>
     setEditingRow(row.id);
     setEditedData({ ...row });
     setGroupSearchTerm(row.group);
-    setSpecSearchTerm(row.specification);
-    
+    setSpecSearchTerm(row.specification); 
     setOpenMenuIndex(null);
   };
 
   const handleSaveEdit = () => {
-  setRows(prevRows =>
-    prevRows.map(row =>
-      row.id === editingRow
-        ? { ...editedData, group: editedData.group.trim(), specification: editedData.specification.trim() }
-        : row
-    )
-  );
-  setEditingRow(null);
-  setEditedData({});
-};
+    // Validate all fields
+    const errors = validateRowData(editedData);
+    
+    if (errors.length > 0) {
+      alert(`Please fill in the following required fields:\n\n${errors.join('\n')}`);
+      return;
+    }
+
+    setRows(prevRows =>
+      prevRows.map(row =>
+        row.id === editingRow
+          ? { 
+              ...editedData, 
+              group: editedData.group.trim(), 
+              specification: editedData.specification.trim(),
+              dimension: editedData.dimension.trim()
+            }
+          : row
+      )
+    );
+    setEditingRow(null);
+    setEditedData({});
+    setGroupSearchTerm('');
+    setSpecSearchTerm('');
+  };
 
   const handleCancelEdit = () => {
     setEditingRow(null);
@@ -298,25 +423,37 @@ const filteredSpecOptions = specMasters.filter(s =>
     setEditedData(prev => ({ ...prev, [field]: value }));
   };
 
- const handleSelectGroup = (option, isEdit = false) => {
-  if (isEdit) {
-    updateEditedData('group', option);  // update row data
-    setGroupSearchTerm(option);         // update input value
-  } else {
-    setNewRowData({ ...newRowData, group: option });
-    setGroupSearchTerm(option);
-  }
-  setGroupDropdownOpen(false);  // close dropdown
-};
-
+  const handleSelectGroup = (groupName, groupId, isEdit = false) => {
+    if (isEdit) {
+      updateEditedData('group', groupName);
+      updateEditedData('groupId', groupId);
+      setGroupSearchTerm(groupName);
+      updateEditedData('specification', '');
+      setSpecSearchTerm('');
+    } else {
+      setNewRowData({ 
+        ...newRowData, 
+        group: groupName,
+        groupId: groupId,
+        specification: '',
+      });
+      setGroupSearchTerm(groupName);
+      setSpecSearchTerm('');
+    }
+    setGroupDropdownOpen(false);
+  };
 
   const handleSelectSpec = (option, isEdit = false) => {
+    const name = option.templateSpecificationName;
+    console.log("🔹 Selected spec option:", option);
+    console.log("🔹 Extracted name:", name);
+    
     if (isEdit) {
-      updateEditedData('specification', option);
-      setSpecSearchTerm(option);
+      updateEditedData('specification', name);
+      setSpecSearchTerm(name);
     } else {
-      setNewRowData({ ...newRowData, specification: option });
-      setSpecSearchTerm(option);
+      setNewRowData({ ...newRowData, specification: name });
+      setSpecSearchTerm(name);
     }
     setSpecDropdownOpen(false);
   };
@@ -367,51 +504,98 @@ const filteredSpecOptions = specMasters.filter(s =>
   const calculateNetAmount = () => {
     return calculateTaxableValue() + calculateGST();
   };
-const handleSubmit = async () => {
-  try {
-    const payload = {
-      TempName: templateName,
-      TotalAmount: calculateTotal(),
-      DisAmount: discount,
-      TaxableValue: calculateTaxableValue(),
-      GSTAmount: calculateGST(),
-      NetAmount: calculateNetAmount(),
-      TermsAndConditions: termsConditions, // 👈 ARRAY (backend joins)
 
-      rows: rows.map(r => ({
-        TempGroupId: groupMasters.find(g => g.TempGroupName === r.group)?.TempGroupId || null,
-        TempSpecId: null, // spec later
-        Dimension: r.dimension,
-        NoUnit: r.noOfUnit,
-        Amount: r.amount,
-        HiddenAmount: r.hiddenAmount
-      }))
-    };
+  // 🔹 NEW: Format number with Indian comma system
+  const formatIndianNumber = (num) => {
+    if (!num && num !== 0) return '0.00';
+    const number = parseFloat(num);
+    return number.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
 
-    await templateSettingsApi.createTemplate(payload);
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        TempName: templateName,
+        TotalAmount: calculateTotal(),
+        DisAmount: discount,
+        TaxableValue: calculateTaxableValue(),
+        GSTAmount: calculateGST(),
+        NetAmount: calculateNetAmount(),
+        TermsAndConditions: termsConditions,
 
-    alert("Template saved successfully ✅"); 
-  } catch (err) {
-    console.error(err);
-    alert("Save failed ❌");
-  }
-};
+        rows: rows.map(r => {
+          const groupMatch = groupMasters.find(g => g.TempGroupName === r.group);
+          const specMatch = specMasters.find(s => s.templateSpecificationName === r.specification);
+          
+          console.log(" Mapping row:", r);
+          console.log(" Group match:", groupMatch);
+          console.log(" Spec match:", specMatch);
 
+          return {
+            TempGroupId: groupMatch?.TempGroupId || r.groupId || null,
+            TempSpecId: specMatch?.TempSpecId || null,
+            Dimension: r.dimension,
+            NoUnit: r.noOfUnit,
+            Amount: r.amount,
+            HiddenAmount: r.hiddenAmount
+          };
+        })
+      };
 
+      console.log(" Final payload:", JSON.stringify(payload, null, 2));
 
+      await templateSettingsApi.createTemplate(payload);
+
+      // 🔹 Clear localStorage FIRST
+      console.log(" Clearing localStorage after submit");
+      localStorage.removeItem('templateSettingsState');
+      alert("Template saved successfully ");
+
+      setRows([]);
+      setTemplateName('Office Container');
+      setDiscount(10000);
+      setGstPercentage(18);
+      setTermsConditions([]);
+      setAddingRow(true);
+      setNewRowPosition('bottom');
+      setNewRowData({
+        group: '',
+        groupId: null,
+        specification: '',
+        dimension: '',
+        noOfUnit: 0,
+        amount: 0,
+        hiddenAmount: 0
+      });
+      setEditingRow(null);
+      setEditedData({});
+      setGroupSearchTerm('');
+      setSpecSearchTerm('');
+      setCurrentPage(1);
+      setIsDataLoaded(false);
+
+    } catch (err) {
+      console.error(" Submit error:", err);
+      alert("Save failed ");
+    }
+  };
+ 
   return (
     <div className="page-container">
       <div className="content-wrapper"> 
         <div className="main-section">
           <div className="content-card">
-           <div className="page-header">
+            <div className="page-header">
               <h1 className="page-title">Template Settings</h1>
               <button 
                 onClick={() => navigate(-1)} 
                 className="page-back-btn"
                 aria-label="Go back"
               >
-                <Undo2   className="page-back-icon" />
+                <Undo2 className="page-back-icon" />
               </button>
             </div>
 
@@ -451,18 +635,17 @@ const handleSubmit = async () => {
                           {editingRow === row.id ? (
                             <div ref={groupDropdownRef} className="relative">
                               <div className="relative">
-                               <input
-                                type="text"
-                                value={editingRow === row.id ? groupSearchTerm : row.group}
-                                onChange={(e) => {
-                                  setGroupSearchTerm(e.target.value);
-                                  setGroupDropdownOpen(true); // show filtered options
-                                }}
-                                onFocus={() => setGroupDropdownOpen(true)}
-                                placeholder="Type or select..."
-                                className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
-                              />
-
+                                <input
+                                  type="text"
+                                  value={groupSearchTerm}
+                                  onChange={(e) => {
+                                    setGroupSearchTerm(e.target.value);
+                                    setGroupDropdownOpen(true);
+                                  }}
+                                  onFocus={() => setGroupDropdownOpen(true)}
+                                  placeholder="Type or select..."
+                                  className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
+                                />
                                 <ChevronDown 
                                   size={16} 
                                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -472,23 +655,22 @@ const handleSubmit = async () => {
                                 <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                                   {filteredGroupOptions.length > 0 ? (
                                     filteredGroupOptions.map((option, idx) => (
-                                    <div
-                                      key={option.TempGroupId}
-                                      onClick={() => handleSelectGroup(option.TempGroupName, true)}
-                                      onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
-                                      onMouseLeave={() => setHoveredGroup(null)}
-                                      className={`dropdown-item-option ${
-                                        hoveredGroup === option.TempGroupName
-                                          ? 'dropdown-item-hovered'
-                                          : editedData.group === option.TempGroupName
-                                          ? 'dropdown-item-selected'
-                                          : 'dropdown-item-default'
-                                      }`}
-                                    >
-                                      {option.TempGroupName}
-                                    </div>
-                                  ))
-
+                                      <div
+                                        key={`edit-group-${option.TempGroupId}-${idx}`}
+                                        onClick={() => handleSelectGroup(option.TempGroupName, option.TempGroupId, true)}
+                                        onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
+                                        onMouseLeave={() => setHoveredGroup(null)}
+                                        className={`dropdown-item-option ${
+                                          hoveredGroup === option.TempGroupName
+                                            ? 'dropdown-item-hovered'
+                                            : editedData.group === option.TempGroupName
+                                            ? 'dropdown-item-selected'
+                                            : 'dropdown-item-default'
+                                        }`}
+                                      >
+                                        {option.TempGroupName}
+                                      </div>
+                                    ))
                                   ) : (
                                     <div className="dropdown-no-matches">No matches found</div>
                                   )}
@@ -500,7 +682,7 @@ const handleSubmit = async () => {
                           )}
                         </td>
 
-                        {/* SPECIFICATION */}
+                        {/* SPECIFICATION - 🔹 FILTERED BY GROUP */}
                         <td className="table-cell spec-column">
                           {editingRow === row.id ? (
                             <div ref={specDropdownRef} className="relative">
@@ -522,28 +704,34 @@ const handleSubmit = async () => {
                                 />
                               </div>
                               {specDropdownOpen && (
-                                <div className="dropdown-menu max-w-[200px]" style={{ zIndex: 9999 }}>
-                                  {filteredSpecOptions.length > 0 ? (
-                                    filteredSpecOptions.map((option, idx) => (
-                                      <div
-                                        key={idx}
-                                        onClick={() => handleSelectSpec(option, true)}
-                                        onMouseEnter={() => setHoveredSpec(option)}
-                                        onMouseLeave={() => setHoveredSpec(null)}
-                                        className={`dropdown-item-option ${
-                                          hoveredSpec === option
-                                             ? 'dropdown-item-hovered' 
-                                             : editedData.specification === option 
-                                             ? 'dropdown-item-selected' 
-                                             : 'dropdown-item-default'
-                                        }`}
-                                      >
-                                        {option}
+                                <div className="dropdown-menu max-w-[300px]" style={{ zIndex: 9999 }}>
+                                  {(() => {
+                                    const filteredSpecs = getFilteredSpecsForEditRow();
+                                    return filteredSpecs.length > 0 ? (
+                                      filteredSpecs.map((option) => (
+                                        <div
+                                          key={option.TempSpecId}
+                                          onClick={() => handleSelectSpec(option, true)}
+                                          onMouseEnter={() => setHoveredSpec(option.templateSpecificationName)}
+                                          onMouseLeave={() => setHoveredSpec(null)}
+                                          className={`dropdown-item-option ${
+                                            hoveredSpec === option.templateSpecificationName
+                                              ? 'dropdown-item-hovered' 
+                                              : editedData.specification === option.templateSpecificationName
+                                              ? 'dropdown-item-selected' 
+                                              : 'dropdown-item-default'
+                                          }`}
+                                          style={{ padding: '8px', cursor: 'pointer' }}
+                                        >
+                                          {option.templateSpecificationName || 'NO NAME'}
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="dropdown-no-matches">
+                                        {editedData.groupId ? 'No specifications for this group' : 'Select a group first'}
                                       </div>
-                                    ))
-                                  ) : (
-                                    <div className="dropdown-no-matches">No matches found</div>
-                                  )}
+                                    );
+                                  })()}
                                 </div>
                               )}
                             </div>
@@ -581,30 +769,30 @@ const handleSubmit = async () => {
                         </td>
 
                         {/* AMOUNT */}
-                        <td className="table-cell">
+                        <td className="table-cell text-right">
                           {editingRow === row.id ? (
                             <input
                               type="number"
                               value={editedData.amount}
                               onChange={(e) => updateEditedData('amount', parseFloat(e.target.value) || 0)}
-                              className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm text-right"
                             />
                           ) : (
-                            <span>₹ {row.amount.toFixed(2)}</span>
+                            <span>₹ {formatIndianNumber(row.amount)}</span>
                           )}
                         </td>
 
                         {/* HIDDEN AMOUNT */}
-                        <td className="table-cell">
+                        <td className="table-cell text-right">
                           {editingRow === row.id ? (
                             <input
                               type="number"
                               value={editedData.hiddenAmount}
                               onChange={(e) => updateEditedData('hiddenAmount', parseFloat(e.target.value) || 0)}
-                              className="w-24 px-2 py-1.5 border border-gray-300 rounded text-sm"
+                              className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm text-right"
                             />
                           ) : (
-                            <span>₹ {row.hiddenAmount.toFixed(2)}</span>
+                            <span>₹ {formatIndianNumber(row.hiddenAmount)}</span>
                           )}
                         </td>
 
@@ -612,25 +800,16 @@ const handleSubmit = async () => {
                         <td className="table-cell-center">
                           {editingRow === row.id ? (
                             <div className="flex gap-2 justify-center">
-                              <button
-                                onClick={handleSaveEdit}
-                                title="Save"
-                              >
-                                <CheckCircle size={18}  className="cursor-pointer text-green-600 hover:opacity-70"/>
+                              <button onClick={handleSaveEdit} title="Save">
+                                <CheckCircle size={18} className="cursor-pointer text-green-600 hover:opacity-70"/>
                               </button>
-                              <button
-                                onClick={handleCancelEdit}
-                                 title="Cancel"
-                              >
+                              <button onClick={handleCancelEdit} title="Cancel">
                                 <XCircle size={18} className="cursor-pointer text-red-600 hover:opacity-70"/>
                               </button>
                             </div>
                           ) : (
                             <div className="table-actions relative">
-                              <button
-                                onClick={() => toggleMenu(index)}
-                                className="btn-action"
-                              >
+                              <button onClick={() => toggleMenu(index)} className="btn-action">
                                 <Menu size={18} className="text-gray-700" />
                               </button>
 
@@ -693,7 +872,7 @@ const handleSubmit = async () => {
                         </td>
                       </tr>
 
-                      {/* Insert new row after this row if + icon was clicked */}
+                      {/* Insert new row after clicked row */}
                       {addingRow && newRowPosition === row.id && (
                         <tr className="table-row bg-blue-50">
                           <td className="table-cell font-bold text-blue-600">
@@ -725,17 +904,16 @@ const handleSubmit = async () => {
                                   {filteredGroupOptions.length > 0 ? (
                                     filteredGroupOptions.map((option, idx) => (
                                       <div
-                                       key={option.TempGroupId} 
-                                        onClick={() => handleSelectGroup(option.TempGroupName, false)}
+                                        key={`insert-group-${option.TempGroupId}-${idx}`}
+                                        onClick={() => handleSelectGroup(option.TempGroupName, option.TempGroupId, false)}
                                         onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
                                         onMouseLeave={() => setHoveredGroup(null)}
                                         className={`dropdown-item-option ${
-                                            hoveredGroup === option.TempGroupName
-                                              ? 'dropdown-item-hovered'
-                                              : newRowData.group === option.TempGroupName
-                                              ? 'dropdown-item-selected'
-                                              : 'dropdown-item-default'
-
+                                          hoveredGroup === option.TempGroupName
+                                            ? 'dropdown-item-hovered'
+                                            : newRowData.group === option.TempGroupName
+                                            ? 'dropdown-item-selected'
+                                            : 'dropdown-item-default'
                                         }`}
                                       >
                                         {option.TempGroupName}
@@ -749,7 +927,7 @@ const handleSubmit = async () => {
                             </div>
                           </td>
 
-                          {/* SPECIFICATION */}
+                          {/* SPECIFICATION - 🔹 FILTERED BY GROUP */}
                           <td className="table-cell">
                             <div ref={specDropdownRef} className="relative">
                               <div className="relative">
@@ -771,27 +949,32 @@ const handleSubmit = async () => {
                               </div>
                               {specDropdownOpen && (
                                 <div className="dropdown-menu" style={{ zIndex: 9999 }}>
-                                  {filteredSpecOptions.length > 0 ? (
-                                    filteredSpecOptions.map((option, idx) => (
-                                      <div
-                                        key={idx}
-                                        onClick={() => handleSelectSpec(option, false)}
-                                        onMouseEnter={() => setHoveredSpec(option)}
-                                        onMouseLeave={() => setHoveredSpec(null)}
-                                        className={`dropdown-item-option ${
-                                          hoveredSpec === option
-                                             ? 'dropdown-item-hovered' 
-                                             : newRowData.specification === option 
-                                             ? 'dropdown-item-selected' 
-                                             : 'dropdown-item-default'
-                                        }`}
-                                      >
-                                        {option}
+                                  {(() => {
+                                    const filteredSpecs = getFilteredSpecsForNewRow();
+                                    return filteredSpecs.length > 0 ? (
+                                      filteredSpecs.map((option) => (
+                                        <div
+                                          key={option.TempSpecId}
+                                          onClick={() => handleSelectSpec(option, false)}
+                                          onMouseEnter={() => setHoveredSpec(option.templateSpecificationName)}
+                                          onMouseLeave={() => setHoveredSpec(null)}
+                                          className={`dropdown-item-option ${
+                                            hoveredSpec === option.templateSpecificationName
+                                              ? 'dropdown-item-hovered' 
+                                              : newRowData.specification === option.templateSpecificationName
+                                              ? 'dropdown-item-selected' 
+                                              : 'dropdown-item-default'
+                                          }`}
+                                        >
+                                          {option.templateSpecificationName}
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="dropdown-no-matches">
+                                        {newRowData.groupId ? 'No specifications for this group' : 'Select a group first'}
                                       </div>
-                                    ))
-                                  ) : (
-                                    <div className="dropdown-no-matches">No matches found</div>
-                                  )}
+                                    );
+                                  })()}
                                 </div>
                               )}
                             </div>
@@ -844,16 +1027,10 @@ const handleSubmit = async () => {
                           {/* ACTIONS */}
                           <td className="table-cell-center">
                             <div className="flex gap-2 justify-center">
-                              <button
-                                onClick={handleSaveNewRow}
-                                title="Save"
-                              >
-                                <CheckCircle size={18}  className="cursor-pointer text-green-600 hover:opacity-70"/>
+                              <button onClick={handleSaveNewRow} title="Save">
+                                <CheckCircle size={18} className="cursor-pointer text-green-600 hover:opacity-70"/>
                               </button>
-                              <button
-                                onClick={handleCancelNewRow}
-                                title="Cancel"
-                              >
+                              <button onClick={handleCancelNewRow} title="Cancel">
                                 <XCircle size={18} className="cursor-pointer text-red-600 hover:opacity-70" />
                               </button>
                             </div>
@@ -863,7 +1040,7 @@ const handleSubmit = async () => {
                     </React.Fragment>
                   ))}
 
-                  {/* Add row at bottom when "Add Row" button is clicked */}
+                  {/* Default bottom row */}
                   {addingRow && newRowPosition === 'bottom' && (
                     <tr className="table-row bg-blue-50">
                       <td className="table-cell font-bold text-blue-600">
@@ -881,11 +1058,7 @@ const handleSubmit = async () => {
                                 setGroupSearchTerm(e.target.value);
                                 setGroupDropdownOpen(true);
                               }}
-                              onFocus={(e) => {
-                                  e.stopPropagation();
-                                  setGroupDropdownOpen(true);
-                                }}
-
+                              onFocus={() => setGroupDropdownOpen(true)}
                               placeholder="Type or select..."
                               className="w-full px-2 py-1.5 pr-8 border border-gray-300 rounded text-sm"
                             />
@@ -897,10 +1070,10 @@ const handleSubmit = async () => {
                           {groupDropdownOpen && (
                             <div className="dropdown-menu" style={{ zIndex: 9999 }}>
                               {filteredGroupOptions.length > 0 ? (
-                                filteredGroupOptions.map((option) => (
+                                filteredGroupOptions.map((option, idx) => (
                                   <div
-                                    key={option.TempGroupId}
-                                    onClick={() => handleSelectGroup(option.TempGroupName, false)}
+                                    key={`bottom-group-${option.TempGroupId}-${idx}`}
+                                    onClick={() => handleSelectGroup(option.TempGroupName, option.TempGroupId, false)}
                                     onMouseEnter={() => setHoveredGroup(option.TempGroupName)}
                                     onMouseLeave={() => setHoveredGroup(null)}
                                     className={`dropdown-item-option ${
@@ -917,13 +1090,12 @@ const handleSubmit = async () => {
                               ) : (
                                 <div className="dropdown-no-matches">No matches found</div>
                               )}
-
                             </div>
                           )}
                         </div>
                       </td>
 
-                      {/* SPECIFICATION */}
+                      {/* SPECIFICATION - 🔹 FILTERED BY GROUP */}
                       <td className="table-cell">
                         <div ref={specDropdownRef} className="relative">
                           <div className="relative">
@@ -945,27 +1117,32 @@ const handleSubmit = async () => {
                           </div>
                           {specDropdownOpen && (
                             <div className="dropdown-menu" style={{ zIndex: 9999 }}>
-                              {filteredSpecOptions.length > 0 ? (
-                                filteredSpecOptions.map((option, idx) => (
-                                  <div
-                                    key={idx}
-                                    onClick={() => handleSelectSpec(option, false)}
-                                    onMouseEnter={() => setHoveredSpec(option)}
-                                    onMouseLeave={() => setHoveredSpec(null)}
-                                    className={`dropdown-item-option ${
-                                      hoveredSpec === option
-                                         ? 'dropdown-item-hovered' 
-                                         : newRowData.specification === option 
-                                         ? 'dropdown-item-selected' 
-                                         : 'dropdown-item-default'
-                                    }`}
-                                      >
-                                    {option}
+                              {(() => {
+                                const filteredSpecs = getFilteredSpecsForNewRow();
+                                return filteredSpecs.length > 0 ? (
+                                  filteredSpecs.map((option) => (
+                                    <div
+                                      key={option.TempSpecId}
+                                      onClick={() => handleSelectSpec(option, false)}
+                                      onMouseEnter={() => setHoveredSpec(option.templateSpecificationName)}
+                                      onMouseLeave={() => setHoveredSpec(null)}
+                                      className={`dropdown-item-option ${
+                                        hoveredSpec === option.templateSpecificationName
+                                          ? 'dropdown-item-hovered' 
+                                          : newRowData.specification === option.templateSpecificationName
+                                          ? 'dropdown-item-selected' 
+                                          : 'dropdown-item-default'
+                                      }`}
+                                    >
+                                      {option.templateSpecificationName}
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="dropdown-no-matches">
+                                    {newRowData.groupId ? 'No specifications for this group' : 'Select a group first'}
                                   </div>
-                                ))
-                              ) : (
-                                <div className="dropdown-no-matches">No matches found</div>
-                              )}
+                                );
+                              })()}
                             </div>
                           )}
                         </div>
@@ -1018,16 +1195,10 @@ const handleSubmit = async () => {
                       {/* ACTIONS */}
                       <td className="table-cell-center">
                         <div className="flex gap-2 justify-center">
-                          <button
-                            onClick={handleSaveNewRow}
-                            title="Save"
-                          >
-                            <CheckCircle size={18}  className="cursor-pointer text-green-600 hover:opacity-70" />
+                          <button onClick={handleSaveNewRow} title="Save">
+                            <CheckCircle size={18} className="cursor-pointer text-green-600 hover:opacity-70" />
                           </button>
-                          <button
-                            onClick={handleCancelNewRow}
-                            title="Cancel"
-                          >
+                          <button onClick={handleCancelNewRow} title="Cancel">
                             <XCircle size={18} className="cursor-pointer text-red-600 hover:opacity-70"/>
                           </button>
                         </div>
@@ -1036,20 +1207,9 @@ const handleSubmit = async () => {
                   )}
                 </tbody>
               </table>
-            </div>
+            </div> 
 
-            {/* Add Row Button */}
-            <div className="flex justify-end mb-2 mt-2">
-              <button
-                onClick={handleAddButtonClick}
-                className="btn-all flex items-center gap-2"
-              >
-                <Plus size={18} />
-                Add Row
-              </button>
-            </div>
-
-            {/* Pagination - LeadOwner style */}
+            {/* Pagination */}
             {rows.length > rowsPerPage && (
               <div className="pagination-container">
                 <button
@@ -1095,8 +1255,8 @@ const handleSubmit = async () => {
                   <div className="filter-label">Total</div>
                   <input
                     readOnly
-                    value={`₹ ${calculateTotal().toFixed(2)}`}
-                    className="filter-input bg-transparent"
+                    value={`₹ ${formatIndianNumber(calculateTotal())}`}
+                    className="filter-input bg-transparent "
                   />
                 </div>
 
@@ -1106,7 +1266,7 @@ const handleSubmit = async () => {
                     type="number"
                     value={discount}
                     onChange={(e) => setDiscount(Number(e.target.value) || 0)}
-                    className="filter-input bg-transparent"
+                    className="filter-input bg-transparent "
                   />
                 </div>
 
@@ -1114,8 +1274,8 @@ const handleSubmit = async () => {
                   <div className="filter-label">Taxable Value</div>
                   <input
                     readOnly
-                    value={`₹ ${calculateTaxableValue().toFixed(2)}`}
-                    className="filter-input bg-transparent"
+                    value={`₹ ${formatIndianNumber(calculateTaxableValue())}`}
+                    className="filter-input bg-transparent "
                   />
                 </div>
 
@@ -1125,7 +1285,7 @@ const handleSubmit = async () => {
                     type="number"
                     value={gstPercentage}
                     onChange={(e) => setGstPercentage(Number(e.target.value) || 0)}
-                    className="filter-input bg-transparent"
+                    className="filter-input bg-transparent "
                   />
                 </div>
               </div>
@@ -1134,8 +1294,8 @@ const handleSubmit = async () => {
                 <div className="filter-label">Net Amount</div>
                 <input
                   readOnly
-                  value={`₹ ${calculateNetAmount().toFixed(2)}`}
-                  className="filter-input bg-transparent"
+                  value={`₹ ${formatIndianNumber(calculateNetAmount())}`}
+                  className="filter-input bg-transparent "
                 />
               </div>
             </div>
@@ -1165,7 +1325,7 @@ const handleSubmit = async () => {
               </div>
               <div className="p-4 text-xs text-gray-500 leading-relaxed">
                 {termsConditions.map((term, index) => (
-                  <div key={index} className="mb-2 flex items-start gap-2">
+                  <div key={`term-${index}-${term}`} className="mb-2 flex items-start gap-2">
                     {editingTermIndex === index ? (
                       <>
                         <textarea
@@ -1210,13 +1370,10 @@ const handleSubmit = async () => {
                 <span>✓</span>
                 <span>Submit</span>
               </button>
-            </div>
-
-           
             </div> 
           </div>
         </div> 
       </div>
-    
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5000/api";
+import { BASE_URL } from "./baseurl";
+const API_BASE_URL = `${BASE_URL}/template-settings`;
 
 const templateSettingsApi = {
 
@@ -48,6 +48,12 @@ const templateSettingsApi = {
     return response.data;
   },
 
+getAllTemplateSpecifications: async () => {
+  const response = await axios.get(`${API_BASE_URL}/template-specifications`);
+  return response.data;
+},
+
+
 };
 
-export default templateSettingsApi;
+export default templateSettingsApi; 

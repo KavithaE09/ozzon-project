@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown,Send,Undo2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { createLead } from "../../api/leadApi";
+import { useLocation, useParams,useNavigate } from 'react-router-dom';
+import { 
+  createLead,
+  getAllLeads,
+  getLeadById,
+  updateLead,
+  deleteLead
+} from "../../api/leadApi";
+
 import {
   getAllLeadOwners,
   getAllLeadStatuses,
@@ -35,12 +42,17 @@ export default function LeadCreationForm(){
   ];
 
   const navigate = useNavigate();
+  const { id } = useParams();
+  const location = useLocation();
   const [leadOwners, setLeadOwners] = useState([]);
   const [leadStatuses, setLeadStatuses] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
   const leadOwnerDropdownRef = useRef(null);
   const leadStatusDropdownRef = useRef(null);
   const leadSourceDropdownRef = useRef(null);
+  const [leads, setLeads] = useState([]);
+  const [editId, setEditId] = useState(null);
+
 
   const [formData, setFormData] = useState({
     leadOwner: '',
@@ -74,9 +86,61 @@ export default function LeadCreationForm(){
   const [isLeadSourceOpen, setIsLeadSourceOpen] = useState(false);
   const [hoveredLeadSource, setHoveredLeadSource] = useState(null);
 
-  useEffect(() => {
+ useEffect(() => {
   loadMasters();
+  fetchLeads();
 }, []);
+
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const shouldPrint = params.get("print");
+
+  if (shouldPrint === "true") {
+    setTimeout(() => {
+      window.print();
+    }, 1000);   
+  }
+}, [location]);
+
+
+useEffect(() => {
+  if (id) {
+    loadLead();
+  }
+}, [id]);
+
+const loadLead = async () => {
+  try {
+    const res = await getLeadById(id);
+    const lead = res.data.data || res.data;
+
+    setEditId(lead.LeadId);
+
+    setFormData({
+      leadOwner: lead.LeadOwnerId,
+      company: lead.CompanyName,
+      firstName: lead.FirstName,
+      lastName: lead.LastName,
+      leadName: lead.LeadName,
+      title: lead.Title,
+      email: lead.Email,
+      phoneNo: lead.PhoneNo,
+      mobileNo: lead.MobileNo,
+      website: lead.Website,
+      city: lead.City,
+      leadStatus: lead.LeadStatusId,
+      leadSource: lead.LeadSourceId,
+      requirements: lead.Requirements,
+      otherRequirements: lead.OtherRequirements,
+      leadPriority: lead.LeadPriority,
+      brokerName: lead.BrokerName,
+      remark: lead.Remark,
+      description: ""
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const loadMasters = async () => {
   try {
@@ -117,6 +181,14 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
   setFormData({ ...formData, leadOwner: option.LeadOwnerId });
   setLeadOwnerSearch(option.LeadOwnerName);
   setIsLeadOwnerOpen(false);
+};
+const fetchLeads = async () => {
+  try {
+    const res = await getAllLeads();
+    setLeads(res.data);
+  } catch (err) {
+    console.log("Fetch Leads Error:", err);
+  }
 };
 
 
@@ -166,50 +238,87 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
     !formData.title ||
     !formData.company ||
     !formData.firstName ||
-    !formData.leadName ||
-    !formData.phoneNo ||
-    !formData.website ||
-    !formData.requirements ||
-    !formData.otherRequirements ||
-    !formData.brokerName
+    !formData.leadName
   ) {
     alert("Please fill all required fields");
     return;
   }
 
   try {
-   const payload = {
-  LeadNo: "LD" + Date.now(),
-  Title: formData.title,
-  CompanyName: formData.company,
-  FirstName: formData.firstName,
-  LastName: formData.lastName,
-  LeadName: formData.leadName,
-  Email: formData.email,
-  PhoneNo: formData.phoneNo,
-  MobileNo: formData.mobileNo,
-  Website: formData.website,
-  City: formData.city,
-  Requirements: formData.requirements,
-  OtherRequirements: formData.otherRequirements,
-  BrokerName: formData.brokerName,
-  LeadPriority: formData.leadPriority,
-  Remark: formData.remark,
+    const payload = {
+      LeadNo: editId ? undefined : "LD" + Date.now(),
+      Title: formData.title,
+      CompanyName: formData.company,
+      FirstName: formData.firstName,
+      LastName: formData.lastName,
+      LeadName: formData.leadName,
+      Email: formData.email,
+      PhoneNo: formData.phoneNo,
+      MobileNo: formData.mobileNo,
+      Website: formData.website,
+      City: formData.city,
+      Requirements: formData.requirements,
+      OtherRequirements: formData.otherRequirements,
+      BrokerName: formData.brokerName,
+      LeadPriority: formData.leadPriority,
+      Remark: formData.remark,
+      LeadOwnerId: formData.leadOwner,
+      LeadStatusId: formData.leadStatus,
+      LeadSourceId: formData.leadSource
+    };
 
-  LeadOwnerId: formData.leadOwner,
-  LeadStatusId: formData.leadStatus,
-  LeadSourceId: formData.leadSource
-};
-
-
-    await createLead(payload);
-
-    alert("Lead Created Successfully ✅");
+    if (editId) {
+      await updateLead(editId, payload);
+      alert("Lead Updated Successfully ");
+    } else {
+      await createLead(payload);
+      alert("Lead Created Successfully ");
+    }
 
     handleClear();
+    fetchLeads();
 
   } catch (error) {
-    alert("Lead Creation Failed ❌");
+    console.log(error);
+    alert("Operation Failed ");
+  }
+};
+
+const handleEdit = (lead) => {
+  setEditId(lead.id);
+
+  setFormData({
+    leadOwner: lead.LeadOwnerId,
+    company: lead.CompanyName,
+    firstName: lead.FirstName,
+    lastName: lead.LastName,
+    leadName: lead.LeadName,
+    title: lead.Title,
+    email: lead.Email,
+    phoneNo: lead.PhoneNo,
+    mobileNo: lead.MobileNo,
+    website: lead.Website,
+    city: lead.City,
+    leadStatus: lead.LeadStatusId,
+    leadSource: lead.LeadSourceId,
+    requirements: lead.Requirements,
+    otherRequirements: lead.OtherRequirements,
+    leadPriority: lead.LeadPriority,
+    brokerName: lead.BrokerName,
+    remark: lead.Remark,
+    description: ""
+  });
+};
+
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this lead?")) return;
+
+  try {
+    await deleteLead(id);
+    alert("Lead Deleted");
+    fetchLeads();
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -240,6 +349,8 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
     setLeadOwnerSearch('');
     setLeadStatusSearch('');
     setLeadSourceSearch('');
+    setEditId(null);
+
   };
 
   const handleBack = () => {
@@ -444,8 +555,11 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
 
             
             {/* Form Grid - Responsive */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6">
-              {/* Lead Owner Dropdown */}
+                  <div className="lead-form-container">
+                  
+            
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-6">
+{/* Lead Owner Dropdown */}
               <div ref={leadOwnerDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Owner</label>
                 <div className="dropdown-wrapper">
@@ -486,58 +600,127 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
                   </div>
                 )}
               </div>
+{/* ================= COMPANY ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Company</label>
+  <input
+    type="text"
+    name="company"
+    value={formData.company}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Company : {formData.company}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Company</label>
-                <input type="text" name="company" value={formData.company} onChange={handleChange} placeholder="Logic-Tech" className="filter-input" />
-              </div>
+{/* ================= FIRST NAME ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">First Name</label>
+  <input
+    type="text"
+    name="firstName"
+    value={formData.firstName}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">First Name : {formData.firstName}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Raneesh" className="filter-input" />
-              </div>
+{/* ================= LAST NAME ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Last Name</label>
+  <input
+    type="text"
+    name="lastName"
+    value={formData.lastName}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Last Name : {formData.lastName}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Kumar" className="filter-input" />
-              </div>
+{/* ================= LEAD NAME ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Lead Name</label>
+  <input
+    type="text"
+    name="leadName"
+    value={formData.leadName}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Lead Name : {formData.leadName}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Lead Name</label>
-                <input type="text" name="leadName" value={formData.leadName} onChange={handleChange} placeholder="Ranee" className="filter-input" />
-              </div>
+{/* ================= TITLE ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Title</label>
+  <input
+    type="text"
+    name="title"
+    value={formData.title}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Title : {formData.title}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Figma-Design" className="filter-input" />
-              </div>
+{/* ================= EMAIL ================= */}
+<div className="filter-grid-blue">
+  <label className="filter-label">Email</label>
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Email : {formData.email}</div>
+</div>
 
-              <div className="filter-grid-blue">
-                <label className="filter-label">Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Nathan@gmail.com" className="filter-input" />
-              </div>
+{/* ================= PHONE NO ================= */}
+<div className="filter-grid-blue">
+  <label className="filter-label">Phone No</label>
+  <input
+    type="text"
+    name="phoneNo"
+    value={formData.phoneNo}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Phone No : {formData.phoneNo}</div>
+</div>
 
-              <div className="filter-grid-blue">
-                <label className="filter-label">Phone No</label>
-                <input type="text" name="phoneNo" value={formData.phoneNo} onChange={handleChange} placeholder="2481-7764" className="filter-input" />
-              </div>
+{/* ================= MOBILE NO ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Mobile No</label>
+  <input
+    type="text"
+    name="mobileNo"
+    value={formData.mobileNo}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Mobile No : {formData.mobileNo}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Mobile No</label>
-                <input type="text" name="mobileNo" value={formData.mobileNo} onChange={handleChange} placeholder="9638527410" className="filter-input" />
-              </div>
-
-              <div className="filter-grid-blue">
+<div className="filter-grid-blue">
                 <label className="filter-label">Website</label>
                 <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="WWW.com" className="filter-input" />
               </div>
-
-              <div className="filter-grid-red">
-                <label className="filter-label">City</label>
-                <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Tirupatpur" className="filter-input" />
-              </div>
-
-              {/* Lead Status Dropdown */}
+{/* ================= CITY ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">City</label>
+  <input
+    type="text"
+    name="city"
+    value={formData.city}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">City : {formData.city}</div>
+</div>
+{/* Lead Status Dropdown */}
               <div ref={leadStatusDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Status</label>
                 <div className="dropdown-wrapper">
@@ -578,8 +761,7 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
                   </div>
                 )}
               </div>
-
-              {/* Lead Source Dropdown */}
+               {/* Lead Source Dropdown */}
               <div ref={leadSourceDropdownRef} className="filter-grid-red">
                 <label className="filter-label">Lead Source</label>
                 <div className="dropdown-wrapper">
@@ -620,34 +802,57 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
                   </div>
                 )}
               </div>
+{/* ================= REQUIREMENTS ================= */}
+<div className="filter-grid-red">
+  <label className="filter-label">Requirements</label>
+  <input
+    type="text"
+    name="requirements"
+    value={formData.requirements}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Requirements : {formData.requirements}</div>
+</div>
 
-              <div className="filter-grid-red">
-                <label className="filter-label">Requirements</label>
-                <input type="text" name="requirements" value={formData.requirements} onChange={handleChange} placeholder="House Model" className="filter-input" />
-              </div>
-
-              <div className="filter-grid-blue">
-                <label className="filter-label">Other Requirements</label>
-                <input type="text" name="otherRequirements" value={formData.otherRequirements} onChange={handleChange} placeholder="Reffer Container" className="filter-input" />
-              </div>
-
-              <div className="filter-grid-red">
+{/* ================= OTHER REQUIREMENTS ================= */}
+<div className="filter-grid-blue">
+  <label className="filter-label">Other Requirements</label>
+  <input
+    type="text"
+    name="otherRequirements"
+    value={formData.otherRequirements}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">
+    Other Requirements : {formData.otherRequirements}
+  </div>
+</div> 
+<div className="filter-grid-red">
                 <label className="filter-label">Lead Priority</label>
                 <input type="text" name="leadPriority" value={formData.leadPriority} onChange={handleChange} placeholder="Warm" className="filter-input" />
               </div>
-
               <div className="filter-grid-red">
                 <label className="filter-label">Broker Name</label>
                 <input type="text" name="brokerName" value={formData.brokerName} onChange={handleChange} placeholder="Broker Name" className="filter-input" />
               </div>
 
-              {/* Remark field - full width on mobile, spans 3 cols on larger screens */}
-              <div className="filter-grid-blue col-span-1 sm:col-span-2 lg:col-span-3">
-                <label className="filter-label">Remark</label>
-                <input type="text" name="remark" value={formData.remark} onChange={handleChange} placeholder="Enter remark" className="filter-input" />
-              </div>
-            </div>
+{/* ================= REMARK ================= */}
+<div className="filter-grid-blue col-span-1 sm:col-span-2 lg:col-span-3">
+  <label className="filter-label">Remark</label>
+  <input
+    type="text"
+    name="remark"
+    value={formData.remark}
+    onChange={handleChange}
+    className="filter-input no-print"
+  />
+  <div className="print-only">Remark : {formData.remark}</div>
+</div>
 
+</div>
+</div>
             {/* Action Buttons - Responsive */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 px-4 sm:px-6 mt-8">
               <button onClick={handleClear} className="btn-back sm:ml-auto order-2 sm:order-1">
@@ -655,9 +860,9 @@ const filteredLeadSources = (leadSources || []).filter(opt =>
                 <span>Clear</span>
               </button> 
               
-              <button onClick={handleSubmit} className="btn-all order-1 sm:order-2">
-               <Send size={18} />  Submit
-              </button>
+              <button onClick={handleSubmit} className="btn-all">
+              <Send size={18}/> {editId ? "Update" : "Submit"}
+            </button>
             </div>
 
             {/* Tables Section - Responsive */}
