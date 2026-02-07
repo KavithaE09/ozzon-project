@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, Search, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import accountGroupApi from '../../api/AccountgroupApi';
 
 export default function LedgerMasterGroupForm() {
   const navigate = useNavigate();
-  const [groupName, setGroupName] = useState('');
-  const [groupUnder, setGroupUnder] = useState('');
-  const [selectedType, setSelectedType] = useState('None');
+  const [groupName, setGroupName] = useState(() => localStorage.getItem('ledgerGroupName') || '');
+  const [groupUnder, setGroupUnder] = useState(() => localStorage.getItem('ledgerGroupUnder') || '');
+  const [selectedType, setSelectedType] = useState(() => localStorage.getItem('ledgerSelectedType') || 'None');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
@@ -22,38 +22,31 @@ export default function LedgerMasterGroupForm() {
   // Dropdown states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hoveredOption, setHoveredOption] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const dropdownRef = React.useRef(null);
+  const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem('ledgerGroupUnderSearch') || '');
+  const dropdownRef = useRef(null);
 
   const totalPages = Math.ceil(filteredRecords.length / rowsPerPage);
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentGroups = filteredRecords.slice(indexOfFirst, indexOfLast);
 
-  // FIX: Use savedRecords as dropdown options instead of separate API call
-  // Filter out invalid entries and current editing record (can't be parent of itself)
+  // Dropdown options
   const dropdownOptions = savedRecords.filter(record => {
     if (!record || !record.GroupName) return false;
-    // When editing, exclude the current record from dropdown (can't be parent of itself)
     if (editingId && Number(record.GroupCode) === Number(editingId)) return false;
     return true;
   });
 
-  // Filter dropdown options based on search term
   const filteredOptions = dropdownOptions.filter(option => {
     if (!option || !option.GroupName) return false;
     return option.GroupName.toLowerCase().includes((searchTerm || '').toLowerCase());
   });
 
-  // Fetch all account groups
+  // Fetch account groups
   const fetchAccountGroups = async () => {
     try {
       setLoading(true);
-      const response = await accountGroupApi.getAllAccountGroups({
-        searchBy: searchBy,
-        page: 1,
-        limit: 100,
-      });
+      const response = await accountGroupApi.getAllAccountGroups({ searchBy: searchBy, page: 1, limit: 100 });
       if (response.success) {
         setSavedRecords(response.data);
         setFilteredRecords(response.data);
@@ -66,10 +59,15 @@ export default function LedgerMasterGroupForm() {
     }
   };
 
-  // Initial load
   useEffect(() => {
     fetchAccountGroups();
   }, []);
+
+  // Persist form values to localStorage
+  useEffect(() => localStorage.setItem('ledgerGroupName', groupName), [groupName]);
+  useEffect(() => localStorage.setItem('ledgerGroupUnder', groupUnder), [groupUnder]);
+  useEffect(() => localStorage.setItem('ledgerSelectedType', selectedType), [selectedType]);
+  useEffect(() => localStorage.setItem('ledgerGroupUnderSearch', searchTerm), [searchTerm]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -82,10 +80,7 @@ export default function LedgerMasterGroupForm() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Update filtered records when saved records change
-  useEffect(() => {
-    setFilteredRecords(savedRecords);
-  }, [savedRecords]);
+  useEffect(() => setFilteredRecords(savedRecords), [savedRecords]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -99,43 +94,35 @@ export default function LedgerMasterGroupForm() {
   };
 
   const handleSave = async () => {
-    if (groupName.trim() === '') {
-      alert('Please enter Group Name');
-      return;
-    }
+    if (!groupName.trim()) return alert('Please enter Group Name');
 
     try {
       setLoading(true);
-      const payload = {
-        GroupName: groupName,
-        GroupUnder: groupUnder || null,
-        Type: selectedType,
-      };
-
+      const payload = { GroupName: groupName, GroupUnder: groupUnder || null, Type: selectedType };
       let response;
+
       if (editingId) {
-        // Update existing record
         response = await accountGroupApi.updateAccountGroup(editingId, payload);
         if (response.success) {
           alert('Account Group updated successfully');
           setEditingId(null);
         }
       } else {
-        // Create new record
         response = await accountGroupApi.createAccountGroup(payload);
-        if (response.success) {
-          alert('Account Group created successfully');
-        }
+        if (response.success) alert('Account Group created successfully');
       }
 
-      // Reset form
       setGroupName('');
       setGroupUnder('');
       setSearchTerm('');
       setSelectedType('None');
       setCurrentPage(1);
 
-      // Refresh data - this will update both table AND dropdown
+      localStorage.removeItem('ledgerGroupName');
+      localStorage.removeItem('ledgerGroupUnder');
+      localStorage.removeItem('ledgerSelectedType');
+      localStorage.removeItem('ledgerGroupUnderSearch');
+
       await fetchAccountGroups();
     } catch (error) {
       console.error('Error saving account group:', error);
@@ -147,14 +134,9 @@ export default function LedgerMasterGroupForm() {
 
   const handleSearch = () => {
     let filtered = savedRecords;
-
     if (searchBy.trim()) {
-      filtered = filtered.filter(record => {
-        return record && record.GroupName && 
-               record.GroupName.toLowerCase().includes(searchBy.toLowerCase());
-      });
+      filtered = filtered.filter(record => record && record.GroupName && record.GroupName.toLowerCase().includes(searchBy.toLowerCase()));
     }
-
     setFilteredRecords(filtered);
     setCurrentPage(1);
   };
@@ -162,28 +144,16 @@ export default function LedgerMasterGroupForm() {
   const handleEdit = (record) => {
     setEditingId(record.GroupCode);
     setGroupName(record.GroupName);
-    
-    // Set groupUnder state properly
     setGroupUnder(record.GroupUnder || '');
-    
-    // Find parent group name for search term
-    if (record.GroupUnder) {
-      const parentGroup = savedRecords.find(
-        opt => Number(opt.GroupCode) === Number(record.GroupUnder)
-      );
-      setSearchTerm(parentGroup ? parentGroup.GroupName : '');
-    } else {
-      setSearchTerm('');
-    }
-    
+
+    const parentGroup = record.GroupUnder ? savedRecords.find(opt => Number(opt.GroupCode) === Number(record.GroupUnder)) : null;
+    setSearchTerm(parentGroup ? parentGroup.GroupName : '');
     setSelectedType(record.Type || 'None');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (recordId) => {
-    if (!window.confirm('Are you sure you want to delete this Account Group?')) {
-      return;
-    }
+    if (!window.confirm('Are you sure you want to delete this Account Group?')) return;
 
     try {
       setLoading(true);
@@ -203,11 +173,7 @@ export default function LedgerMasterGroupForm() {
 
   const getGroupUnderName = (groupUnderCode) => {
     if (!groupUnderCode) return '-';
-
-    const group = savedRecords.find(
-      opt => Number(opt.GroupCode) === Number(groupUnderCode)
-    );
-
+    const group = savedRecords.find(opt => Number(opt.GroupCode) === Number(groupUnderCode));
     return group ? group.GroupName : '-';
   };
 
@@ -217,13 +183,17 @@ export default function LedgerMasterGroupForm() {
     setGroupUnder('');
     setSearchTerm('');
     setSelectedType('None');
+
+    localStorage.removeItem('ledgerGroupName');
+    localStorage.removeItem('ledgerGroupUnder');
+    localStorage.removeItem('ledgerSelectedType');
+    localStorage.removeItem('ledgerGroupUnderSearch');
   };
 
   const handleClearDropdown = () => {
     setGroupUnder('');
     setSearchTerm('');
   };
-
   return (
     <div className="page-container">
       <div className="content-wrapper">

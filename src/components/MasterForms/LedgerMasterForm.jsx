@@ -6,7 +6,7 @@ import accountGroupApi from "../../api/AccountgroupApi";
 
 export default function LedgerMasterForm() {
   const navigate = useNavigate();
-  
+
   const states = [
     "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam",
     "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu",
@@ -33,123 +33,11 @@ export default function LedgerMasterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [accountGroups, setAccountGroups] = useState([]);
-  const [selectedGroupCode, setSelectedGroupCode] = useState(null);
 
-  const [formData, setFormData] = useState({
-    partyName: '',
-    group: '',
-    gstNo: '',
-    billingAddress1: '',
-    billingAddress2: '',
-    billingCity: '',
-    billingPinCode: '',
-    billingState: '',
-    deliveryAddress1: '',
-    deliveryAddress2: '',
-    deliveryCity: '',
-    deliveryPinCode: '',
-    deliveryState: ''
-  });
-
-  const [groupSearch, setGroupSearch] = useState('');
-  const [isGroupOpen, setIsGroupOpen] = useState(false);
-  const [hoveredGroup, setHoveredGroup] = useState(null);
-  const groupRef = useRef(null);
-
-  const [billingCitySearch, setBillingCitySearch] = useState('');
-  const [isBillingCityOpen, setIsBillingCityOpen] = useState(false);
-  const [hoveredBillingCity, setHoveredBillingCity] = useState(null);
-  const billingCityRef = useRef(null);
-
-  const [billingStateSearch, setBillingStateSearch] = useState('');
-  const [isBillingStateOpen, setIsBillingStateOpen] = useState(false);
-  const [hoveredBillingState, setHoveredBillingState] = useState(null);
-  const billingStateRef = useRef(null);
-
-  const [deliveryCitySearch, setDeliveryCitySearch] = useState('');
-  const [isDeliveryCityOpen, setIsDeliveryCityOpen] = useState(false);
-  const [hoveredDeliveryCity, setHoveredDeliveryCity] = useState(null);
-  const deliveryCityRef = useRef(null);
-
-  const [deliveryStateSearch, setDeliveryStateSearch] = useState('');
-  const [isDeliveryStateOpen, setIsDeliveryStateOpen] = useState(false);
-  const [hoveredDeliveryState, setHoveredDeliveryState] = useState(null);
-  const deliveryStateRef = useRef(null);
-
-  useEffect(() => {
-    fetchAccountGroups();
-  }, []);
-
-  const fetchAccountGroups = async () => {
-    try {
-      setLoading(true);
-      
-      const response = await accountGroupApi.getAccountGroupsForDropdown();
-      console.log('📦 Account Groups Response:', response);
-      
-      if (response && response.data) {
-        setAccountGroups(response.data);
-      }
-    } catch (err) {
-      console.error('❌ Error fetching account groups:', err);
-      setError('Failed to load account groups');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (groupRef.current && !groupRef.current.contains(event.target)) {
-        setIsGroupOpen(false);
-      }
-      if (billingCityRef.current && !billingCityRef.current.contains(event.target)) {
-        setIsBillingCityOpen(false);
-      }
-      if (billingStateRef.current && !billingStateRef.current.contains(event.target)) {
-        setIsBillingStateOpen(false);
-      }
-      if (deliveryCityRef.current && !deliveryCityRef.current.contains(event.target)) {
-        setIsDeliveryCityOpen(false);
-      }
-      if (deliveryStateRef.current && !deliveryStateRef.current.contains(event.target)) {
-        setIsDeliveryStateOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const filteredGroups = accountGroups.filter((group) => {
-    if (!group) return false;
-    const groupName = group.accountGroupName || '';
-    return String(groupName).toLowerCase().includes(groupSearch.toLowerCase());
-  });
-
-  const filteredBillingCities = cities.filter(city =>
-    city.toLowerCase().includes(billingCitySearch.toLowerCase())
-  );
-
-  const filteredBillingStates = states.filter(state =>
-    state.toLowerCase().includes(billingStateSearch.toLowerCase())
-  );
-
-  const filteredDeliveryCities = cities.filter(city =>
-    city.toLowerCase().includes(deliveryCitySearch.toLowerCase())
-  );
-
-  const filteredDeliveryStates = states.filter(state =>
-    state.toLowerCase().includes(deliveryStateSearch.toLowerCase())
-  );
-
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (error) setError('');
-  };
-
-  const handleClear = () => {
-    setFormData({
+  // ---------- LocalStorage-Persistent States ----------
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem('ledgerFormData');
+    return saved ? JSON.parse(saved) : {
       partyName: '',
       group: '',
       gstNo: '',
@@ -163,6 +51,98 @@ export default function LedgerMasterForm() {
       deliveryCity: '',
       deliveryPinCode: '',
       deliveryState: ''
+    };
+  });
+
+  const [groupSearch, setGroupSearch] = useState(() => localStorage.getItem('ledgerGroupSearch') || '');
+  const [selectedGroupCode, setSelectedGroupCode] = useState(() => {
+    const saved = localStorage.getItem('ledgerSelectedGroupCode');
+    return saved ? Number(saved) : null;
+  });
+  const [billingCitySearch, setBillingCitySearch] = useState(() => localStorage.getItem('ledgerBillingCitySearch') || '');
+  const [billingStateSearch, setBillingStateSearch] = useState(() => localStorage.getItem('ledgerBillingStateSearch') || '');
+  const [deliveryCitySearch, setDeliveryCitySearch] = useState(() => localStorage.getItem('ledgerDeliveryCitySearch') || '');
+  const [deliveryStateSearch, setDeliveryStateSearch] = useState(() => localStorage.getItem('ledgerDeliveryStateSearch') || '');
+
+  const [isGroupOpen, setIsGroupOpen] = useState(false);
+  const [hoveredGroup, setHoveredGroup] = useState(null);
+  const groupRef = useRef(null);
+
+  const [isBillingCityOpen, setIsBillingCityOpen] = useState(false);
+  const [hoveredBillingCity, setHoveredBillingCity] = useState(null);
+  const billingCityRef = useRef(null);
+
+  const [isBillingStateOpen, setIsBillingStateOpen] = useState(false);
+  const [hoveredBillingState, setHoveredBillingState] = useState(null);
+  const billingStateRef = useRef(null);
+
+  const [isDeliveryCityOpen, setIsDeliveryCityOpen] = useState(false);
+  const [hoveredDeliveryCity, setHoveredDeliveryCity] = useState(null);
+  const deliveryCityRef = useRef(null);
+
+  const [isDeliveryStateOpen, setIsDeliveryStateOpen] = useState(false);
+  const [hoveredDeliveryState, setHoveredDeliveryState] = useState(null);
+  const deliveryStateRef = useRef(null);
+
+  // ------------------- Fetch Account Groups -------------------
+  useEffect(() => {
+    fetchAccountGroups();
+  }, []);
+
+  const fetchAccountGroups = async () => {
+    try {
+      setLoading(true);
+      const response = await accountGroupApi.getAccountGroupsForDropdown();
+      if (response?.data) setAccountGroups(response.data);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load account groups');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ------------------- Persist to LocalStorage -------------------
+  useEffect(() => localStorage.setItem('ledgerFormData', JSON.stringify(formData)), [formData]);
+  useEffect(() => localStorage.setItem('ledgerGroupSearch', groupSearch), [groupSearch]);
+  useEffect(() => localStorage.setItem('ledgerSelectedGroupCode', selectedGroupCode), [selectedGroupCode]);
+  useEffect(() => localStorage.setItem('ledgerBillingCitySearch', billingCitySearch), [billingCitySearch]);
+  useEffect(() => localStorage.setItem('ledgerBillingStateSearch', billingStateSearch), [billingStateSearch]);
+  useEffect(() => localStorage.setItem('ledgerDeliveryCitySearch', deliveryCitySearch), [deliveryCitySearch]);
+  useEffect(() => localStorage.setItem('ledgerDeliveryStateSearch', deliveryStateSearch), [deliveryStateSearch]);
+
+  // ------------------- Handle Click Outside -------------------
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (groupRef.current && !groupRef.current.contains(event.target)) setIsGroupOpen(false);
+      if (billingCityRef.current && !billingCityRef.current.contains(event.target)) setIsBillingCityOpen(false);
+      if (billingStateRef.current && !billingStateRef.current.contains(event.target)) setIsBillingStateOpen(false);
+      if (deliveryCityRef.current && !deliveryCityRef.current.contains(event.target)) setIsDeliveryCityOpen(false);
+      if (deliveryStateRef.current && !deliveryStateRef.current.contains(event.target)) setIsDeliveryStateOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // ------------------- Filtered Lists -------------------
+  const filteredGroups = accountGroups.filter(group => (group?.accountGroupName || '').toLowerCase().includes(groupSearch.toLowerCase()));
+  const filteredBillingCities = cities.filter(city => city.toLowerCase().includes(billingCitySearch.toLowerCase()));
+  const filteredBillingStates = states.filter(state => state.toLowerCase().includes(billingStateSearch.toLowerCase()));
+  const filteredDeliveryCities = cities.filter(city => city.toLowerCase().includes(deliveryCitySearch.toLowerCase()));
+  const filteredDeliveryStates = states.filter(state => state.toLowerCase().includes(deliveryStateSearch.toLowerCase()));
+
+  // ------------------- Handle Form Change -------------------
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (error) setError('');
+  };
+
+  // ------------------- Clear Form -------------------
+  const handleClear = () => {
+    setFormData({
+      partyName: '', group: '', gstNo: '',
+      billingAddress1: '', billingAddress2: '', billingCity: '', billingPinCode: '', billingState: '',
+      deliveryAddress1: '', deliveryAddress2: '', deliveryCity: '', deliveryPinCode: '', deliveryState: ''
     });
     setGroupSearch('');
     setSelectedGroupCode(null);
@@ -171,34 +151,26 @@ export default function LedgerMasterForm() {
     setDeliveryCitySearch('');
     setDeliveryStateSearch('');
     setError('');
+
+    localStorage.removeItem('ledgerFormData');
+    localStorage.removeItem('ledgerGroupSearch');
+    localStorage.removeItem('ledgerSelectedGroupCode');
+    localStorage.removeItem('ledgerBillingCitySearch');
+    localStorage.removeItem('ledgerBillingStateSearch');
+    localStorage.removeItem('ledgerDeliveryCitySearch');
+    localStorage.removeItem('ledgerDeliveryStateSearch');
   };
 
+  // ------------------- Submit Form -------------------
   const handleSubmit = async () => {
     try {
       setError('');
-
-      const partyNameValue = formData.partyName?.trim();
-
-      console.log('🔍 Validation Check:');
-      console.log('Party Name:', partyNameValue);
-      console.log('Selected Group Code:', selectedGroupCode);
-
-      if (!partyNameValue || partyNameValue.length === 0) {
-        setError('Party Name is required');
-        return;
-      }
-      
-      if (!selectedGroupCode) {
-        setError('Account Group is required');
-        return;
-      }
+      if (!formData.partyName?.trim()) return setError('Party Name is required');
+      if (!selectedGroupCode) return setError('Account Group is required');
 
       setLoading(true);
-
-      // FIXED: Match exact database column names and handle NULL constraints
-      // Try sending empty string with single space (some databases accept this but not empty or NULL)
       const ledgerData = {
-        PartyName: partyNameValue,
+        PartyName: formData.partyName.trim(),
         GroupCode: Number(selectedGroupCode),
         GSTNo: formData.gstNo?.trim() || ' ',
         BillAd1: formData.billingAddress1?.trim() || ' ',
@@ -213,79 +185,18 @@ export default function LedgerMasterForm() {
         DelState: formData.deliveryState || ' '
       };
 
-      console.log('📤 Submitting Ledger Data:');
-      console.log(JSON.stringify(ledgerData, null, 2));
-      console.log('📤 Data types:', {
-        PartyName: typeof ledgerData.PartyName,
-        GroupCode: typeof ledgerData.GroupCode,
-        GSTNo: typeof ledgerData.GSTNo
-      });
-
       const response = await ledgerApi.createLedger(ledgerData);
-      
-      console.log('✅ Success Response:', response);
-      
-      if (response?.success || response?.data || response?.status === 200 || response?.status === 201) {
+      if (response?.success || response?.data || [200, 201].includes(response?.status)) {
         alert('✅ Ledger created successfully!');
         handleClear();
-      } else {
-        setError('Ledger created but response format is unexpected');
-      }
+      } else setError('Ledger created but response format is unexpected');
     } catch (err) {
-      console.error('❌ Full Error:', err);
-      console.error('❌ Error Response:', err.response);
-      console.error('❌ Response Data:', err.response?.data);
-      console.error('❌ Response Status:', err.response?.status);
-      console.error('❌ Response Headers:', err.response?.headers);
-      
-      let errorMessage = 'Failed to create ledger';
-      
-      if (err.response?.data) {
-        const data = err.response.data;
-        
-        // Log the raw response for debugging
-        console.log('📋 Raw Response Data Type:', typeof data);
-        console.log('📋 Raw Response Data:', data);
-        
-        if (typeof data === 'string') {
-          errorMessage = data;
-        } else if (data.message) {
-          errorMessage = data.message;
-        } else if (data.error) {
-          errorMessage = data.error;
-        } else if (data.errors) {
-          if (Array.isArray(data.errors)) {
-            errorMessage = data.errors.map(e => e.message || e.msg || e).join(', ');
-          } else if (typeof data.errors === 'object') {
-            errorMessage = Object.entries(data.errors)
-              .map(([key, value]) => `${key}: ${value}`)
-              .join(', ');
-          } else {
-            errorMessage = JSON.stringify(data.errors);
-          }
-        } else {
-          errorMessage = JSON.stringify(data);
-        }
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      if (err.response?.status === 400) {
-        errorMessage = `Bad Request: ${errorMessage}`;
-      } else if (err.response?.status === 401) {
-        errorMessage = 'Unauthorized. Please login again.';
-      } else if (err.response?.status === 403) {
-        errorMessage = 'Forbidden. You do not have permission.';
-      } else if (err.response?.status === 500) {
-        errorMessage = `Server Error (500): ${errorMessage}. Please check the server logs or contact support.`;
-      }
-      
-      setError(errorMessage);
+      console.error(err);
+      setError(err.response?.data?.message || err.message || 'Failed to create ledger');
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="page-container">
       <div className="content-wrapper">
