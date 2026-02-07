@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "./baseurl";
 
-const API_BASE_URL = `${BASE_URL}/api`;
+const API_BASE_URL = `${BASE_URL}`;
 
 const ledgerApi = {
   // ================= CREATE LEDGER =================
