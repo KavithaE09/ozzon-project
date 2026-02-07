@@ -1,38 +1,75 @@
 import axios from "axios";
-import { BASE_URL } from "./baseurl";
-const API_BASE_URL = `${BASE_URL}/material`;
+
+const API_BASE_URL = "http://localhost:5000/api";
 
 const materialApi = {
-
+  // ==================== GET ALL ====================
   getAllMaterials: async () => {
-    const response = await axios.get(`${API_BASE_URL}/material-list`);
-    return response.data;
+    try {
+      const response = await axios.get(`${API_BASE_URL}/material-list`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching materials:", error);
+      throw error;
+    }
   },
 
+  // ==================== GET BY ID ====================
+  getMaterialById: async (id) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/material-list/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching material:", error);
+      throw error;
+    }
+  },
+
+  // ==================== CREATE ====================
   createMaterial: async (data) => {
-    const response = await axios.post(`${API_BASE_URL}/material-list`, data);
-    return response.data;
+    try {
+      const response = await axios.post(`${API_BASE_URL}/material-list`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating material:", error);
+      throw error;
+    }
   },
 
+  // ==================== UPDATE ====================
   updateMaterial: async (id, data) => {
-    const response = await axios.put(`${API_BASE_URL}/material-list/${id}`, data);
-    return response.data;
+    try {
+      const response = await axios.put(`${API_BASE_URL}/material-list/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating material:", error);
+      throw error;
+    }
   },
 
+  // ==================== DELETE ====================
   deleteMaterial: async (id) => {
-    const response = await axios.delete(`${API_BASE_URL}/material-list/${id}`);
-    return response.data;
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/material-list/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting material:", error);
+      throw error;
+    }
   },
 
-  searchMaterials: async (name) => {
-    const response = await axios.get(`${API_BASE_URL}/material-list/search`, {
-      params: { name }
-    });
-    return response.data;
-  }
-
-  
-
+  // ==================== SEARCH ====================
+  searchMaterials: async (searchTerm) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/material-list/search`, {
+        params: { search: searchTerm },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error searching materials:", error);
+      throw error;
+    }
+  },
 };
 
 export default materialApi;

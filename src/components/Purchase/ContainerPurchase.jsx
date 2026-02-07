@@ -23,20 +23,26 @@ export default function ContainerPurchase() {
     return `${year}-${month}-${day}`;
   };
 
-  const [formData, setFormData] = useState({
-    containerNo: '',
-    partyCode: null,
-    sizeTypeId: null,
-    gradeId: null,
-    liner: '',
-    yardId: null,
-    mfgDate: getTodayDate(),
-    inDate: getTodayDate(),
-    amount: '',
-    remark: '',
-    photoPath: '',
-    images: [],
-    imagePreviews: []
+  const [formData, setFormData] = useState(() => {
+    const savedData = localStorage.getItem('containerPurchaseFormData');
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+    return {
+      containerNo: '',
+      partyCode: null,
+      sizeTypeId: null,
+      gradeId: null,
+      liner: '',
+      yardId: null,
+      mfgDate: getTodayDate(),
+      inDate: getTodayDate(),
+      amount: '',
+      remark: '',
+      photoPath: '',
+      images: [],
+      imagePreviews: []
+    };
   });
 
   // Dropdown options from API
@@ -46,19 +52,27 @@ export default function ContainerPurchase() {
   const [yardOptions, setYardOptions] = useState([]);
 
   // Dropdown search states
-  const [partyNameSearch, setPartyNameSearch] = useState('');
+  const [partyNameSearch, setPartyNameSearch] = useState(() => {
+    return localStorage.getItem('containerPartyNameSearch') || '';
+  });
   const [isPartyNameOpen, setIsPartyNameOpen] = useState(false);
   const [hoveredPartyName, setHoveredPartyName] = useState(null);
 
-  const [sizeTypeSearch, setSizeTypeSearch] = useState('');
+  const [sizeTypeSearch, setSizeTypeSearch] = useState(() => {
+    return localStorage.getItem('containerSizeTypeSearch') || '';
+  });
   const [isSizeTypeOpen, setIsSizeTypeOpen] = useState(false);
   const [hoveredSizeType, setHoveredSizeType] = useState(null);
 
-  const [gradeSearch, setGradeSearch] = useState('');
+  const [gradeSearch, setGradeSearch] = useState(() => {
+    return localStorage.getItem('containerGradeSearch') || '';
+  });
   const [isGradeOpen, setIsGradeOpen] = useState(false);
   const [hoveredGrade, setHoveredGrade] = useState(null);
 
-  const [yardSearch, setYardSearch] = useState('');
+  const [yardSearch, setYardSearch] = useState(() => {
+    return localStorage.getItem('containerYardSearch') || '';
+  });
   const [isYardOpen, setIsYardOpen] = useState(false);
   const [hoveredYard, setHoveredYard] = useState(null);
 
@@ -66,6 +80,28 @@ export default function ContainerPurchase() {
   useEffect(() => {
     fetchAllDropdownData();
   }, []);
+
+  // ✅ Save formData to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('containerPurchaseFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // ✅ Save search states to localStorage
+  useEffect(() => {
+    localStorage.setItem('containerPartyNameSearch', partyNameSearch);
+  }, [partyNameSearch]);
+
+  useEffect(() => {
+    localStorage.setItem('containerSizeTypeSearch', sizeTypeSearch);
+  }, [sizeTypeSearch]);
+
+  useEffect(() => {
+    localStorage.setItem('containerGradeSearch', gradeSearch);
+  }, [gradeSearch]);
+
+  useEffect(() => {
+    localStorage.setItem('containerYardSearch', yardSearch);
+  }, [yardSearch]);
 
   const fetchAllDropdownData = async () => {
     try {
@@ -199,6 +235,37 @@ export default function ContainerPurchase() {
     });
   };
 
+  // ✅ Clear handler
+  const handleClear = () => {
+    const emptyForm = {
+      containerNo: '',
+      partyCode: null,
+      sizeTypeId: null,
+      gradeId: null,
+      liner: '',
+      yardId: null,
+      mfgDate: getTodayDate(),
+      inDate: getTodayDate(),
+      amount: '',
+      remark: '',
+      photoPath: '',
+      images: [],
+      imagePreviews: []
+    };
+    setFormData(emptyForm);
+    setPartyNameSearch('');
+    setSizeTypeSearch('');
+    setGradeSearch('');
+    setYardSearch('');
+    
+    // Clear localStorage
+    localStorage.removeItem('containerPurchaseFormData');
+    localStorage.removeItem('containerPartyNameSearch');
+    localStorage.removeItem('containerSizeTypeSearch');
+    localStorage.removeItem('containerGradeSearch');
+    localStorage.removeItem('containerYardSearch');
+  };
+
   // ✅ Submit handler
   const handleSubmit = async () => {
     try {
@@ -229,7 +296,7 @@ export default function ContainerPurchase() {
         alert('Container Purchase created successfully!');
         
         // Reset form
-        setFormData({
+        const emptyForm = {
           containerNo: '',
           partyCode: null,
           sizeTypeId: null,
@@ -243,12 +310,20 @@ export default function ContainerPurchase() {
           photoPath: '',
           images: [],
           imagePreviews: []
-        });
+        };
+        setFormData(emptyForm);
         
         setPartyNameSearch('');
         setSizeTypeSearch('');
         setGradeSearch('');
         setYardSearch('');
+
+        // ✅ Clear localStorage
+        localStorage.removeItem('containerPurchaseFormData');
+        localStorage.removeItem('containerPartyNameSearch');
+        localStorage.removeItem('containerSizeTypeSearch');
+        localStorage.removeItem('containerGradeSearch');
+        localStorage.removeItem('containerYardSearch');
       }
     } catch (error) {
       console.error('Error creating container purchase:', error);
@@ -648,13 +723,22 @@ export default function ContainerPurchase() {
             {/* Footer Buttons */}
             <div className="footer-container">
               <div></div>
-              <button 
-                onClick={handleSubmit} 
-                className="btn-all"
-                disabled={loading}
-              >
-                <Send size={18} /> {loading ? 'Submitting...' : 'Submit'}
-              </button>
+              <div className="btn-container">
+                <button 
+                  onClick={handleClear} 
+                  className="px-4 py-2 bg-gray-600 text-white border-none rounded cursor-pointer font-medium flex items-center gap-2 hover:bg-gray-700"
+                  disabled={loading}
+                >
+                  Clear
+                </button>
+                <button 
+                  onClick={handleSubmit} 
+                  className="btn-all"
+                  disabled={loading}
+                >
+                  <Send size={18} /> {loading ? 'Submitting...' : 'Submit'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

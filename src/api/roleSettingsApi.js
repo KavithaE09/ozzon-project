@@ -1,12 +1,15 @@
 import axios from 'axios';
 import { BASE_URL } from "./baseurl";
+
+// ✅ FIXED: API_BASE_URL should be just the base
 const API_BASE_URL = `${BASE_URL}/rolesettings`;
 
 // ✅ Get all role settings - backend includes Role model
 export const getAllRoleSettings = async () => {
   try {
     console.log('📡 Fetching all role settings...');
-    const response = await axios.get(`${API_BASE_URL}/rolesettings`);
+    // ✅ FIXED: Don't add /rolesettings again, API_BASE_URL already has it
+    const response = await axios.get(API_BASE_URL);
     console.log('📡 Role settings response:', response.data);
     return response.data;
   } catch (error) {
@@ -20,7 +23,8 @@ export const getAllRoleSettings = async () => {
 export const getRoleSettingById = async (id) => {
   try {
     console.log('📡 Fetching role setting by ID:', id);
-    const response = await axios.get(`${API_BASE_URL}/rolesettings/${id}`);
+    // ✅ FIXED: Use API_BASE_URL directly
+    const response = await axios.get(`${API_BASE_URL}/${id}`);
     console.log('📡 Role setting response:', response.data);
     return response.data;
   } catch (error) {
@@ -47,7 +51,8 @@ export const createRoleSetting = async (roleData) => {
     };
     
     console.log('📡 Transformed backend payload:', backendPayload);
-    const response = await axios.post(`${API_BASE_URL}/rolesettings`, backendPayload);
+    // ✅ FIXED: Use API_BASE_URL directly
+    const response = await axios.post(API_BASE_URL, backendPayload);
     console.log('✅ Create response:', response.data);
     return response.data;
   } catch (error) {
@@ -74,15 +79,16 @@ export const updateRoleSetting = async (roleSettingsId, roleData) => {
     };
     
     console.log('📡 Transformed backend payload:', backendPayload);
-    console.log('📡 Update URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    console.log('📡 Update URL:', `${API_BASE_URL}/${roleSettingsId}`);
     
-    const response = await axios.put(`${API_BASE_URL}/rolesettings/${roleSettingsId}`, backendPayload);
+    // ✅ FIXED: Use API_BASE_URL directly
+    const response = await axios.put(`${API_BASE_URL}/${roleSettingsId}`, backendPayload);
     console.log('✅ Update response:', response.data);
     return response.data;
   } catch (error) {
     console.error('❌ Error updating role setting:', error);
     console.error('❌ Error details:', error.response?.data);
-    console.error('❌ Request URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    console.error('❌ Request URL:', `${API_BASE_URL}/${roleSettingsId}`);
     throw error;
   }
 };
@@ -91,15 +97,16 @@ export const updateRoleSetting = async (roleSettingsId, roleData) => {
 export const deleteRoleSetting = async (roleSettingsId) => {
   try {
     console.log('📡 Deleting role setting with RoleSettingsId:', roleSettingsId);
-    console.log('📡 Delete URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    console.log('📡 Delete URL:', `${API_BASE_URL}/${roleSettingsId}`);
     
-    const response = await axios.delete(`${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    // ✅ FIXED: Use API_BASE_URL directly
+    const response = await axios.delete(`${API_BASE_URL}/${roleSettingsId}`);
     console.log('✅ Delete response:', response.data);
     return response.data;
   } catch (error) {
     console.error('❌ Error deleting role setting:', error);
     console.error('❌ Error details:', error.response?.data);
-    console.error('❌ Request URL:', `${API_BASE_URL}/rolesettings/${roleSettingsId}`);
+    console.error('❌ Request URL:', `${API_BASE_URL}/${roleSettingsId}`);
     console.error('❌ Status:', error.response?.status);
     throw error;
   }
