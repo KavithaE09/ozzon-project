@@ -1,9 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown,Send,Undo2 } from 'lucide-react';
+import { ChevronDown, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ledgerApi from "../../api/ledgerApi";
+import accountGroupApi from "../../api/AccountgroupApi";
 
 export default function LedgerMasterForm() {
   const navigate = useNavigate();
+  
+  const states = [
+    "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam",
+    "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir",
+    "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh",
+    "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha",
+    "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
+    "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
+  ].sort();
+
   const cities = [
     "Agra", "Ahmedabad", "Ajmer", "Aligarh", "Allahabad", "Amritsar", "Aurangabad",
     "Bengaluru", "Bhopal", "Bhubaneswar", "Chandigarh", "Chennai", "Coimbatore",
@@ -17,17 +30,10 @@ export default function LedgerMasterForm() {
     "Udaipur", "Vadodara", "Varanasi", "Vellore", "Vijayawada", "Visakhapatnam", "Warangal"
   ].sort();
 
-  const states = [
-    "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam",
-    "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu",
-    "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir",
-    "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh",
-    "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha",
-    "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
-    "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
-  ].sort();
-
-  const groupOptions = ["Group 1", "Group 2", "Group 3"];
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [accountGroups, setAccountGroups] = useState([]);
+  const [selectedGroupCode, setSelectedGroupCode] = useState(null);
 
   const [formData, setFormData] = useState({
     partyName: '',
@@ -45,37 +51,53 @@ export default function LedgerMasterForm() {
     deliveryState: ''
   });
 
-  // Group dropdown states
   const [groupSearch, setGroupSearch] = useState('');
   const [isGroupOpen, setIsGroupOpen] = useState(false);
   const [hoveredGroup, setHoveredGroup] = useState(null);
   const groupRef = useRef(null);
 
-  // Billing City dropdown states
   const [billingCitySearch, setBillingCitySearch] = useState('');
   const [isBillingCityOpen, setIsBillingCityOpen] = useState(false);
   const [hoveredBillingCity, setHoveredBillingCity] = useState(null);
   const billingCityRef = useRef(null);
 
-  // Billing State dropdown states
   const [billingStateSearch, setBillingStateSearch] = useState('');
   const [isBillingStateOpen, setIsBillingStateOpen] = useState(false);
   const [hoveredBillingState, setHoveredBillingState] = useState(null);
   const billingStateRef = useRef(null);
 
-  // Delivery City dropdown states
   const [deliveryCitySearch, setDeliveryCitySearch] = useState('');
   const [isDeliveryCityOpen, setIsDeliveryCityOpen] = useState(false);
   const [hoveredDeliveryCity, setHoveredDeliveryCity] = useState(null);
   const deliveryCityRef = useRef(null);
 
-  // Delivery State dropdown states
   const [deliveryStateSearch, setDeliveryStateSearch] = useState('');
   const [isDeliveryStateOpen, setIsDeliveryStateOpen] = useState(false);
   const [hoveredDeliveryState, setHoveredDeliveryState] = useState(null);
   const deliveryStateRef = useRef(null);
 
-  // Close dropdowns when clicking outside
+  useEffect(() => {
+    fetchAccountGroups();
+  }, []);
+
+  const fetchAccountGroups = async () => {
+    try {
+      setLoading(true);
+      
+      const response = await accountGroupApi.getAccountGroupsForDropdown();
+      console.log('📦 Account Groups Response:', response);
+      
+      if (response && response.data) {
+        setAccountGroups(response.data);
+      }
+    } catch (err) {
+      console.error('❌ Error fetching account groups:', err);
+      setError('Failed to load account groups');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (groupRef.current && !groupRef.current.contains(event.target)) {
@@ -99,10 +121,11 @@ export default function LedgerMasterForm() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter functions
-  const filteredGroups = groupOptions.filter(opt =>
-    opt.toLowerCase().includes(groupSearch.toLowerCase())
-  );
+  const filteredGroups = accountGroups.filter((group) => {
+    if (!group) return false;
+    const groupName = group.accountGroupName || '';
+    return String(groupName).toLowerCase().includes(groupSearch.toLowerCase());
+  });
 
   const filteredBillingCities = cities.filter(city =>
     city.toLowerCase().includes(billingCitySearch.toLowerCase())
@@ -122,6 +145,7 @@ export default function LedgerMasterForm() {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (error) setError('');
   };
 
   const handleClear = () => {
@@ -141,14 +165,125 @@ export default function LedgerMasterForm() {
       deliveryState: ''
     });
     setGroupSearch('');
+    setSelectedGroupCode(null);
     setBillingCitySearch('');
     setBillingStateSearch('');
     setDeliveryCitySearch('');
     setDeliveryStateSearch('');
+    setError('');
   };
 
-  const handleSubmit = () => {
-    alert('Form submitted successfully!');
+  const handleSubmit = async () => {
+    try {
+      setError('');
+
+      const partyNameValue = formData.partyName?.trim();
+
+      console.log('🔍 Validation Check:');
+      console.log('Party Name:', partyNameValue);
+      console.log('Selected Group Code:', selectedGroupCode);
+
+      if (!partyNameValue || partyNameValue.length === 0) {
+        setError('Party Name is required');
+        return;
+      }
+      
+      if (!selectedGroupCode) {
+        setError('Account Group is required');
+        return;
+      }
+
+      setLoading(true);
+
+      // FIXED: Match exact database column names and handle NULL constraints
+      // Try sending empty string with single space (some databases accept this but not empty or NULL)
+      const ledgerData = {
+        PartyName: partyNameValue,
+        GroupCode: Number(selectedGroupCode),
+        GSTNo: formData.gstNo?.trim() || ' ',
+        BillAd1: formData.billingAddress1?.trim() || ' ',
+        BillAd2: formData.billingAddress2?.trim() || ' ',
+        BillCity: formData.billingCity || ' ',
+        BillPinCode: formData.billingPinCode?.trim() || ' ',
+        BillState: formData.billingState || ' ',
+        DelAd1: formData.deliveryAddress1?.trim() || ' ',
+        DelAd2: formData.deliveryAddress2?.trim() || ' ',
+        DelCity: formData.deliveryCity || ' ',
+        DelPinCode: formData.deliveryPinCode?.trim() || ' ',
+        DelState: formData.deliveryState || ' '
+      };
+
+      console.log('📤 Submitting Ledger Data:');
+      console.log(JSON.stringify(ledgerData, null, 2));
+      console.log('📤 Data types:', {
+        PartyName: typeof ledgerData.PartyName,
+        GroupCode: typeof ledgerData.GroupCode,
+        GSTNo: typeof ledgerData.GSTNo
+      });
+
+      const response = await ledgerApi.createLedger(ledgerData);
+      
+      console.log('✅ Success Response:', response);
+      
+      if (response?.success || response?.data || response?.status === 200 || response?.status === 201) {
+        alert('✅ Ledger created successfully!');
+        handleClear();
+      } else {
+        setError('Ledger created but response format is unexpected');
+      }
+    } catch (err) {
+      console.error('❌ Full Error:', err);
+      console.error('❌ Error Response:', err.response);
+      console.error('❌ Response Data:', err.response?.data);
+      console.error('❌ Response Status:', err.response?.status);
+      console.error('❌ Response Headers:', err.response?.headers);
+      
+      let errorMessage = 'Failed to create ledger';
+      
+      if (err.response?.data) {
+        const data = err.response.data;
+        
+        // Log the raw response for debugging
+        console.log('📋 Raw Response Data Type:', typeof data);
+        console.log('📋 Raw Response Data:', data);
+        
+        if (typeof data === 'string') {
+          errorMessage = data;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (data.error) {
+          errorMessage = data.error;
+        } else if (data.errors) {
+          if (Array.isArray(data.errors)) {
+            errorMessage = data.errors.map(e => e.message || e.msg || e).join(', ');
+          } else if (typeof data.errors === 'object') {
+            errorMessage = Object.entries(data.errors)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(', ');
+          } else {
+            errorMessage = JSON.stringify(data.errors);
+          }
+        } else {
+          errorMessage = JSON.stringify(data);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      if (err.response?.status === 400) {
+        errorMessage = `Bad Request: ${errorMessage}`;
+      } else if (err.response?.status === 401) {
+        errorMessage = 'Unauthorized. Please login again.';
+      } else if (err.response?.status === 403) {
+        errorMessage = 'Forbidden. You do not have permission.';
+      } else if (err.response?.status === 500) {
+        errorMessage = `Server Error (500): ${errorMessage}. Please check the server logs or contact support.`;
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -163,9 +298,27 @@ export default function LedgerMasterForm() {
                 className="page-back-btn"
                 aria-label="Go back"
               >
-                <Undo2   className="page-back-icon" />
+                <Undo2 className="page-back-icon" />
               </button>
             </div>
+
+            {/* Error Message */}
+            {error && error.trim() !== '' && (
+              <div style={{ 
+                padding: '12px 16px', 
+                marginBottom: '20px', 
+                backgroundColor: '#fee2e2', 
+                color: '#991b1b',
+                borderRadius: '6px',
+                fontSize: '14px',
+                border: '1px solid #fecaca',
+                fontWeight: '500',
+                maxHeight: '200px',
+                overflow: 'auto'
+              }}>
+                ⚠️ {error}
+              </div>
+            )}
 
             {/* Party Details */}
             <div className="filter-grid" style={{ marginBottom: '32px' }}>
@@ -176,10 +329,11 @@ export default function LedgerMasterForm() {
                   value={formData.partyName}
                   onChange={(e) => handleChange('partyName', e.target.value)}
                   className="filter-input"
+                  disabled={loading}
+                  placeholder="Enter party name"
                 />
               </div>
 
-              {/* Group Dropdown */}
               <div ref={groupRef} className="filter-grid-red">
                 <label className="filter-label">Group</label>
                 <div className="dropdown-wrapper">
@@ -189,40 +343,50 @@ export default function LedgerMasterForm() {
                     onChange={(e) => {
                       setGroupSearch(e.target.value);
                       setIsGroupOpen(true);
+                      if (error) setError('');
                     }}
                     onFocus={() => setIsGroupOpen(true)}
                     placeholder="Type or select..."
                     className="dropdown-input"
+                    disabled={loading}
                   />
                   <ChevronDown size={20} className="dropdown-icon" />
                 </div>
                 {isGroupOpen && (
                   <div className="dropdown-menu">
                     {filteredGroups.length > 0 ? (
-                      filteredGroups.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            handleChange('group', option);
-                            setGroupSearch(option);
-                            setIsGroupOpen(false);
-                          }}
-                          onMouseEnter={() => setHoveredGroup(option)}
-                          onMouseLeave={() => setHoveredGroup(null)}
-                          className={`dropdown-item-option ${
-                            hoveredGroup === option
-                              ? 'dropdown-item-hovered'
-                              : formData.group === option
-                              ? 'dropdown-item-selected'
-                              : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      ))
+                      filteredGroups.map((group, index) => {
+                        const displayName = group.accountGroupName || 'Unknown';
+                        const groupId = group.accountGroupId;
+                        
+                        return (
+                          <div
+                            key={groupId || index}
+                            onClick={() => {
+                              handleChange('group', displayName);
+                              setGroupSearch(displayName);
+                              setSelectedGroupCode(groupId);
+                              setIsGroupOpen(false);
+                              if (error) setError('');
+                              console.log('✅ Selected Group:', displayName, 'Code:', groupId);
+                            }}
+                            onMouseEnter={() => setHoveredGroup(displayName)}
+                            onMouseLeave={() => setHoveredGroup(null)}
+                            className={`dropdown-item-option ${
+                              hoveredGroup === displayName
+                                ? 'dropdown-item-hovered'
+                                : formData.group === displayName
+                                ? 'dropdown-item-selected'
+                                : 'dropdown-item-default'
+                            }`}
+                          >
+                            {displayName}
+                          </div>
+                        );
+                      })
                     ) : (
                       <div className="dropdown-no-matches">
-                        No matches found
+                        {loading ? 'Loading...' : 'No matches found'}
                       </div>
                     )}
                   </div>
@@ -236,6 +400,9 @@ export default function LedgerMasterForm() {
                   value={formData.gstNo}
                   onChange={(e) => handleChange('gstNo', e.target.value)}
                   className="filter-input"
+                  disabled={loading}
+                  placeholder="Enter GST number"
+                  maxLength={15}
                 />
               </div>
 
@@ -256,6 +423,8 @@ export default function LedgerMasterForm() {
                   }}
                   rows={1}
                   className="multiline-field"
+                  disabled={loading}
+                  placeholder="Enter address line 1"
                 />
               </div>
 
@@ -270,72 +439,11 @@ export default function LedgerMasterForm() {
                   }}
                   rows={1}
                   className="multiline-field"
+                  disabled={loading}
+                  placeholder="Enter address line 2"
                 />
               </div>
 
-              {/* Billing City Dropdown */}
-              <div ref={billingCityRef} className="filter-grid-red">
-                <label className="filter-label">City</label>
-                <div className="dropdown-wrapper">
-                  <input
-                    type="text"
-                    value={billingCitySearch}
-                    onChange={(e) => {
-                      setBillingCitySearch(e.target.value);
-                      setIsBillingCityOpen(true);
-                    }}
-                    onFocus={() => setIsBillingCityOpen(true)}
-                    placeholder="Type or select..."
-                    className="dropdown-input"
-                  />
-                  <ChevronDown size={20} className="dropdown-icon" />
-                </div>
-                {isBillingCityOpen && (
-                  <div className="dropdown-menu">
-                    {filteredBillingCities.length > 0 ? (
-                      filteredBillingCities.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            handleChange('billingCity', option);
-                            setBillingCitySearch(option);
-                            setIsBillingCityOpen(false);
-                          }}
-                          onMouseEnter={() => setHoveredBillingCity(option)}
-                          onMouseLeave={() => setHoveredBillingCity(null)}
-                          className={`dropdown-item-option ${
-                            hoveredBillingCity === option
-                              ? 'dropdown-item-hovered'
-                              : formData.billingCity === option
-                              ? 'dropdown-item-selected'
-                              : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="dropdown-no-matches">
-                        No matches found
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="filter-grid-red">
-                <label className="filter-label">PinCode</label>
-                <input
-                  type="text"
-                  value={formData.billingPinCode}
-                  onChange={(e) => handleChange('billingPinCode', e.target.value)}
-                  className="filter-input"
-                />
-              </div>
-            </div>
-
-            <div className="filter-grid" style={{ marginBottom: '32px' }}>
-              {/* Billing State Dropdown */}
               <div ref={billingStateRef} className="filter-grid-red">
                 <label className="filter-label">State</label>
                 <div className="dropdown-wrapper">
@@ -347,8 +455,9 @@ export default function LedgerMasterForm() {
                       setIsBillingStateOpen(true);
                     }}
                     onFocus={() => setIsBillingStateOpen(true)}
-                    placeholder="Type or select..."
+                    placeholder="Type or select state..."
                     className="dropdown-input"
+                    disabled={loading}
                   />
                   <ChevronDown size={20} className="dropdown-icon" />
                 </div>
@@ -385,6 +494,71 @@ export default function LedgerMasterForm() {
                 )}
               </div>
 
+              <div className="filter-grid-red">
+                <label className="filter-label">PinCode</label>
+                <input
+                  type="text"
+                  value={formData.billingPinCode}
+                  onChange={(e) => handleChange('billingPinCode', e.target.value)}
+                  className="filter-input"
+                  disabled={loading}
+                  placeholder="Enter pincode"
+                  maxLength={6}
+                />
+              </div>
+            </div>
+
+            <div className="filter-grid" style={{ marginBottom: '32px' }}>
+              <div ref={billingCityRef} className="filter-grid-red">
+                <label className="filter-label">City</label>
+                <div className="dropdown-wrapper">
+                  <input
+                    type="text"
+                    value={billingCitySearch}
+                    onChange={(e) => {
+                      setBillingCitySearch(e.target.value);
+                      setIsBillingCityOpen(true);
+                    }}
+                    onFocus={() => setIsBillingCityOpen(true)}
+                    placeholder="Type or select city..."
+                    className="dropdown-input"
+                    disabled={loading}
+                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
+                </div>
+                {isBillingCityOpen && (
+                  <div className="dropdown-menu">
+                    {filteredBillingCities.length > 0 ? (
+                      filteredBillingCities.map((option, index) => (
+                        <div
+                          key={index}
+                          onClick={() => {
+                            handleChange('billingCity', option);
+                            setBillingCitySearch(option);
+                            setIsBillingCityOpen(false);
+                          }}
+                          onMouseEnter={() => setHoveredBillingCity(option)}
+                          onMouseLeave={() => setHoveredBillingCity(null)}
+                          className={`dropdown-item-option ${
+                            hoveredBillingCity === option
+                              ? 'dropdown-item-hovered'
+                              : formData.billingCity === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
+                        >
+                          {option}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div></div>
               <div></div>
               <div></div>
@@ -404,6 +578,8 @@ export default function LedgerMasterForm() {
                   }}
                   rows={1}
                   className="multiline-field"
+                  disabled={loading}
+                  placeholder="Enter delivery address line 1"
                 />
               </div>
 
@@ -418,72 +594,11 @@ export default function LedgerMasterForm() {
                   }}
                   rows={1}
                   className="multiline-field"
+                  disabled={loading}
+                  placeholder="Enter delivery address line 2"
                 />
               </div>
 
-              {/* Delivery City Dropdown */}
-              <div ref={deliveryCityRef} className="filter-grid-red">
-                <label className="filter-label">City</label>
-                <div className="dropdown-wrapper">
-                  <input
-                    type="text"
-                    value={deliveryCitySearch}
-                    onChange={(e) => {
-                      setDeliveryCitySearch(e.target.value);
-                      setIsDeliveryCityOpen(true);
-                    }}
-                    onFocus={() => setIsDeliveryCityOpen(true)}
-                    placeholder="Type or select..."
-                    className="dropdown-input"
-                  />
-                  <ChevronDown size={20} className="dropdown-icon" />
-                </div>
-                {isDeliveryCityOpen && (
-                  <div className="dropdown-menu">
-                    {filteredDeliveryCities.length > 0 ? (
-                      filteredDeliveryCities.map((option, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            handleChange('deliveryCity', option);
-                            setDeliveryCitySearch(option);
-                            setIsDeliveryCityOpen(false);
-                          }}
-                          onMouseEnter={() => setHoveredDeliveryCity(option)}
-                          onMouseLeave={() => setHoveredDeliveryCity(null)}
-                          className={`dropdown-item-option ${
-                            hoveredDeliveryCity === option
-                              ? 'dropdown-item-hovered'
-                              : formData.deliveryCity === option
-                              ? 'dropdown-item-selected'
-                              : 'dropdown-item-default'
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="dropdown-no-matches">
-                        No matches found
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="filter-grid-red">
-                <label className="filter-label">PinCode</label>
-                <input
-                  type="text"
-                  value={formData.deliveryPinCode}
-                  onChange={(e) => handleChange('deliveryPinCode', e.target.value)}
-                  className="filter-input"
-                />
-              </div>
-            </div>
-
-            <div className="filter-grid">
-              {/* Delivery State Dropdown */}
               <div ref={deliveryStateRef} className="filter-grid-red">
                 <label className="filter-label">State</label>
                 <div className="dropdown-wrapper">
@@ -495,8 +610,9 @@ export default function LedgerMasterForm() {
                       setIsDeliveryStateOpen(true);
                     }}
                     onFocus={() => setIsDeliveryStateOpen(true)}
-                    placeholder="Type or select..."
+                    placeholder="Type or select state..."
                     className="dropdown-input"
+                    disabled={loading}
                   />
                   <ChevronDown size={20} className="dropdown-icon" />
                 </div>
@@ -533,27 +649,105 @@ export default function LedgerMasterForm() {
                 )}
               </div>
 
+              <div className="filter-grid-red">
+                <label className="filter-label">PinCode</label>
+                <input
+                  type="text"
+                  value={formData.deliveryPinCode}
+                  onChange={(e) => handleChange('deliveryPinCode', e.target.value)}
+                  className="filter-input"
+                  disabled={loading}
+                  placeholder="Enter pincode"
+                  maxLength={6}
+                />
+              </div>
+            </div>
+
+            <div className="filter-grid">
+              <div ref={deliveryCityRef} className="filter-grid-red">
+                <label className="filter-label">City</label>
+                <div className="dropdown-wrapper">
+                  <input
+                    type="text"
+                    value={deliveryCitySearch}
+                    onChange={(e) => {
+                      setDeliveryCitySearch(e.target.value);
+                      setIsDeliveryCityOpen(true);
+                    }}
+                    onFocus={() => setIsDeliveryCityOpen(true)}
+                    placeholder="Type or select city..."
+                    className="dropdown-input"
+                    disabled={loading}
+                  />
+                  <ChevronDown size={20} className="dropdown-icon" />
+                </div>
+                {isDeliveryCityOpen && (
+                  <div className="dropdown-menu">
+                    {filteredDeliveryCities.length > 0 ? (
+                      filteredDeliveryCities.map((option, index) => (
+                        <div
+                          key={index}
+                          onClick={() => {
+                            handleChange('deliveryCity', option);
+                            setDeliveryCitySearch(option);
+                            setIsDeliveryCityOpen(false);
+                          }}
+                          onMouseEnter={() => setHoveredDeliveryCity(option)}
+                          onMouseLeave={() => setHoveredDeliveryCity(null)}
+                          className={`dropdown-item-option ${
+                            hoveredDeliveryCity === option
+                              ? 'dropdown-item-hovered'
+                              : formData.deliveryCity === option
+                              ? 'dropdown-item-selected'
+                              : 'dropdown-item-default'
+                          }`}
+                        >
+                          {option}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="dropdown-no-matches">
+                        No matches found
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div></div>
               <div></div>
               <div></div>
             </div>
-             {/* Action Buttons */}
-          <div className="footer-container">
-           
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={handleClear} className="btn-all">
-                <span>✕</span>
-                <span>Clear</span>
-              </button>
+            {/* Action Buttons */}
+            <div className="footer-container" style={{ 
+              display: 'flex', 
+              justifyContent: 'flex-end',
+              marginTop: '24px' 
+            }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  onClick={handleClear} 
+                  className="btn-all" 
+                  disabled={loading}
+                  style={{ opacity: loading ? 0.6 : 1 }}
+                >
+                  <span>✕</span>
+                  <span>Clear</span>
+                </button>
 
-              <button onClick={handleSubmit} className="btn-all">
-                <Send size={18} />  Submit
-              </button>
+                <button 
+                  onClick={handleSubmit} 
+                  className="btn-all" 
+                  disabled={loading}
+                  style={{ opacity: loading ? 0.6 : 1 }}
+                >
+                  <Send size={18} /> 
+                  {loading ? 'Submitting...' : 'Submit'}
+                </button>
+              </div>
             </div>
           </div>
-          </div>
-
         </div>
       </div>
     </div>

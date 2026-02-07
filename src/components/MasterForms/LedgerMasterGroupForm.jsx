@@ -1,42 +1,78 @@
-import React, { useState } from 'react';
-import { ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, Search,Send,Undo2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, Edit2, Trash2, ChevronLeft, ChevronRight, Search, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import accountGroupApi from '../../api/AccountgroupApi';
 
 export default function LedgerMasterGroupForm() {
   const navigate = useNavigate();
-  const [accountsGroupName, setAccountsGroupName] = useState('');
+  const [groupName, setGroupName] = useState('');
   const [groupUnder, setGroupUnder] = useState('');
   const [selectedType, setSelectedType] = useState('None');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  const [savedRecords, setSavedRecords] = useState([
-    { id: 1, accountsGroupName: 'Sundry Creditor', groupUnder: 'CAPITAL-AC', type: 'None' },
-  ]);
+  const [savedRecords, setSavedRecords] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Search states
   const [searchBy, setSearchBy] = useState('');
-  const [filteredRecords, setFilteredRecords] = useState(savedRecords);
+  const [filteredRecords, setFilteredRecords] = useState([]);
+
+  // Dropdown states
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hoveredOption, setHoveredOption] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = React.useRef(null);
 
   const totalPages = Math.ceil(filteredRecords.length / rowsPerPage);
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentGroups = filteredRecords.slice(indexOfFirst, indexOfLast);
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [hoveredOption, setHoveredOption] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const dropdownRef = React.useRef(null);
+  // FIX: Use savedRecords as dropdown options instead of separate API call
+  // Filter out invalid entries and current editing record (can't be parent of itself)
+  const dropdownOptions = savedRecords.filter(record => {
+    if (!record || !record.GroupName) return false;
+    // When editing, exclude the current record from dropdown (can't be parent of itself)
+    if (editingId && Number(record.GroupCode) === Number(editingId)) return false;
+    return true;
+  });
 
-  const groupOptions = ['CAPITAL-AC', 'ASSETS', 'LIABILITY', 'INCOME', 'EXPENSE'];
-  const typeOptions = ['None', 'Cash', 'Bank'];
-  
-  const filteredOptions = groupOptions.filter(option => 
-    option.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter dropdown options based on search term
+  const filteredOptions = dropdownOptions.filter(option => {
+    if (!option || !option.GroupName) return false;
+    return option.GroupName.toLowerCase().includes((searchTerm || '').toLowerCase());
+  });
 
-  React.useEffect(() => {
+  // Fetch all account groups
+  const fetchAccountGroups = async () => {
+    try {
+      setLoading(true);
+      const response = await accountGroupApi.getAllAccountGroups({
+        searchBy: searchBy,
+        page: 1,
+        limit: 100,
+      });
+      if (response.success) {
+        setSavedRecords(response.data);
+        setFilteredRecords(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching account groups:', error);
+      alert('Failed to fetch account groups');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
+    fetchAccountGroups();
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -46,7 +82,8 @@ export default function LedgerMasterGroupForm() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  React.useEffect(() => {
+  // Update filtered records when saved records change
+  useEffect(() => {
     setFilteredRecords(savedRecords);
   }, [savedRecords]);
 
@@ -56,42 +93,55 @@ export default function LedgerMasterGroupForm() {
   };
 
   const handleSelectGroup = (option) => {
-    setGroupUnder(option);
-    setSearchTerm(option);
+    setGroupUnder(Number(option.GroupCode));
+    setSearchTerm(option.GroupName);
     setIsDropdownOpen(false);
   };
 
-  React.useEffect(() => {
-    setSearchTerm(groupUnder);
-  }, [groupUnder]);
+  const handleSave = async () => {
+    if (groupName.trim() === '') {
+      alert('Please enter Group Name');
+      return;
+    }
 
-  const handleSave = () => {
-    if (accountsGroupName.trim() !== '') {
+    try {
+      setLoading(true);
+      const payload = {
+        GroupName: groupName,
+        GroupUnder: groupUnder || null,
+        Type: selectedType,
+      };
+
+      let response;
       if (editingId) {
         // Update existing record
-        const updatedRecords = savedRecords.map(record =>
-          record.id === editingId 
-            ? { ...record, accountsGroupName, groupUnder, type: selectedType }
-            : record
-        );
-        setSavedRecords(updatedRecords);
-        setEditingId(null);
+        response = await accountGroupApi.updateAccountGroup(editingId, payload);
+        if (response.success) {
+          alert('Account Group updated successfully');
+          setEditingId(null);
+        }
       } else {
-        // Add new record
-        const newRecord = {
-          id: savedRecords.length > 0 ? Math.max(...savedRecords.map(r => r.id)) + 1 : 1,
-          accountsGroupName,
-          groupUnder,
-          type: selectedType
-        };
-        setSavedRecords([...savedRecords, newRecord]);
+        // Create new record
+        response = await accountGroupApi.createAccountGroup(payload);
+        if (response.success) {
+          alert('Account Group created successfully');
+        }
       }
+
       // Reset form
-      setAccountsGroupName('');
+      setGroupName('');
       setGroupUnder('');
       setSearchTerm('');
       setSelectedType('None');
       setCurrentPage(1);
+
+      // Refresh data - this will update both table AND dropdown
+      await fetchAccountGroups();
+    } catch (error) {
+      console.error('Error saving account group:', error);
+      alert(error.response?.data?.message || 'Failed to save Account Group');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,9 +149,10 @@ export default function LedgerMasterGroupForm() {
     let filtered = savedRecords;
 
     if (searchBy.trim()) {
-      filtered = filtered.filter(record => 
-        record.accountsGroupName.toLowerCase().includes(searchBy.toLowerCase())
-      );
+      filtered = filtered.filter(record => {
+        return record && record.GroupName && 
+               record.GroupName.toLowerCase().includes(searchBy.toLowerCase());
+      });
     }
 
     setFilteredRecords(filtered);
@@ -109,18 +160,68 @@ export default function LedgerMasterGroupForm() {
   };
 
   const handleEdit = (record) => {
-    setEditingId(record.id);
-    setAccountsGroupName(record.accountsGroupName);
-    setGroupUnder(record.groupUnder);
-    setSearchTerm(record.groupUnder);
-    setSelectedType(record.type);
+    setEditingId(record.GroupCode);
+    setGroupName(record.GroupName);
+    
+    // Set groupUnder state properly
+    setGroupUnder(record.GroupUnder || '');
+    
+    // Find parent group name for search term
+    if (record.GroupUnder) {
+      const parentGroup = savedRecords.find(
+        opt => Number(opt.GroupCode) === Number(record.GroupUnder)
+      );
+      setSearchTerm(parentGroup ? parentGroup.GroupName : '');
+    } else {
+      setSearchTerm('');
+    }
+    
+    setSelectedType(record.Type || 'None');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = (recordId) => {
-    const updatedRecords = savedRecords.filter(record => record.id !== recordId);
-    setSavedRecords(updatedRecords);
-    setCurrentPage(1);
+  const handleDelete = async (recordId) => {
+    if (!window.confirm('Are you sure you want to delete this Account Group?')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await accountGroupApi.deleteAccountGroup(recordId);
+      if (response.success) {
+        alert('Account Group deleted successfully');
+        await fetchAccountGroups();
+        setCurrentPage(1);
+      }
+    } catch (error) {
+      console.error('Error deleting account group:', error);
+      alert(error.response?.data?.message || 'Failed to delete Account Group');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getGroupUnderName = (groupUnderCode) => {
+    if (!groupUnderCode) return '-';
+
+    const group = savedRecords.find(
+      opt => Number(opt.GroupCode) === Number(groupUnderCode)
+    );
+
+    return group ? group.GroupName : '-';
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setGroupName('');
+    setGroupUnder('');
+    setSearchTerm('');
+    setSelectedType('None');
+  };
+
+  const handleClearDropdown = () => {
+    setGroupUnder('');
+    setSearchTerm('');
   };
 
   return (
@@ -130,66 +231,74 @@ export default function LedgerMasterGroupForm() {
           <div className="content-card">
             <div className="page-header">
               <h1 className="page-title">Account Group Form</h1>
-              <button 
-                onClick={() => navigate(-1)} 
+              <button
+                onClick={() => navigate(-1)}
                 className="page-back-btn"
                 aria-label="Go back"
               >
-                <Undo2   className="page-back-icon" />
+                <Undo2 className="page-back-icon" />
               </button>
             </div>
 
             {/* Form Section */}
             <div className="filter-section">
+              
+
               <div className="filter-grid">
-                {/* Accounts Group Name */}
+                {/* Group Name */}
                 <div className="filter-grid-red">
-                  <label className="filter-label">Accounts Group Name</label>
+                  <label className="filter-label">Group Name</label>
                   <input
                     type="text"
-                    value={accountsGroupName}
-                    onChange={(e) => setAccountsGroupName(e.target.value)}
+                    value={groupName}
+                    onChange={(e) => setGroupName(e.target.value)}
                     className="filter-input"
+                    disabled={loading}
+                    placeholder="Enter group name"
                   />
                 </div>
 
                 {/* Group Under */}
                 <div ref={dropdownRef} className="filter-grid-red">
-                  <label className="filter-label">Group Under</label>
+                  <label className="filter-label">
+                    Group Under 
+                    
+                  </label>
                   <div className="dropdown-wrapper">
                     <input
                       type="text"
                       value={searchTerm}
                       onChange={handleInputChange}
                       onFocus={() => setIsDropdownOpen(true)}
-                      placeholder="Type or select..."
+                      placeholder="Type or select.."
                       className="dropdown-input"
+                      disabled={loading}
                     />
                     <ChevronDown size={20} className="dropdown-icon" />
                   </div>
                   {isDropdownOpen && (
                     <div className="dropdown-menu">
                       {filteredOptions.length > 0 ? (
-                        filteredOptions.map((option, index) => (
+                        filteredOptions.map((option) => (
                           <div
-                            key={index}
+                            key={option.GroupCode}
                             onClick={() => handleSelectGroup(option)}
-                            onMouseEnter={() => setHoveredOption(option)}
+                            onMouseEnter={() => setHoveredOption(option.GroupCode)}
                             onMouseLeave={() => setHoveredOption(null)}
                             className={`dropdown-item-option ${
-                              hoveredOption === option
+                              hoveredOption === option.GroupCode
                                 ? 'dropdown-item-hovered'
-                                : groupUnder === option
+                                : Number(groupUnder) === Number(option.GroupCode)
                                 ? 'dropdown-item-selected'
                                 : 'dropdown-item-default'
                             }`}
                           >
-                            {option}
+                            {option.GroupName}
                           </div>
                         ))
                       ) : (
                         <div className="dropdown-no-matches">
-                          No matches found
+                          {searchTerm ? 'No matching groups' : 'No groups available yet. Create your first group!'}
                         </div>
                       )}
                     </div>
@@ -201,45 +310,48 @@ export default function LedgerMasterGroupForm() {
 
               {/* Radio Buttons */}
               <div className="radio-group">
-                <div className="radio-option" onClick={() => setSelectedType('None')}>
-                  <input 
-                    type="radio" 
-                    checked={selectedType === 'None'} 
+                <div className="radio-option" onClick={() => !loading && setSelectedType('None')}>
+                  <input
+                    type="radio"
+                    checked={selectedType === 'None'}
                     onChange={() => setSelectedType('None')}
                     className="radio-input accent-primary"
+                    disabled={loading}
                   />
                   <span className="radio-label">None</span>
                 </div>
 
-                <div className="radio-option" onClick={() => setSelectedType('Cash')}>
-                  <input 
-                    type="radio" 
-                    checked={selectedType === 'Cash'} 
+                <div className="radio-option" onClick={() => !loading && setSelectedType('Cash')}>
+                  <input
+                    type="radio"
+                    checked={selectedType === 'Cash'}
                     onChange={() => setSelectedType('Cash')}
                     className="radio-input accent-primary"
+                    disabled={loading}
                   />
                   <span className="radio-label">Cash</span>
                 </div>
 
-                <div className="radio-option" onClick={() => setSelectedType('Bank')}>
-                  <input 
-                    type="radio" 
-                    checked={selectedType === 'Bank'} 
+                <div className="radio-option" onClick={() => !loading && setSelectedType('Bank')}>
+                  <input
+                    type="radio"
+                    checked={selectedType === 'Bank'}
                     onChange={() => setSelectedType('Bank')}
                     className="radio-input accent-primary"
+                    disabled={loading}
                   />
                   <span className="radio-label">Bank</span>
                 </div>
               </div>
- 
+
               {/* Submit Button */}
               <div className="btn-container">
-                <button onClick={handleSave} className="btn-all">
-                <Send size={18} />  Submit
+                <button onClick={handleSave} className="btn-all" disabled={loading}>
+                  <Send size={18} /> {loading ? 'Submitting...' : editingId ? 'Update' : 'Submit'}
                 </button>
               </div>
             </div>
- 
+
             {/* Record List Section */}
             <h2 className="page-title">Record List</h2>
 
@@ -250,20 +362,22 @@ export default function LedgerMasterGroupForm() {
                   <label className="filter-label">Search By</label>
                   <input
                     type="text"
-                    placeholder="Accounts Group Name"
+                    placeholder="Group Name"
                     value={searchBy}
                     onChange={(e) => setSearchBy(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     className="filter-input"
+                    disabled={loading}
                   />
                 </div>
 
                 {/* Search Button */}
                 <div className="btn-container">
-                  <button onClick={handleSearch} className="btn-all">
+                  <button onClick={handleSearch} className="btn-all" disabled={loading}>
                     <Search size={18} /> Search
                   </button>
                 </div>
-                
+
                 <div></div>
                 <div></div>
               </div>
@@ -275,33 +389,43 @@ export default function LedgerMasterGroupForm() {
                 <thead>
                   <tr className="table-header">
                     <th className="table-th">S.No</th>
-                    <th className="table-th">Accounts Group Name</th>
+                    <th className="table-th">Group Code</th>
+                    <th className="table-th">Group Name</th>
                     <th className="table-th">Group Under</th>
                     <th className="table-th">Type</th>
                     <th className="table-th-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentGroups.length > 0 ? (
+                  {loading ? (
+                    <tr>
+                      <td colSpan="6" className="no-data-cell">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : currentGroups.length > 0 ? (
                     currentGroups.map((record, idx) => (
-                      <tr key={record.id} className="table-row">
+                      <tr key={record.GroupCode} className="table-row">
                         <td className="table-cell">{indexOfFirst + idx + 1}</td>
-                        <td className="table-cell">{record.accountsGroupName}</td>
-                        <td className="table-cell">{record.groupUnder}</td>
-                        <td className="table-cell">{record.type}</td>
+                        <td className="table-cell">{record.GroupCode}</td>
+                        <td className="table-cell">{record.GroupName}</td>
+                        <td className="table-cell">{getGroupUnderName(record.GroupUnder)}</td>
+                        <td className="table-cell">{record.Type || 'None'}</td>
                         <td className="table-cell-center">
                           <div className="table-actions">
                             <button
                               onClick={() => handleEdit(record)}
                               className="btn-action"
                               title="Edit"
+                              disabled={loading}
                             >
-                              <Edit2 size={18}  />
+                              <Edit2 size={18} />
                             </button>
                             <button
-                              onClick={() => handleDelete(record.id)}
+                              onClick={() => handleDelete(record.GroupCode)}
                               className="btn-action"
                               title="Delete"
+                              disabled={loading}
                             >
                               <Trash2 size={18} className="text-[#dc2626]" />
                             </button>
@@ -311,8 +435,8 @@ export default function LedgerMasterGroupForm() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="no-data-cell">
-                        No records found 
+                      <td colSpan="6" className="no-data-cell">
+                        No records found
                       </td>
                     </tr>
                   )}
@@ -324,8 +448,8 @@ export default function LedgerMasterGroupForm() {
             {filteredRecords.length > rowsPerPage && (
               <div className="pagination-container">
                 <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  disabled={currentPage === 1 || loading}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
                   className={`pagination-btn ${
                     currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
                   }`}
@@ -333,21 +457,22 @@ export default function LedgerMasterGroupForm() {
                   <ChevronLeft size={18} />
                 </button>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
                     className={`pagination-page-btn ${
                       currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
                     }`}
+                    disabled={loading}
                   >
                     {page}
                   </button>
                 ))}
 
                 <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  disabled={currentPage === totalPages || loading}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
                   className={`pagination-btn ${
                     currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
                   }`}
@@ -356,8 +481,6 @@ export default function LedgerMasterGroupForm() {
                 </button>
               </div>
             )}
-
-          
           </div>
         </div>
       </div>

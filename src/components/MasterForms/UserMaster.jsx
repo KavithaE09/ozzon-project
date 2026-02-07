@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, ChevronRight, Edit2, Trash2, ChevronLeft, Send, Undo2, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import userApi from "../../api/userApi.js";
-import { getAllDepartments, getAllRoles } from "../../api/masterApi.js";
+import { getAllDepartments } from "../../api/masterApi.js";
+import { getAllRoleSettings } from "../../api/roleSettingsApi.js";
 
 export default function UserMaster() {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ export default function UserMaster() {
     fetchAllData();
   }, []);
 
-  // ✅ Fetch all data at once - Material List pattern
+  // ✅ Fetch all data at once - Updated with Debug Logs
   const fetchAllData = async () => {
     try {
       setLoading(true);
@@ -116,20 +117,61 @@ export default function UserMaster() {
         setFilteredGroups(usersRes.data);
       }
 
-      // ✅ Fetch Departments - masterApi direct use
+      // ✅ Fetch Departments
       const departmentsRes = await getAllDepartments();
       if (departmentsRes && departmentsRes.data) {
         setDepartmentOptions(departmentsRes.data);
       }
 
-      // ✅ Fetch Roles - masterApi direct use
-      const rolesRes = await getAllRoles();
+      // ✅ Fetch Roles from Role Settings API with Debug
+      console.log('🔍 Starting to fetch RoleSettings...');
+      const rolesRes = await getAllRoleSettings();
+      console.log('📦 RoleSettings API Full Response:', rolesRes);
+      
       if (rolesRes && rolesRes.data) {
-        setRoleOptions(rolesRes.data);
+        console.log('✅ RoleSettings Data exists, length:', rolesRes.data.length);
+        console.log('📋 First RoleSetting:', rolesRes.data[0]);
+        
+        // Extract unique roles from RoleSettings
+        const roleMap = new Map();
+        
+        rolesRes.data.forEach((roleSetting, index) => {
+          console.log(`\n🔹 Processing RoleSetting #${index}:`, roleSetting);
+          console.log(`   - RoleId:`, roleSetting.RoleId);
+          console.log(`   - Role object:`, roleSetting.Role);
+          
+          if (roleSetting.Role && roleSetting.RoleId) {
+            const roleName = roleSetting.Role.RoleName || roleSetting.Role.roleName;
+            console.log(`   ✓ Valid! RoleName:`, roleName);
+            
+            if (!roleMap.has(roleSetting.RoleId)) {
+              const roleData = {
+                RoleId: roleSetting.RoleId,
+                RoleName: roleName
+              };
+              console.log(`   ➕ Adding to map:`, roleData);
+              roleMap.set(roleSetting.RoleId, roleData);
+            } else {
+              console.log(`   ⏭️ Already in map, skipping`);
+            }
+          } else {
+            console.warn(`   ⚠️ Invalid - Missing Role or RoleId`);
+          }
+        });
+        
+        const rolesArray = Array.from(roleMap.values());
+        console.log('\n🎯 Final Unique Roles Array:', rolesArray);
+        console.log('📊 Total unique roles:', rolesArray.length);
+        
+        setRoleOptions(rolesArray);
+      } else {
+        console.error('❌ No data in RoleSettings response or response is null');
+        console.log('Response structure:', rolesRes);
       }
 
     } catch (err) {
-      console.error('Error fetching data:', err);
+      console.error('💥 Error fetching data:', err);
+      console.error('Error details:', err.response?.data);
       setError('Failed to load data');
     } finally {
       setLoading(false);
@@ -143,12 +185,23 @@ export default function UserMaster() {
     return String(deptName).toLowerCase().includes(departmentSearch.toLowerCase());
   });
 
-  // ✅ Filter Roles with null checks
+  // ✅ Filter Roles with null checks and Debug
   const filteredRoles = roleOptions.filter((role) => {
     if (!role) return false;
     const roleName = role.RoleName || role.roleName || role.name || '';
     return String(roleName).toLowerCase().includes(roleSearch.toLowerCase());
   });
+
+  // Debug log when role dropdown opens
+  useEffect(() => {
+    if (isRoleOpen) {
+      console.log('🔽 Role Dropdown Opened');
+      console.log('   - Total roleOptions:', roleOptions.length);
+      console.log('   - roleOptions:', roleOptions);
+      console.log('   - Current roleSearch:', roleSearch);
+      console.log('   - Filtered Roles:', filteredRoles);
+    }
+  }, [isRoleOpen]);
 
   // ✅ Outside Click Close (both dropdowns)
   useEffect(() => {
@@ -248,8 +301,6 @@ export default function UserMaster() {
     localStorage.removeItem('userMasterRoleSearch');
     localStorage.removeItem('userMasterRoleId');
   };
-
-  
 
   const handleSearch = async () => {
     try {
@@ -463,7 +514,7 @@ export default function UserMaster() {
                   </div>
                 </div>
                 
-                {/* ✅ Role Dropdown */}
+                {/* ✅ Role Dropdown - Updated */}
                 <div ref={roleDropdownRef} className="filter-grid-red">
                   <label className="filter-label">Role</label>
                   <div className="dropdown-wrapper">
@@ -519,7 +570,6 @@ export default function UserMaster() {
                   <button onClick={handleSubmit} className="btn-all" disabled={loading}>
                     <Send size={18} /> {loading ? 'Processing...' : editingId ? 'Update' : 'Submit'}
                   </button>
-                 
                 </div>
               </div>
             </div>

@@ -70,21 +70,24 @@ export default function MaterialList() {
   useEffect(() => {
     localStorage.setItem('materialUnitSearch', unitSearch);
   }, [unitSearch]);
+  
   const filteredGroups = groupOptions.filter(group => {
     if (!group) return false;
     const name = group.MaterialGroupName || group.materialgroupName || group.groupName || group.GroupName || '';
     return name.toLowerCase().includes(groupSearch.toLowerCase());
   });
   
+  // ✅ FIXED: Now filters by Unit name instead of UnitId
   const filteredUnits = unitOptions.filter(unit => {
     if (!unit) return false;
-    const unitName = String(unit.UnitId || unit.unitid || '');
-    return unitName.toLowerCase().includes(String(unitSearch).toLowerCase());
+    const unitName = unit.Unit || unit.unit || unit.UnitName || '';
+    return String(unitName).toLowerCase().includes(String(unitSearch).toLowerCase());
   });
 
   useEffect(() => {
     fetchAllData();
   }, []);
+  
   const fetchAllData = async () => {
     try {
       setLoading(true);
@@ -100,6 +103,7 @@ export default function MaterialList() {
       }
       const unitsRes = await getAllUnits();
       if (unitsRes && unitsRes.data) {
+        console.log('Units from API:', unitsRes.data); // Debug log
         setUnitOptions(unitsRes.data);
       }
 
@@ -361,7 +365,7 @@ export default function MaterialList() {
                 )}
               </div>
 
-          
+              {/* ✅ FIXED: Unit Dropdown now shows Unit name */}
               <div ref={unitRef} className="filter-grid-red">
                 <label className="filter-label">Unit</label>
                 <div className="dropdown-wrapper">
@@ -382,14 +386,17 @@ export default function MaterialList() {
                   <div className="dropdown-menu">
                     {filteredUnits.length > 0 ? (
                       filteredUnits.map((unit, index) => {
-                        const displayName = unit.UnitId || unit.unitid || 'Unknown';
-                        const unitId = unit.UnitMId || unit.UnitId || unit.id;
+                        // ✅ Display Unit name (KG, Liter, etc.) instead of UnitId
+                        const displayName = unit.Unit || unit.unit || unit.UnitName || 'Unknown';
+                        // ✅ But save UnitId to the database
+                        const unitId = unit.UnitId || unit.unitid || unit.id;
+                        
                         return (
                           <div
                             key={index}
                             onClick={() => {
                               setFormData({ ...formData, UnitId: unitId });
-                              setUnitSearch(String(displayName));
+                              setUnitSearch(displayName);
                               setIsUnitOpen(false);
                             }}
                             onMouseEnter={() => setHoveredUnit(displayName)}

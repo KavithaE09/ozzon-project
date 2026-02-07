@@ -1,33 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronRight, Edit2, Trash2, ChevronLeft, Search, ChevronDown, Send, Undo2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import {
-  getAllRoleSettings,
-  createRoleSetting,
-  updateRoleSetting,
-  deleteRoleSetting
-} from '../../api/roleSettingsApi';
-import { getAllRoles } from "../../api/masterApi.js"; // ✅ Import getAllRoles from masterApi
+import { getAllRoleSettings,createRoleSetting,updateRoleSetting, deleteRoleSetting} from '../../api/roleSettingsApi';
+import { getAllRoles } from "../../api/masterApi.js"; 
 
 export default function UserRoleSettings() {
   const navigate = useNavigate();
-
-  // ✅ Role master data for dropdown (from role master table)
   const [roles, setRoles] = useState([]);
-  
-  // ✅ Role settings data for display (from role settings table)
   const [roleSettings, setRoleSettings] = useState([]);
-  
-  // ✅ Selected role ID from dropdown
   const [selectedRoleId, setSelectedRoleId] = useState(() => {
-    const saved = localStorage.getItem('roleSettingsSelectedRoleId');
+  const saved = localStorage.getItem('roleSettingsSelectedRoleId');
     return saved ? Number(saved) : null;
   });
-  
   const [roleSearch, setRoleSearch] = useState(() => {
     return localStorage.getItem('roleSettingsRoleSearch') || '';
   });
-  
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
   const [hoveredRole, setHoveredRole] = useState(null);
   const [searchText, setSearchText] = useState('');
@@ -39,14 +26,17 @@ export default function UserRoleSettings() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  // ✅ Form fields for the selected role
-  const [isActive, setIsActive] = useState(false);
-  const [description, setDescription] = useState('');
+  // Checkbox states
+  const [canAdd, setCanAdd] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
+  const [canView, setCanView] = useState(false);
+  const [canPrint, setCanPrint] = useState(false);
+  const [canMenu, setCanMenu] = useState(false);
+  const [canOthers, setCanOthers] = useState(false);
   
   const rowsPerPage = 5;
   const roleDropdownRef = useRef(null);
 
-  // ✅ Save to localStorage
   useEffect(() => {
     localStorage.setItem('roleSettingsRoleSearch', roleSearch);
   }, [roleSearch]);
@@ -57,33 +47,43 @@ export default function UserRoleSettings() {
     }
   }, [selectedRoleId]);
 
-  // ✅ Fetch all data on component mount
   useEffect(() => {
     fetchAllData();
   }, []);
 
-  // ✅ Fetch both role master data and role settings data
   const fetchAllData = async () => {
     try {
       setLoading(true);
       setError('');
 
-      // ✅ Fetch roles from role master (for dropdown)
       const rolesRes = await getAllRoles();
       console.log('Roles from master:', rolesRes);
       if (rolesRes && rolesRes.data) {
         setRoles(rolesRes.data);
       }
 
-      // ✅ Fetch role settings (for display/record list)
       const settingsData = await getAllRoleSettings();
       console.log('Role settings data:', settingsData);
-      console.log('First role setting:', settingsData[0]); // ✅ Log first item to see structure
+      console.log('First role setting:', settingsData[0]);
       console.log('Role setting keys:', settingsData[0] ? Object.keys(settingsData[0]) : 'No data');
-      
-      setRoleSettings(settingsData);
-      setDisplayRoles(settingsData);
-      if (settingsData.length > 0) {
+
+      // ✅ TEMPORARY FIX: Merge role names from master roles
+      const enrichedSettings = settingsData.map(setting => {
+        const roleFromMaster = rolesRes?.data?.find(r => 
+          Number(r.RoleId || r.roleId || r.id) === Number(setting.RoleId)
+        );
+        
+        return {
+          ...setting,
+          RoleName: roleFromMaster?.RoleName || roleFromMaster?.roleName || 'Unknown Role'
+        };
+      });
+
+      console.log('✅ Enriched settings with role names:', enrichedSettings);
+
+      setRoleSettings(enrichedSettings);
+      setDisplayRoles(enrichedSettings);
+      if (enrichedSettings.length > 0) {
         setShowRecordList(true);
       }
     } catch (error) {
@@ -94,14 +94,12 @@ export default function UserRoleSettings() {
     }
   };
 
-  // ✅ Filter roles from role master with null checks
   const filteredRoles = roles.filter((role) => {
     if (!role) return false;
     const roleName = role.RoleName || role.roleName || role.name || '';
     return String(roleName).toLowerCase().includes(roleSearch.toLowerCase());
   });
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (roleDropdownRef.current && !roleDropdownRef.current.contains(event.target)) {
@@ -112,13 +110,11 @@ export default function UserRoleSettings() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Pagination calculations
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const paginatedData = displayRoles.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(displayRoles.length / rowsPerPage);
 
-  /* ROLE INPUT CHANGE */
   const handleRoleInput = (e) => {
     setRoleSearch(e.target.value);
     setSelectedRoleId(null);
@@ -128,23 +124,32 @@ export default function UserRoleSettings() {
   /* ROLE SELECT */
   const handleRoleSelect = (role) => {
     const displayName = role.RoleName || role.roleName || role.name || 'Unknown';
-    const roleId = role.RoleId || role.roleId || role.id;
+    const roleId = Number(role.RoleId || role.roleId || role.id);
 
     setRoleSearch(displayName);
-    setSelectedRoleId(roleId);
+    setSelectedRoleId(Number(roleId));
     setIsRoleDropdownOpen(false);
 
-    // ✅ Check if this role already has settings (using RoleId field)
-    const existingSetting = roleSettings.find(rs => rs.RoleId === roleId);
+    const existingSetting = roleSettings.find(
+      rs => Number(rs.RoleId) === Number(roleId)
+    );
 
     if (existingSetting) {
       // ✅ Load existing settings
-      setIsActive(existingSetting.CanAdd || false);
-      setDescription(existingSetting.Description || '');
+      setCanAdd(existingSetting.CanAdd || false);
+      setCanDelete(existingSetting.CanDelete || false);
+      setCanView(existingSetting.CanView || false);
+      setCanPrint(existingSetting.CanPrint || false);
+      setCanMenu(existingSetting.CanMenu || false);
+      setCanOthers(existingSetting.CanOther || false);
     } else {
       // ✅ Reset for new role
-      setIsActive(false);
-      setDescription('');
+      setCanAdd(false);
+      setCanDelete(false);
+      setCanView(false);
+      setCanPrint(false);
+      setCanMenu(false);
+      setCanOthers(false);
     }
   };
 
@@ -160,27 +165,42 @@ export default function UserRoleSettings() {
       setLoading(true);
       setError('');
 
-      // ✅ Check if role setting already exists (using RoleId field)
-      const existingSetting = roleSettings.find(rs => rs.RoleId === selectedRoleId);
+      const existingSetting = roleSettings.find(
+        rs => Number(rs.RoleId) === Number(selectedRoleId)
+      );
 
       // ✅ Get role name from roles master
-      const selectedRoleFromMaster = roles.find(r => 
+      const selectedRoleFromMaster = roles.find(r =>
         (r.RoleId || r.roleId || r.id) === selectedRoleId
       );
-      const roleName = selectedRoleFromMaster 
+      const roleName = selectedRoleFromMaster
         ? (selectedRoleFromMaster.RoleName || selectedRoleFromMaster.roleName || selectedRoleFromMaster.name)
         : roleSearch;
 
       const roleSettingData = {
         roleId: selectedRoleId,
-        roleName: roleName,
-        isActive: isActive, // This maps to CanAdd in backend
-        description: description
+        RoleName: roleName,
+        isActive: canAdd,
+        canDelete: canDelete,
+        canView: canView,
+        canPrint: canPrint,
+        canMenu: canMenu,
+        canOther: canOthers
       };
+
+      console.log('📤 Submitting role setting data:', roleSettingData);
 
       if (existingSetting) {
         // ✅ Update existing role setting using RoleSettingsId
-        await updateRoleSetting(existingSetting.RoleSettingsId, roleSettingData);
+        const updateData = {
+          CanAdd: canAdd,
+          CanDelete: canDelete,
+          CanView: canView,
+          CanPrint: canPrint,
+          CanMenu: canMenu,
+          CanOther: canOthers
+        };
+        await updateRoleSetting(existingSetting.RoleSettingsId, updateData);
         alert('Role setting updated successfully');
       } else {
         // ✅ Create new role setting
@@ -188,13 +208,18 @@ export default function UserRoleSettings() {
         alert('Role setting created successfully');
       }
 
-      // Refresh the list
+      // ✅ Refresh the list to show new/updated record
       await fetchAllData();
+      
+      // ✅ Show record list
+      setShowRecordList(true);
+      
+      // ✅ Reset form
       resetForm();
 
     } catch (error) {
       setError(error.response?.data?.message || error.message || 'Failed to save role setting');
-      console.error(error);
+      console.error('Submit error:', error);
     } finally {
       setLoading(false);
     }
@@ -204,10 +229,14 @@ export default function UserRoleSettings() {
   const resetForm = () => {
     setSelectedRoleId(null);
     setRoleSearch('');
-    setIsActive(false);
-    setDescription('');
+    setCanAdd(false);
+    setCanDelete(false);
+    setCanView(false);
+    setCanPrint(false);
+    setCanMenu(false);
+    setCanOthers(false);
     setError('');
-    
+
     // Clear localStorage
     localStorage.removeItem('roleSettingsSelectedRoleId');
     localStorage.removeItem('roleSettingsRoleSearch');
@@ -219,7 +248,6 @@ export default function UserRoleSettings() {
       setDisplayRoles(roleSettings);
     } else {
       const filtered = roleSettings.filter(role => {
-        // ✅ FIXED: Check multiple possible fields for role name
         const roleName = role.roleName || role.RoleName || role.Role?.RoleName || '';
         return roleName.toLowerCase().includes(searchText.toLowerCase());
       });
@@ -230,17 +258,15 @@ export default function UserRoleSettings() {
 
   /* EDIT */
   const handleEdit = (role) => {
-    // ✅ CRITICAL: Use RoleSettingsId (PRIMARY KEY)
     const roleSettingsId = role.RoleSettingsId;
-    // ✅ FIXED: Get role name from the correct field
     const roleName = role.roleName || role.RoleName || role.Role?.RoleName || 'Unknown';
-    
+
     console.log('Editing role:', role);
     console.log('RoleSettingsId:', roleSettingsId);
     console.log('Role name:', roleName);
-    
+
     setEditingRole(roleSettingsId);
-    setEditingData({ 
+    setEditingData({
       ...role,
       RoleSettingsId: roleSettingsId,
       RoleName: roleName
@@ -255,12 +281,11 @@ export default function UserRoleSettings() {
       return;
     }
 
-    // ✅ CRITICAL: Use RoleSettingsId (PRIMARY KEY)
     const roleSettingsId = editingData.RoleSettingsId;
-    
+
     console.log('📝 Update clicked for:', editingData);
     console.log('📝 RoleSettingsId:', roleSettingsId);
-    
+
     if (!roleSettingsId) {
       alert('Error: Role Settings ID not found');
       console.error('RoleSettingsId is undefined:', editingData);
@@ -270,8 +295,7 @@ export default function UserRoleSettings() {
     try {
       setLoading(true);
       setError('');
-      
-      // ✅ Backend expects CanAdd, CanDelete, etc.
+
       const updatePayload = {
         CanAdd: editingData.CanAdd || false,
         CanDelete: editingData.CanDelete || false,
@@ -280,13 +304,13 @@ export default function UserRoleSettings() {
         CanMenu: editingData.CanMenu || false,
         CanOther: editingData.CanOther || false
       };
-      
+
       console.log('📝 Update payload:', updatePayload);
       console.log('📝 Calling updateRoleSetting with RoleSettingsId:', roleSettingsId);
-      
+
       const response = await updateRoleSetting(roleSettingsId, updatePayload);
       console.log('📝 Update response:', response);
-      
+
       alert('Role setting updated successfully');
       await fetchAllData();
       setEditingRole(null);
@@ -294,7 +318,7 @@ export default function UserRoleSettings() {
     } catch (error) {
       console.error('📝 Update error:', error);
       console.error('📝 Error response:', error.response);
-      
+
       const errorMsg = error.response?.data?.message || error.message || 'Failed to update role setting';
       setError(errorMsg);
       alert(`Update failed: ${errorMsg}`);
@@ -311,38 +335,33 @@ export default function UserRoleSettings() {
 
   /* DELETE */
   const handleDelete = async (role) => {
-    // ✅ CRITICAL: Use RoleSettingsId (PRIMARY KEY) not RoleId
     const roleSettingsId = role.RoleSettingsId;
-    // ✅ FIXED: Get role name from the correct field
     const roleName = role.roleName || role.RoleName || role.Role?.RoleName || 'this role';
-    
+
     console.log('🗑️ Delete clicked for role:', role);
     console.log('🗑️ RoleSettingsId (PRIMARY KEY):', roleSettingsId);
     console.log('🗑️ Role name:', roleName);
-    
-    // ✅ Validate roleSettingsId exists
+
     if (!roleSettingsId) {
       alert('Error: Role Settings ID not found');
       console.error('RoleSettingsId is undefined:', role);
       return;
     }
-    
+
     if (window.confirm(`Are you sure you want to delete ${roleName}?`)) {
       try {
         setLoading(true);
         setError('');
-        
+
         console.log('🗑️ Calling deleteRoleSetting with RoleSettingsId:', roleSettingsId);
-        
+
         const response = await deleteRoleSetting(roleSettingsId);
         console.log('🗑️ Delete response:', response);
-        
+
         alert('Role setting deleted successfully');
-        
-        // ✅ Refresh the data
+
         await fetchAllData();
 
-        // ✅ Adjust current page if needed
         const newTotalPages = Math.ceil((displayRoles.length - 1) / rowsPerPage);
         if (currentPage > newTotalPages && newTotalPages > 0) {
           setCurrentPage(newTotalPages);
@@ -350,7 +369,7 @@ export default function UserRoleSettings() {
       } catch (error) {
         console.error('🗑️ Delete error:', error);
         console.error('🗑️ Error response:', error.response);
-        
+
         const errorMsg = error.response?.data?.message || error.message || 'Failed to delete role setting';
         setError(errorMsg);
         alert(`Delete failed: ${errorMsg}`);
@@ -363,7 +382,10 @@ export default function UserRoleSettings() {
   // ✅ Get selected role name for display
   const getSelectedRoleName = () => {
     if (!selectedRoleId) return '';
-    const role = roles.find(r => (r.RoleId || r.roleId || r.id) === selectedRoleId);
+    const role = roles.find(
+      r => Number(r.RoleId || r.roleId || r.id) === Number(selectedRoleId)
+    );
+
     return role ? (role.RoleName || role.roleName || role.name) : roleSearch;
   };
 
@@ -385,10 +407,10 @@ export default function UserRoleSettings() {
 
             {/* Error Message */}
             {error && (
-              <div style={{ 
-                padding: '10px', 
-                marginBottom: '15px', 
-                backgroundColor: '#fee', 
+              <div style={{
+                padding: '10px',
+                marginBottom: '15px',
+                backgroundColor: '#fee',
                 color: '#c00',
                 borderRadius: '4px',
                 fontSize: '14px'
@@ -417,7 +439,7 @@ export default function UserRoleSettings() {
                   <div className="dropdown-menu">
                     {filteredRoles.length > 0 ? (
                       filteredRoles.map((role, index) => {
-                     const displayName = role.RoleName || role.roleName || role.name || 'Unknown';
+                        const displayName = role.RoleName || role.roleName || role.name || 'Unknown';
                         const roleId = role.RoleId || role.roleId || role.id;
 
                         return (
@@ -426,13 +448,12 @@ export default function UserRoleSettings() {
                             onClick={() => handleRoleSelect(role)}
                             onMouseEnter={() => setHoveredRole(roleId)}
                             onMouseLeave={() => setHoveredRole(null)}
-                            className={`dropdown-item-option ${
-                              hoveredRole === roleId
+                            className={`dropdown-item-option ${hoveredRole === roleId
                                 ? 'dropdown-item-hovered'
                                 : selectedRoleId === roleId
                                   ? 'dropdown-item-selected'
                                   : 'dropdown-item-default'
-                            }`}
+                              }`}
                           >
                             {displayName}
                           </div>
@@ -466,8 +487,12 @@ export default function UserRoleSettings() {
                     <tr>
                       <th className="table-th-center">Role ID</th>
                       <th className="table-th-center">Role Name</th>
-                      <th className="table-th-center">Active</th>
-                      <th className="table-th-center">Description</th>
+                      <th className="table-th-center">Add</th>
+                      <th className="table-th-center">Delete</th>
+                      <th className="table-th-center">View</th>
+                      <th className="table-th-center">Print</th>
+                      <th className="table-th-center">Menu</th>
+                      <th className="table-th-center">Others</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -477,19 +502,49 @@ export default function UserRoleSettings() {
                       <td className="table-cell-center">
                         <input
                           type="checkbox"
-                          checked={isActive}
-                          onChange={(e) => setIsActive(e.target.checked)}
+                          checked={canAdd}
+                          onChange={(e) => setCanAdd(e.target.checked)}
                           className="radio-input"
                         />
                       </td>
                       <td className="table-cell-center">
                         <input
-                          type="text"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          placeholder="Enter description"
-                          className="filter-input"
-                          style={{ minWidth: '200px' }}
+                          type="checkbox"
+                          checked={canDelete}
+                          onChange={(e) => setCanDelete(e.target.checked)}
+                          className="radio-input"
+                        />
+                      </td>
+                      <td className="table-cell-center">
+                        <input
+                          type="checkbox"
+                          checked={canView}
+                          onChange={(e) => setCanView(e.target.checked)}
+                          className="radio-input"
+                        />
+                      </td>
+                      <td className="table-cell-center">
+                        <input
+                          type="checkbox"
+                          checked={canPrint}
+                          onChange={(e) => setCanPrint(e.target.checked)}
+                          className="radio-input"
+                        />
+                      </td>
+                      <td className="table-cell-center">
+                        <input
+                          type="checkbox"
+                          checked={canMenu}
+                          onChange={(e) => setCanMenu(e.target.checked)}
+                          className="radio-input"
+                        />
+                      </td>
+                      <td className="table-cell-center">
+                        <input
+                          type="checkbox"
+                          checked={canOthers}
+                          onChange={(e) => setCanOthers(e.target.checked)}
+                          className="radio-input"
                         />
                       </td>
                     </tr>
@@ -533,17 +588,22 @@ export default function UserRoleSettings() {
                       <div className="no-data-cell">No records found</div>
                     ) : (
                       paginatedData.map((role, idx) => {
-                        // ✅ Log each role to debug the structure
+                        // ✅ Debug log for first item
                         if (idx === 0) {
-                          console.log('Sample role object:', role);
-                          console.log('Available keys:', Object.keys(role));
+                          console.log('📋 Sample role object:', role);
+                          console.log('📋 Available keys:', Object.keys(role));
                         }
+
+                        const roleSettingsId = Number(role.RoleSettingsId);
                         
-                
-                        const roleSettingsId = role.RoleSettingsId;
-                        const roleId = role.roleId || role.RoleId || role.roleid   || 'Unnamed Role';
-                        const roleName = role.rolename || role.RoleName || role.Role?.RoleName || 'Unnamed Role';
-                        
+                        // ✅ FIXED: Try multiple possible fields for role name
+                        const roleName = role.RoleName || 
+                                       role.roleName || 
+                                       role.Role?.RoleName || 
+                                       role.Role?.roleName ||
+                                       role.name ||
+                                       'Unknown Role';
+
                         return (
                           <div key={`role-${roleSettingsId}-${idx}`} className="master-table-row">
                             <div className="master-table-content">
@@ -615,9 +675,8 @@ export default function UserRoleSettings() {
                 <button
                   disabled={currentPage === 1 || loading}
                   onClick={() => setCurrentPage(prev => prev - 1)}
-                  className={`pagination-btn ${
-                    currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
-                  }`}
+                  className={`pagination-btn ${currentPage === 1 ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                    }`}
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -627,9 +686,8 @@ export default function UserRoleSettings() {
                     key={page}
                     onClick={() => setCurrentPage(page)}
                     disabled={loading}
-                    className={`pagination-page-btn ${
-                      currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
-                    }`}
+                    className={`pagination-page-btn ${currentPage === page ? 'pagination-page-active' : 'pagination-page-inactive'
+                      }`}
                   >
                     {page}
                   </button>
@@ -638,9 +696,8 @@ export default function UserRoleSettings() {
                 <button
                   disabled={currentPage === totalPages || loading}
                   onClick={() => setCurrentPage(prev => prev + 1)}
-                  className={`pagination-btn ${
-                    currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
-                  }`}
+                  className={`pagination-btn ${currentPage === totalPages ? 'pagination-btn-disabled' : 'pagination-btn-active'
+                    }`}
                 >
                   <ChevronRight size={16} />
                 </button>
