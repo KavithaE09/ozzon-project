@@ -1,15 +1,13 @@
 import axios from "axios";
+import { BASE_URL } from "./baseurl";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = `${BASE_URL}/container-purchase`;
 
 const containerPurchaseApi = {
   // ==================== CREATE ====================
   createPurchase: async (data) => {
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/container-purchase`,
-        data
-      );
+      const response = await axios.post(API_BASE_URL, data);
       return response.data;
     } catch (error) {
       console.error("Error creating container purchase:", error);
@@ -20,7 +18,7 @@ const containerPurchaseApi = {
   // ==================== GET ALL ====================
   getAllPurchases: async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/container-purchase`);
+      const response = await axios.get(API_BASE_URL);
       return response.data;
     } catch (error) {
       console.error("Error fetching container purchases:", error);
@@ -31,9 +29,7 @@ const containerPurchaseApi = {
   // ==================== GET BY ID ====================
   getPurchaseById: async (id) => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/container-purchase/${id}`
-      );
+      const response = await axios.get(`${API_BASE_URL}/${encodeURIComponent(id)}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching container purchase:", error);
@@ -44,10 +40,7 @@ const containerPurchaseApi = {
   // ==================== UPDATE ====================
   updatePurchase: async (id, data) => {
     try {
-      const response = await axios.put(
-        `${API_BASE_URL}/container-purchase/${id}`,
-        data
-      );
+      const response = await axios.put(`${API_BASE_URL}/${encodeURIComponent(id)}`, data);
       return response.data;
     } catch (error) {
       console.error("Error updating container purchase:", error);
@@ -58,9 +51,7 @@ const containerPurchaseApi = {
   // ==================== DELETE ====================
   deletePurchase: async (id) => {
     try {
-      const response = await axios.delete(
-        `${API_BASE_URL}/container-purchase/${id}`
-      );
+      const response = await axios.delete(`${API_BASE_URL}/${encodeURIComponent(id)}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting container purchase:", error);
@@ -71,12 +62,9 @@ const containerPurchaseApi = {
   // ==================== SEARCH ====================
   searchPurchases: async (searchTerm) => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/container-purchase/search`,
-        {
-          params: { search: searchTerm },
-        }
-      );
+      const response = await axios.get(`${API_BASE_URL}/search`, {
+        params: { search: searchTerm },
+      });
       return response.data;
     } catch (error) {
       console.error("Error searching container purchases:", error);
